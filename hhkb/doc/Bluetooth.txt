@@ -1,4 +1,0 @@
-HHKB Bluetooth mod
-==================
-See this article:
-http://geekhack.org/showwiki.php?title=Island:20851
