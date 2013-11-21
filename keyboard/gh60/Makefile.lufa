@@ -48,9 +48,10 @@ TOP_DIR = ../..
 TARGET_DIR = .
 
 # project specific files
-SRC =	keymap.c \
+SRC +=	keymap.c \
 	matrix.c \
-	led.c
+	led.c \
+	backlight.c
 
 CONFIG_H = config.h
 
@@ -112,9 +113,13 @@ BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
 MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
-COMMAND_ENABLE = yes    # Commands for debug and configuration
-SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
+COMMAND_ENABLE = yes	# Commands for debug and configuration
+#SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
 #NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+#PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
+KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
+KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 
 
 # Optimize size but this may cause error "relocation truncated to fit"
@@ -139,3 +144,6 @@ poker_set: all
 
 poker_bit: OPT_DEFS += -DKEYMAP_POKER_BIT
 poker_bit: all
+
+poker2: OPT_DEFS += -DKEYMAP_POKER2 -DBACKLIGHT_CUSTOM -DGH60_REV_C
+poker2: all
