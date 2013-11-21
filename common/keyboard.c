@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eeconfig.h"
 #include "mousekey.h"
 #include "backlight.h"
+#include "keymap_ex.h"
 
 
 #ifdef MATRIX_HAS_GHOST
@@ -66,6 +67,10 @@ void keyboard_init(void)
 
 #ifdef BACKLIGHT_ENABLE
     backlight_init();
+#endif
+
+#ifdef KEYMAP_EX_ENABLE
+    keymap_init();
 #endif
 }
 
