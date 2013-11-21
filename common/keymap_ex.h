@@ -37,8 +37,7 @@ typedef struct {
 #define EECONFIG_KEYMAP_FN_ACTIONS (EECONFIG_KEYMAP_EX + sizeof(uint16_t))
 #define EECONFIG_KEYMAP_KEYMAPS (EECONFIG_KEYMAP_FN_ACTIONS + sizeof(uint16_t) * FN_ACTIONS_COUNT)
 
-#define FN_ACTIONS_SIZE_EX (sizeof(uint16_t) * FN_ACTIONS_COUNT)
-#define KEYMAPS_SIZE_EX (sizeof(uint8_t) * KEYMAPS_COUNT * MATRIX_ROWS * MATRIX_COLS)
+#define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_ROWS * MATRIX_COLS)
 #define FN_ACTION_OFFSET(index) (sizeof(uint16_t) * index)
 #define KEY_OFFSET(layer, row, col) (sizeof(uint8_t) * (layer * MATRIX_ROWS * MATRIX_COLS + row * MATRIX_COLS + col))
 
@@ -54,8 +53,8 @@ void eeconfig_write_keymap_fn_action(uint8_t index, uint16_t fn_action);
 
 const uint8_t* keymaps_pointer(void);
 const uint16_t* fn_actions_pointer(void);
-uint16_t keymaps_size(void);
-uint16_t fn_actions_size(void);
+uint16_t keys_count(void);
+uint16_t fn_actions_count(void);
 
 #endif
 

@@ -229,11 +229,11 @@ const uint16_t* fn_actions_pointer(void) {
     return fn_actions;
 }
 
-uint16_t keymaps_size(void) {
+uint16_t keys_count(void) {
     return KEYMAPS_SIZE * MATRIX_ROWS * MATRIX_COLS;
 }
 
-uint16_t fn_actions_size(void) {
+uint16_t fn_actions_count(void) {
     return FN_ACTIONS_SIZE;
 }
 #endif

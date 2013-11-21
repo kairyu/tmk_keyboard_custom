@@ -30,7 +30,9 @@ void keymap_init(void) {
 }
 
 bool check_keymap_in_eeprom(void) {
-    return false;
+    uint16_t checksum_in_eeprom = eeprom_read_word(&((keymap_ex_t*)EECONFIG_KEYMAP_EX)->checksum);
+    uint16_t checksum = EECONFIG_MAGIC_NUMBER;
+    return (checksum_in_eeprom == checksum);
 }
 
 void write_keymap_to_eeprom(void) {
@@ -39,10 +41,10 @@ void write_keymap_to_eeprom(void) {
     const uint8_t *keymaps = keymaps_pointer();
     // write fn_actions
     if (fn_actions != NULL) {
-        uint16_t size_of_fn_actions = fn_actions_size();
-        for (uint16_t i = 0; i < FN_ACTIONS_SIZE_EX; i++) {
+        uint16_t fn_actions_count_in_flash = fn_actions_count();
+        for (uint16_t i = 0; i < FN_ACTIONS_COUNT; i++) {
             uint16_t fn_action = 0;
-            if (i < size_of_fn_actions) {
+            if (i < fn_actions_count_in_flash) {
                 fn_action = pgm_read_word(fn_actions + i);
             }
             eeconfig_write_keymap_fn_action(i, fn_action);
@@ -51,10 +53,10 @@ void write_keymap_to_eeprom(void) {
     }
     // write keymaps
     if (keymaps != NULL) {
-        uint16_t size_of_keymaps = keymaps_size();
-        for (uint16_t i = 0; i < KEYMAPS_SIZE_EX; i++) {
+        uint16_t keys_count_in_flash = keys_count();
+        for (uint16_t i = 0; i < KEYS_COUNT; i++) {
             uint8_t keymap = 0;
-            if (i < size_of_keymaps) {
+            if (i < keys_count_in_flash) {
                 keymap = pgm_read_byte(keymaps + i);
             }
             eeconfig_write_keymap_key_by_index(i, keymap);
