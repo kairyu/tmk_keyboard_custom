@@ -53,7 +53,11 @@ ifdef PS2_MOUSE_ENABLE
     OPT_DEFS += -DPS2_MOUSE_ENABLE
 endif
 
-ifdef $(or MOUSEKEY_ENABLE, PS2_MOUSE_ENABLE)
+ifdef MOUSEKEY_ENABLE
+    OPT_DEFS += -DMOUSE_ENABLE
+endif
+
+ifdef PS4_MOUSE_ENABLE
     OPT_DEFS += -DMOUSE_ENABLE
 endif
 
@@ -71,6 +75,11 @@ endif
 ifdef KEYMAP_SECTION_ENABLE
     OPT_DEFS += -DKEYMAP_SECTION_ENABLE
     EXTRALDFLAGS = -Wl,-L$(TOP_DIR),-Tldscript_keymap_avr5.x
+endif
+
+ifdef KEYMAP_EX_ENABLE
+    SRC += $(COMMON_DIR)/keymap_ex.c
+    OPT_DEFS += -DKEYMAP_EX_ENABLE
 endif
 
 # Version string
