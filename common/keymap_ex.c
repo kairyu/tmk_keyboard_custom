@@ -32,6 +32,12 @@ void keymap_init(void) {
 bool check_keymap_in_eeprom(void) {
     uint16_t checksum_in_eeprom = eeprom_read_word(&((keymap_ex_t*)EECONFIG_KEYMAP_EX)->checksum);
     uint16_t checksum = EECONFIG_MAGIC_NUMBER;
+    for (uint16_t i = 0; i < KEYMAP_SIZE; i += 2) {
+        checksum ^= eeprom_read_word((void*)(EECONFIG_KEYMAP_FN_ACTIONS + i));
+    }
+#ifdef DEBUG
+    eeprom_write_word((void*)(EECONFIG_KEYMAP_DEBUG), checksum);
+#endif
     return (checksum_in_eeprom == checksum);
 }
 

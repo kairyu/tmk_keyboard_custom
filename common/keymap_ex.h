@@ -33,11 +33,13 @@ typedef struct {
     uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS];
 } keymap_ex_t;
 
+#define EECONFIG_KEYMAP_DEBUG (EECONFIG_KEYMAP_EX - sizeof(uint16_t))
 #define EECONFIG_KEYMAP_CHECKSUM (EECONFIG_KEYMAP_EX)
 #define EECONFIG_KEYMAP_FN_ACTIONS (EECONFIG_KEYMAP_EX + sizeof(uint16_t))
 #define EECONFIG_KEYMAP_KEYMAPS (EECONFIG_KEYMAP_FN_ACTIONS + sizeof(uint16_t) * FN_ACTIONS_COUNT)
 
 #define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_ROWS * MATRIX_COLS)
+#define KEYMAP_SIZE (sizeof(uint16_t) * FN_ACTIONS_COUNT + sizeof(uint8_t) * KEYS_COUNT)
 #define FN_ACTION_OFFSET(index) (sizeof(uint16_t) * index)
 #define KEY_OFFSET(layer, row, col) (sizeof(uint8_t) * (layer * MATRIX_ROWS * MATRIX_COLS + row * MATRIX_COLS + col))
 
