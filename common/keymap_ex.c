@@ -33,7 +33,7 @@ bool check_keymap_in_eeprom(void) {
     uint16_t checksum_in_eeprom = eeprom_read_word(&((keymap_ex_t*)EECONFIG_KEYMAP_EX)->checksum);
     uint16_t checksum = EECONFIG_MAGIC_NUMBER;
     for (uint16_t i = 0; i < KEYMAP_SIZE; i += 2) {
-        checksum ^= eeprom_read_word((void*)(EECONFIG_KEYMAP_FN_ACTIONS + i));
+        checksum += eeprom_read_word((void*)(EECONFIG_KEYMAP_FN_ACTIONS + i));
     }
 #ifdef DEBUG
     eeprom_write_word((void*)(EECONFIG_KEYMAP_DEBUG), checksum);
@@ -54,7 +54,7 @@ void write_keymap_to_eeprom(void) {
                 fn_action = pgm_read_word(fn_actions + i);
             }
             eeconfig_write_keymap_fn_action(i, fn_action);
-            checksum ^= fn_action;
+            checksum += fn_action;
         }
     }
     // write keymaps
@@ -70,7 +70,7 @@ void write_keymap_to_eeprom(void) {
             if (i & 1) {
                 keymap_word = keymap << 8;
             }
-            checksum ^= keymap_word;
+            checksum += keymap_word;
         }
     }
     // write checksum
