@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = onekey_lufa
+TARGET = gh60_lufa
 
 # Directory common source filess exist
 TOP_DIR = ../..
@@ -48,9 +48,16 @@ TOP_DIR = ../..
 TARGET_DIR = .
 
 # project specific files
-SRC =	keymap.c \
+SRC =	keymap_common.c \
 	matrix.c \
-	led.c
+	led.c \
+	backlight.c
+
+ifdef KEYMAP
+    SRC := keymap_$(KEYMAP).c $(SRC)
+else
+    SRC := keymap_poker.c $(SRC)
+endif
 
 CONFIG_H = config.h
 
@@ -93,7 +100,7 @@ ARCH = AVR8
 F_USB = $(F_CPU)
 
 # Interrupt driven control endpoint task(+60)
-#OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
+OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 
 
 # Boot Section Size in *bytes*
@@ -112,9 +119,13 @@ BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
 MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
-COMMAND_ENABLE = yes    # Commands for debug and configuration
-SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
+COMMAND_ENABLE = yes	# Commands for debug and configuration
+#SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
 #NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+#PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
+KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
+KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 
 
 # Optimize size but this may cause error "relocation truncated to fit"
@@ -127,15 +138,3 @@ VPATH += $(TOP_DIR)
 include $(TOP_DIR)/protocol/lufa.mk
 include $(TOP_DIR)/common.mk
 include $(TOP_DIR)/rules.mk
-
-plain: OPT_DEFS += -DKEYMAP_PLAIN
-plain: all
-
-poker: OPT_DEFS += -DKEYMAP_POKER
-poker: all
-
-poker_set: OPT_DEFS += -DKEYMAP_POKER_SET
-poker_set: all
-
-poker_bit: OPT_DEFS += -DKEYMAP_POKER_BIT
-poker_bit: all
