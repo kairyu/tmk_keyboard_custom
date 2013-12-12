@@ -117,7 +117,10 @@ ifdef REV
     OPT_DEFS += -DGH60_REV_$(REV)
 endif
 
-OPT_DEFS += -DBACKLIGHT_CUSTOM
+# Additional definitions from command line
+ifdef DEFS
+    OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
+endif
 
 # Build Options
 #   comment out to disable the options.
