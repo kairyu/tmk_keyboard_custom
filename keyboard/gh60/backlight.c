@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 
-#ifdef GH60_REV_C
+#ifdef GH60_REV_CHN
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
@@ -51,4 +51,6 @@ void backlight_set(uint8_t level)
         OCR1B = 0;
     }
 }
+#else
+void backlight_set(uint8_t level) {}
 #endif
