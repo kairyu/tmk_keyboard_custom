@@ -48,9 +48,16 @@ TOP_DIR = ../..
 TARGET_DIR = .
 
 # project specific files
-SRC +=	keymap.c \
+SRC =	keymap_common.c \
 	matrix.c \
 	led.c
+
+ifdef KEYMAP
+    SRC := keymap_$(KEYMAP).c $(SRC)
+else
+    SRC := keymap_4x6.c $(SRC)
+endif
+
 
 CONFIG_H = config.h
 
@@ -93,7 +100,7 @@ ARCH = AVR8
 F_USB = $(F_CPU)
 
 # Interrupt driven control endpoint task(+60)
-#OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
+OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 
 
 # Boot Section Size in *bytes*
@@ -131,7 +138,3 @@ VPATH += $(TOP_DIR)
 include $(TOP_DIR)/protocol/lufa.mk
 include $(TOP_DIR)/common.mk
 include $(TOP_DIR)/rules.mk
-
-plain: OPT_DEFS += -DKEYMAP_PLAIN
-plain: all
-

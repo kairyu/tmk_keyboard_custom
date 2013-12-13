@@ -1,7 +1,10 @@
+#include "keymap_common.h"
+
+// 4x6 Keypad
 #ifdef KEYMAP_SECTION_ENABLE
-const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
+const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
 #else
-static const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
+const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
 #endif
     /* Keymap 0: Default Layer
      * ,---------------.
@@ -31,8 +34,18 @@ static const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
  * Fn action definition
  */
 #ifdef KEYMAP_SECTION_ENABLE
-const uint16_t fn_actions[] __attribute__ ((section (".keymap.fn_actions"))) = {
+const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn_actions"))) = {
 #else
-static const uint16_t fn_actions[] PROGMEM = {
+const uint16_t fn_actions[] PROGMEM = {
 #endif
 };
+
+#ifdef KEYMAP_EX_ENABLE
+uint16_t keys_count(void) {
+    return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
+}
+
+uint16_t fn_actions_count(void) {
+    return sizeof(fn_actions) / sizeof(fn_actions[0]);
+}
+#endif
