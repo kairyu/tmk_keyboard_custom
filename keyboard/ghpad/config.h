@@ -31,11 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_ROWS 6
 #define MATRIX_COLS 4
 
+/* keymap in eeprom */
+#define FN_ACTIONS_COUNT 32
+#define KEYMAPS_COUNT 32
+
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST
 
 /* Set 0 if debouncing isn't needed */
 #define DEBOUNCE    5
+
+/* number of backlight levels */
+#define BACKLIGHT_LEVELS 3
 
 /* number of backlight levels */
 //#define BACKLIGHT_LEVELS 3

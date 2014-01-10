@@ -35,7 +35,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,TRNS),
+        FN1, TRNS,FN2, TRNS),
 };
 
 /*
@@ -46,7 +46,9 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    [0] = ACTION_LAYER_MOMENTARY(1)
+    [0] = ACTION_LAYER_MOMENTARY(1),
+    [1] = ACTION_BACKLIGHT_DECREASE(),
+    [2] = ACTION_BACKLIGHT_INCREASE()
 };
 
 #ifdef KEYMAP_EX_ENABLE
