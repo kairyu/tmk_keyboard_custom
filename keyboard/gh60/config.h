@@ -31,6 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 14
 
+/* keymap in eeprom */
+#define FN_ACTIONS_COUNT 32
+#define KEYMAPS_COUNT 8
+
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST
 
@@ -38,7 +42,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE    5
 
 /* number of backlight levels */
+#ifdef GH60_REV_CHN
 #define BACKLIGHT_LEVELS 3
+#else
+#define BACKLIGHT_LEVELS 1
+#endif
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE

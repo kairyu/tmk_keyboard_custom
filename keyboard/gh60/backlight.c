@@ -52,5 +52,14 @@ void backlight_set(uint8_t level)
     }
 }
 #else
-void backlight_set(uint8_t level) {}
+void backlight_set(uint8_t level)
+{
+    if (level > 0) {
+        DDRF  |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+        PORTF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    }
+    else {
+        DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    }
+}
 #endif
