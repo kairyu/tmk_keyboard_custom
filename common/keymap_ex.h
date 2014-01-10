@@ -24,8 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 
 #define EECONFIG_KEYMAP_EX 0x10
-#define FN_ACTIONS_COUNT 8
+#ifndef FN_ACTIONS_COUNT
+#define FN_ACTIONS_COUNT 32
+#endif
+#ifndef KEYMAPS_COUNT
 #define KEYMAPS_COUNT 8
+#endif
 
 typedef struct {
     uint16_t checksum;
