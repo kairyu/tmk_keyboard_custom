@@ -81,6 +81,12 @@ void backlight_decrease(void)
 void backlight_toggle(void)
 {
     backlight_config.enable ^= 1;
+    if (backlight_config.enable)
+    {
+        if (backlight_config.level == 0) {
+            backlight_config.level = 1;
+        }
+    }
     eeconfig_write_backlight(backlight_config.raw);
     dprintf("backlight toggle: %u\n", backlight_config.enable);
     backlight_set(backlight_config.enable ? backlight_config.level : 0);
