@@ -141,7 +141,7 @@ uint8_t matrix_key_count(void)
 /* Column pin configuration
  * pin: F1  F0  E6  D7  D6  D4  C7  C6  B6  B5  B4  B3  B1  B0  (Rev.A)
  * pin: F1  F0  E6  D7  D6  D4  C7  C6  B7  B6  B5  B4  B3  B1  (Rev.B)
- * pin: F1  F0  E6  D7  D6  D4  C7  C6  B7  B5  B4  B3  B1  B0  (Rev.CHN)
+ * pin: F1  F0  E6  D7  D6  D4  C7  C6  B7  B5  B4  B3  B1  B0  (Rev.CHN/CNY)
  */
 static void  init_cols(void)
 {
@@ -154,7 +154,7 @@ static void  init_cols(void)
     PORTD |=  (1<<PD7 | 1<<PD6 | 1<<PD4);
     DDRC  &= ~(1<<PC7 | 1<<PC6);
     PORTC |=  (1<<PC7 | 1<<PC6);
-#if defined(GH60_REV_CHN)
+#if defined(GH60_REV_CHN) || defined(GH60_REV_CNY)
     DDRB  &= ~(1<<PB7 | 1<<PB5 | 1<<PB4 | 1<<PB3 | 1<<PB1 | 1<<PB0);
     PORTB |=  (1<<PB7 | 1<<PB5 | 1<<PB4 | 1<<PB3 | 1<<PB1 | 1<<PB0);
 #else
@@ -168,6 +168,7 @@ static void  init_cols(void)
  * pin: F0  F1  E6  C7  C6  B6  D4  B1  B0  B5  B4  D7  D6  B3  (Rev.A)
  * pin: F0  F1  E6  C7  C6  B6  D4  B1  B7  B5  B4  D7  D6  B3  (Rev.B)
  * pin: F0  F1  E6  C7  C6  B7  D4  B1  B0  B5  B4  D7  D6  B3  (Rev.CHN)
+ * pin: F0  F1  E6  C7  C6  B7  D4  B0  B1  B5  B4  D7  D6  B3  (Rev.CNY)
  */
 static matrix_row_t read_cols(void)
 {
@@ -181,6 +182,21 @@ static matrix_row_t read_cols(void)
            (PIND&(1<<PD4) ? 0 : (1<<6)) |
            (PINB&(1<<PB1) ? 0 : (1<<7)) |
            (PINB&(1<<PB0) ? 0 : (1<<8)) |
+           (PINB&(1<<PB5) ? 0 : (1<<9)) |
+           (PINB&(1<<PB4) ? 0 : (1<<10)) |
+           (PIND&(1<<PD7) ? 0 : (1<<11)) |
+           (PIND&(1<<PD6) ? 0 : (1<<12)) |
+           (PINB&(1<<PB3) ? 0 : (1<<13));
+#elif defined(GH60_REV_CNY)
+    return (PINF&(1<<PF0) ? 0 : (1<<0)) |
+           (PINF&(1<<PF1) ? 0 : (1<<1)) |
+           (PINE&(1<<PE6) ? 0 : (1<<2)) |
+           (PINC&(1<<PC7) ? 0 : (1<<3)) |
+           (PINC&(1<<PC6) ? 0 : (1<<4)) |
+           (PINB&(1<<PB7) ? 0 : (1<<5)) |
+           (PIND&(1<<PD4) ? 0 : (1<<6)) |
+           (PINB&(1<<PB0) ? 0 : (1<<7)) |
+           (PINB&(1<<PB1) ? 0 : (1<<8)) |
            (PINB&(1<<PB5) ? 0 : (1<<9)) |
            (PINB&(1<<PB4) ? 0 : (1<<10)) |
            (PIND&(1<<PD7) ? 0 : (1<<11)) |
