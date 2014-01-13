@@ -31,11 +31,17 @@ typedef struct {
     uint8_t value;
 } led_matrix_element_t;
 
+#ifdef LED_MATRIX_ENABLE
 uint8_t led_matrix_rows(void);
 uint8_t led_matrix_cols(void);
 void led_matrix_init(void);
 void led_matrix_enable(void);
 void led_matrix_disable(void);
 uint8_t led_matrix_scan(void);
+#else
+#define led_matrix_rows()
+#define led_matrix_cols()
+#define led_matrix_init()
+#endif
 
 #endif
