@@ -62,6 +62,11 @@ void keyboard_init(void)
 {
     timer_init();
     matrix_init();
+
+#ifdef LED_MATRIX_ENABLE
+    led_matrix_init();
+#endif
+
 #ifdef PS2_MOUSE_ENABLE
     ps2_mouse_init();
 #endif
