@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 
-#ifdef GH60_REV_CHN
+#if defined(GH60_REV_CHN)
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
@@ -49,6 +49,26 @@ void backlight_set(uint8_t level)
         sei();
         // Set PWM
         OCR1B = 0;
+    }
+}
+#elif #defined(GH60_REV_CNY)
+static const uint8_t backlight_table[] PROGMEM = {
+    0, 16, 128, 255
+};
+
+void backlight_set(uint8_t level)
+{
+    if (level > 0) {
+        led_matrix_disable();
+        for (uint8_t row = 0; row < LED_MATRIX_ROWS; row++) {
+            for (uint8_t col = 0; col < LED_MATRIX_COLS; col++) {
+                led_matrix_set_value(row, col, pgm_read_byte(&backlight_table[level]));
+            }
+        }
+        led_matrix_enable();
+    }
+    else {
+        led_matrix_disable();
     }
 }
 #else

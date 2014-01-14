@@ -43,16 +43,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #if defined(GH60_REV_CHN)
-#define BACKLIGHT_LEVELS 3
+#   define BACKLIGHT_LEVELS 3
 #elif defined(GH60_REV_CNY)
-#define BACKLIGHT_LEVELS 3
+#   define BACKLIGHT_LEVELS 3
 #else
-#define BACKLIGHT_LEVELS 1
+#   define BACKLIGHT_LEVELS 1
 #endif
 
 #ifdef GH60_REV_CNY
-#define LED_MATRIX_ROWS 6
-#define LED_MATRIX_COLS 14
+#   define LED_MATRIX_ROWS 6
+#   define LED_MATRIX_COLS 14
 #endif
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */

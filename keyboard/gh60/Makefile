@@ -51,7 +51,8 @@ TARGET_DIR = .
 SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
-	backlight.c
+	backlight.c \
+	led_matrix.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
