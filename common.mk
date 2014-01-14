@@ -69,6 +69,11 @@ ifdef KEYMAP_EX_ENABLE
     OPT_DEFS += -DKEYMAP_EX_ENABLE
 endif
 
+ifdef LED_MATRIX_ENABLE
+    SRC += $(COMMON_DIR)/led_matrix.c
+    OPT_DEFS += -DLED_MATRIX_ENABLE
+endif
+
 # Version string
 OPT_DEFS += -DVERSION=$(shell (git describe --always --dirty || echo 'unknown') 2> /dev/null)
 
