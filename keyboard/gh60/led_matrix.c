@@ -47,10 +47,14 @@ void led_matrix_write_cols(led_matrix_row_t cols)
  */
 void led_matrix_unselect_rows(void)
 {
-	//      bit 76543210
+    // unselect key matrix rows
+    //DDRD  &= ~0b00101111;
+    //PORTD &= ~0b00101111;
+
+    //      bit 76543210
     DDRB  &= ~0b01000100;
     PORTB &= ~0b01000100;
-	//      bit 76543210
+    //      bit 76543210
     DDRF  &= ~0b11110000;
     PORTF &= ~0b11110000;
 }
