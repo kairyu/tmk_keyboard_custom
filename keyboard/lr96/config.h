@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DESCRIPTION     t.m.k. keyboard firmware for LR96
 
 /* key matrix size */
-#define MATRIX_ROWS 7
-#define MATRIX_COLS 16
+#define MATRIX_ROWS 16
+#define MATRIX_COLS 7
 
 /* keymap in eeprom */
 #define FN_ACTIONS_COUNT 32
