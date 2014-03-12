@@ -149,7 +149,7 @@ static void  init_cols(void)
  */
 static matrix_row_t read_cols(void)
 {
-     return PIND & ~(1<<PD7);
+     return ~PIND & ~(1<<PD7);
 }
 
 /* Row pin configuration
@@ -174,7 +174,7 @@ static matrix_row_t read_cols(void)
  */
 static void unselect_rows(void)
 {
-    // Output low(DDR:1, PORT:0) to unselect
+    // Output high(DDR:1, PORT:1) to unselect
     DDRB  |= (1<<PB0);
     PORTB |= (1<<PB0);
 }
