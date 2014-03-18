@@ -33,20 +33,26 @@ void backlight_set(uint8_t level)
         // Turn on PWM
         cli();
         DDRC |= (1<<PC6);
-        TCCR3A |= ( (1<<WGM30) | (1<<COM3A1) );
+	//TCCR3A = 0b10101001;
+	//TCCR3B = 0b00000011;
+        TCCR3A |= ( (1<<WGM30) | (1<<COM3A1) | (1<<COM3B1) | (1<<COM3C1) );
         TCCR3B |= ( (1<<CS31) | (1<<CS30) );
         sei();
         // Set PWM
         OCR3A = pgm_read_byte(&backlight_table[level]);
+        OCR3B = pgm_read_byte(&backlight_table[level]);
     }
     else {
         // Turn off PWM
         cli();
         DDRC &= ~(1<<PC6);
-        TCCR3A &= ~( (1<<WGM30) | (1<<COM3A1) );
+	//TCCR3A = 0b00000000;
+	//TCCR3B = 0b00000000;
+        TCCR3A &= ~( (1<<WGM30) | (1<<COM3A1) | (1<<COM3B1) | (1<<COM3C1) );
         TCCR3B &= ~( (1<<CS31) | (1<<CS30) );
         sei();
         // Set PWM
         OCR3A = 0;
+        OCR3B = 0;
     }
 }
