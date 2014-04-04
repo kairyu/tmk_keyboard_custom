@@ -50,7 +50,8 @@ TARGET_DIR = .
 # project specific files
 SRC =	keymap_common.c \
 	matrix.c \
-	led.c
+	led.c \
+	backlight.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -123,7 +124,7 @@ COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
 #NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
-#BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
+BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
 KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 
