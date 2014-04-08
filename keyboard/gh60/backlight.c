@@ -72,14 +72,39 @@ void backlight_set(uint8_t level)
     }
 }
 #else
+static const uint8_t backlight_table[] PROGMEM = {
+    0, 16, 128, 255
+};
+
 void backlight_set(uint8_t level)
 {
     if (level > 0) {
-        DDRF  |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-        PORTF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+        DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+        PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+        cli();
+        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
+        TIFR1 |= (1<<TOV1);
+        sei();
+        OCR1A = pgm_read_byte(&backlight_table[level]);
     }
     else {
         DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+        cli();
+        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
+        TIFR1 |= (1<<TOV1);
+        sei();
+        OCR1A = 0;
     }
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+    // LED off
+    PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+}
+ISR(TIMER1_OVF_vect)
+{
+    // LED on
+    PORTF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
 }
 #endif
