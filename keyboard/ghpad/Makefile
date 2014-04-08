@@ -112,6 +112,11 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
+# Additional definitions from command line
+ifdef DEFS
+    OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
+endif
+
 
 # Build Options
 #   comment out to disable the options.
@@ -122,7 +127,7 @@ EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-#NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+NKRO_ENABLE = yes	# USB Nkey Rollover
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
