@@ -133,11 +133,11 @@ CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
 NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
-#PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+PS2_USE_BUSYWAIT = yes
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
 KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
-
 
 # Optimize size but this may cause error "relocation truncated to fit"
 #EXTRALDFLAGS = -Wl,--relax
@@ -147,5 +147,6 @@ VPATH += $(TARGET_DIR)
 VPATH += $(TOP_DIR)
 
 include $(TOP_DIR)/protocol/lufa.mk
+include $(TOP_DIR)/protocol.mk
 include $(TOP_DIR)/common.mk
 include $(TOP_DIR)/rules.mk

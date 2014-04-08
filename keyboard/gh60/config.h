@@ -66,7 +66,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
 )
 
+/* PS2 mouse support */
+#ifdef PS2_MOUSE_ENABLE
+#define PS2_CLOCK_PORT	PORTF
+#define PS2_CLOCK_PIN	PINF
+#define PS2_CLOCK_DDR	DDRF
+#define PS2_CLOCK_BIT	PF7
 
+#define PS2_DATA_PORT	PORTF
+#define PS2_DATA_PIN	PINF
+#define PS2_DATA_DDR	DDRF
+#define PS2_DATA_BIT	PF6
+#endif
 
 /*
  * Feature disable options

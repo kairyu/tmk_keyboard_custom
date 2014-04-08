@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
+#ifdef PS2_MOUSE_ENABLE
+#include "ps2.h"
+#endif
 
 
 #ifndef DEBOUNCE
@@ -42,6 +45,14 @@ static void init_cols(void);
 static void unselect_rows(void);
 static void select_row(uint8_t row);
 
+#ifdef PS2_MOUSE_ENABLE
+static uint8_t ps2_mouse_detected;
+
+uint8_t ps2_enabled(void)
+{
+    return ps2_mouse_detected;
+}
+#endif
 
 inline
 uint8_t matrix_rows(void)
@@ -60,6 +71,19 @@ void matrix_init(void)
     // disable JTAG
     MCUCR = (1<<JTD);
     MCUCR = (1<<JTD);
+
+#ifdef PS2_MOUSE_ENABLE
+    // ps2 mouse detect
+    DDRF &= ~(1<<PF5 | 1<<PF4);
+    PORTF |= (1<<PF5 | 1<<PF4);
+    if (PINF & (1<<PF5 | 1 <<PF4)) {
+        ps2_mouse_detected = 0;
+    }
+    else {
+        ps2_mouse_detected = 1;
+    }
+    DDRF |= (1<<PF5 | 1<<PF4);
+#endif
 
     // initialize row and col
     unselect_rows();
