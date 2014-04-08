@@ -68,7 +68,9 @@ void keyboard_init(void)
 #endif
 
 #ifdef PS2_MOUSE_ENABLE
-    ps2_mouse_init();
+    if (ps2_enabled()) {
+        ps2_mouse_init();
+    }
 #endif
 
 #ifdef BOOTMAGIC_ENABLE
@@ -80,7 +82,7 @@ void keyboard_init(void)
 #endif
 
 #ifdef KEYMAP_EX_ENABLE
-    keymap_init();
+    keymap_ex_init();
 #endif
 }
 
@@ -133,7 +135,9 @@ MATRIX_LOOP_END:
 #endif
 
 #ifdef PS2_MOUSE_ENABLE
-    ps2_mouse_task();
+    if (ps2_enabled()) {
+        ps2_mouse_task();
+    }
 #endif
 
     // update LED
