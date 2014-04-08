@@ -23,10 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef KEYMAP_EX_ENABLE
 
-void keymap_init(void) {
+void keymap_ex_init(void) {
     if (!check_keymap_in_eeprom()) {
         write_keymap_to_eeprom();
     }
+}
+
+void keymap_ex_disable(void) {
+    eeprom_write_word((void*)EECONFIG_KEYMAP_CHECKSUM, eeprom_read_word((void*)EECONFIG_KEYMAP_CHECKSUM) + 1);
 }
 
 bool check_keymap_in_eeprom(void) {
