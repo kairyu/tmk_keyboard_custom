@@ -47,7 +47,8 @@ typedef struct {
 #define FN_ACTION_OFFSET(index) (sizeof(uint16_t) * index)
 #define KEY_OFFSET(layer, row, col) (sizeof(uint8_t) * (layer * MATRIX_ROWS * MATRIX_COLS + row * MATRIX_COLS + col))
 
-void keymap_init(void);
+void keymap_ex_init(void);
+void keymap_ex_disable(void);
 bool check_keymap_in_eeprom(void);
 void write_keymap_to_eeprom(void);
 uint8_t eeconfig_read_keymap_key(uint8_t layer, uint8_t row, uint8_t col);
