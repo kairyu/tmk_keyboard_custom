@@ -82,6 +82,8 @@ void backlight_set(uint8_t level)
         DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
         PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
         cli();
+        TCCR1A |= (1<<WGM10);
+        TCCR1B |= ((1<<CS11) | (1<<CS10));
         TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
         TIFR1 |= (1<<TOV1);
         sei();
@@ -90,6 +92,8 @@ void backlight_set(uint8_t level)
     else {
         DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
         cli();
+        TCCR1A &= ~(1<<WGM10);
+        TCCR1B &= ~((1<<CS11) | (1<<CS10));
         TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
         TIFR1 |= (1<<TOV1);
         sei();

@@ -42,13 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE    5
 
 /* number of backlight levels */
-#if defined(GH60_REV_CHN)
-#   define BACKLIGHT_LEVELS 3
-#elif defined(GH60_REV_CNY)
-#   define BACKLIGHT_LEVELS 3
-#else
-#   define BACKLIGHT_LEVELS 1
-#endif
+#define BACKLIGHT_LEVELS 3
 
 #ifdef GH60_REV_CNY
 #   define LED_MATRIX_ROWS 6
