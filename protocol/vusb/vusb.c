@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "host_driver.h"
 #include "vusb.h"
+#include "action_util.h"
 
 
 static uint8_t vusb_keyboard_leds = 0;
@@ -232,7 +233,7 @@ uchar usbFunctionWrite(uchar *data, uchar len)
  *
  * from an example in HID spec appendix
  */
-PROGMEM uchar keyboard_hid_report[] = {
+PROGMEM const uchar keyboard_hid_report[] = {
     0x05, 0x01,          // Usage Page (Generic Desktop),
     0x09, 0x06,          // Usage (Keyboard),
     0xA1, 0x01,          // Collection (Application),
@@ -275,7 +276,7 @@ PROGMEM uchar keyboard_hid_report[] = {
  * http://www.keil.com/forum/15671/
  * http://www.microsoft.com/whdc/device/input/wheel.mspx
  */
-PROGMEM uchar mouse_hid_report[] = {
+PROGMEM const uchar mouse_hid_report[] = {
     /* mouse */
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x02,                    // USAGE (Mouse)
@@ -358,7 +359,7 @@ PROGMEM uchar mouse_hid_report[] = {
  * contains: device, interface, HID and endpoint descriptors
  */
 #if USB_CFG_DESCR_PROPS_CONFIGURATION
-PROGMEM char usbDescriptorConfiguration[] = {    /* USB configuration descriptor */
+PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration descriptor */
     9,          /* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
     USBDESCR_CONFIG,    /* descriptor type */
     9 + (9 + 9 + 7) + (9 + 9 + 7), 0,

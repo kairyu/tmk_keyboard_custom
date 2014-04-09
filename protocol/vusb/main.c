@@ -48,9 +48,14 @@ int main(void)
     uint16_t last_timer = timer_read();
 #endif
 
+#ifdef CLKPR
     CLKPR = 0x80, CLKPR = 0;
+#endif
+
+#ifndef NO_UART
 #ifndef PS2_USE_USART
     uart_init(UART_BAUD_RATE);
+#endif
 #endif
 
     keyboard_init();

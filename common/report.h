@@ -87,6 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #   define REPORT_SIZE 8
 #   define REPORT_KEYS 6
+#   define REPORT_BITS 7
 #endif
 
 

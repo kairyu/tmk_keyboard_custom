@@ -28,18 +28,18 @@ volatile uint32_t timer_count = 0;
 void timer_init(void)
 {
     // Timer0 CTC mode
-    TCCR0A = 0x02;
+    TCCR0A |= (1<<WGM01 | 0<<WGM00);
 
 #if TIMER_PRESCALER == 1
-    TCCR0B = 0x01;
+    TCCR0B |= (0<<CS02 | 0<<CS01 | 1<<CS00);
 #elif TIMER_PRESCALER == 8
-    TCCR0B = 0x02;
+    TCCR0B |= (0<<CS02 | 1<<CS01 | 0<<CS00);
 #elif TIMER_PRESCALER == 64
-    TCCR0B = 0x03;
+    TCCR0B |= (0<<CS02 | 1<<CS01 | 1<<CS00);
 #elif TIMER_PRESCALER == 256
-    TCCR0B = 0x04;
+    TCCR0B |= (1<<CS02 | 0<<CS01 | 0<<CS00);
 #elif TIMER_PRESCALER == 1024
-    TCCR0B = 0x05;
+    TCCR0B |= (1<<CS02 | 0<<CS01 | 1<<CS00);
 #else
 #   error "Timer prescaler value is NOT vaild."
 #endif

@@ -45,6 +45,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TIMER_DIFF_32(a, b)     TIMER_DIFF(a, b, UINT32_MAX)
 #define TIMER_DIFF_RAW(a, b)    TIMER_DIFF_8(a, b)
 
+#ifndef TCCR0A
+#define TCCR0A TCCR0
+#endif
+#ifndef TCCR0B
+#define TCCR0B TCCR0
+#endif
+#ifndef TIMSK0
+#define TIMSK0 TIMSK
+#endif
+#ifndef OCIE0A
+#define OCIE0A OCIE0
+#endif
+#ifndef OCR0A
+#define OCR0A OCR0
+#endif
+#ifndef TIMER0_COMPA_vect
+#define TIMER0_COMPA_vect TIMER0_COMP_vect
+#endif
 
 #ifdef __cplusplus
 extern "C" {

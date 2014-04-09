@@ -8,9 +8,10 @@ SRC +=	$(VUSB_DIR)/main.c \
 	$(VUSB_DIR)/usbdrv/usbdrvasm.S \
 	$(VUSB_DIR)/usbdrv/oddebug.c
 
-
+COMMON_DIR = common
 ifdef NO_UART
 SRC +=	$(COMMON_DIR)/sendchar_null.c
+OPT_DEFS += -DNO_UART
 else
 SRC +=	$(COMMON_DIR)/sendchar_uart.c \
 	$(COMMON_DIR)/uart.c

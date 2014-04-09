@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BOOTLOADER_H
 #define BOOTLOADER_H
 
+#ifndef MCUSR
+#define MCUSR MCUCSR
+#endif
 
 /* give code for your bootloader to come up if needed */
 void bootloader_jump(void);

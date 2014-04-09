@@ -178,7 +178,7 @@ USB_PUBLIC void usbPoll(void);
  * Please note that debug outputs through the UART take ~ 0.5ms per byte
  * at 19200 bps.
  */
-extern uchar *usbMsgPtr;
+extern const uchar *usbMsgPtr;
 /* This variable may be used to pass transmit data to the driver from the
  * implementation of usbFunctionWrite(). It is also used internally by the
  * driver for standard control requests.
@@ -452,43 +452,43 @@ extern
 #if !(USB_CFG_DESCR_PROPS_DEVICE & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-char usbDescriptorDevice[];
+const char usbDescriptorDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_CONFIGURATION & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-char usbDescriptorConfiguration[];
+const char usbDescriptorConfiguration[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_HID_REPORT & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-char usbDescriptorHidReport[];
+const char usbDescriptorHidReport[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_0 & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-char usbDescriptorString0[];
+const char usbDescriptorString0[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_VENDOR & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-int usbDescriptorStringVendor[];
+const int usbDescriptorStringVendor[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_PRODUCT & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-int usbDescriptorStringDevice[];
+const int usbDescriptorStringDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER & USB_PROP_IS_RAM)
 PROGMEM
 #endif
-int usbDescriptorStringSerialNumber[];
+const int usbDescriptorStringSerialNumber[];
 
 #endif /* __ASSEMBLER__ */
 
