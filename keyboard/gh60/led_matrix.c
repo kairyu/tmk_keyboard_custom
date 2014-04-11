@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/io.h>
 #include "led_matrix.h"
 
+#ifdef LED_MATRIX_ENABLE
 #if defined(GH60_REV_CNY)
 
 /* LED Column pin configuration
@@ -89,4 +90,5 @@ void led_matrix_select_row(uint8_t row)
     }
 }
 
+#endif
 #endif
