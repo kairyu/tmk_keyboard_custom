@@ -54,11 +54,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOCKING_RESYNC_ENABLE
 
 /* key combination for command */
+#ifndef __ASSEMBLER__
+#include "matrix.h"
 #define IS_COMMAND() ( \
-    keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
+    matrix_is_on(0, 0) && matrix_is_on(0, MATRIX_COLS - 1) \
 )
+#endif
 
-
+/* boot magic key */
+#define BOOTMAGIC_KEY_SALT KC_FN0
 
 /*
  * Feature disable options
