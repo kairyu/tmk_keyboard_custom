@@ -51,13 +51,14 @@ void backlight_set(uint8_t level)
         OCR1B = 0;
     }
 }
-#elif #defined(GH60_REV_CNY)
+#elif defined(GH60_REV_CNY)
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
 
 void backlight_set(uint8_t level)
 {
+#ifdef LED_MATRIX_ENABLE
     if (level > 0) {
         led_matrix_disable();
         for (uint8_t row = 0; row < LED_MATRIX_ROWS; row++) {
@@ -70,6 +71,7 @@ void backlight_set(uint8_t level)
     else {
         led_matrix_disable();
     }
+#endif
 }
 #else
 static const uint8_t backlight_table[] PROGMEM = {

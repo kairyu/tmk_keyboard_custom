@@ -138,7 +138,7 @@ NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
 KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
-LED_MATRIX_ENABLE = yes
+#LED_MATRIX_ENABLE = yes
 
 # Optimize size but this may cause error "relocation truncated to fit"
 #EXTRALDFLAGS = -Wl,--relax
