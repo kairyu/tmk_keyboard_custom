@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "backlight.h"
+#include "breathing_led.h"
 #include "eeconfig.h"
 #include "debug.h"
 
@@ -33,7 +34,7 @@ void backlight_init(void)
 
 void backlight_increase(void)
 {
-#ifdef BACKLIGHT_CUSTOM
+#if defined(BACKLIGHT_CUSTOM) || defined(BREATHING_LED_ENABLE)
     if (backlight_config.enable) {
         if (backlight_config.level < BACKLIGHT_LEVELS) {
             backlight_config.level++;
@@ -42,6 +43,9 @@ void backlight_increase(void)
         dprintf("backlight custom increase: %u\n", backlight_config.level);
         backlight_set(backlight_config.level);
     }
+#ifdef BREATHING_LED_ENABLE
+    breathing_led_increase();
+#endif
 #else
     if(backlight_config.level < BACKLIGHT_LEVELS)
     {
@@ -56,7 +60,7 @@ void backlight_increase(void)
 
 void backlight_decrease(void)
 {
-#ifdef BACKLIGHT_CUSTOM
+#if defined(BACKLIGHT_CUSTOM) || defined(BREATHING_LED_ENABLE)
     if (backlight_config.enable) {
         if(backlight_config.level > 1)
         {
@@ -66,6 +70,9 @@ void backlight_decrease(void)
         dprintf("backlight custom decrease: %u\n", backlight_config.level);
         backlight_set(backlight_config.level);
     }
+#ifdef BREATHING_LED_ENABLE
+    breathing_led_decrease();
+#endif
 #else
     if(backlight_config.level > 0)
     {
@@ -80,16 +87,37 @@ void backlight_decrease(void)
 
 void backlight_toggle(void)
 {
+#ifdef BREATHING_LED_ENABLE
+    if (breathing_led_is_enabled()) {
+        breathing_led_disable();
+        backlight_disable();
+        return;
+    }
+#endif
     backlight_config.enable ^= 1;
-    if (backlight_config.enable)
-    {
+    if (backlight_config.enable) {
+#if defined(BACKLIGHT_CUSTOM) || defined(BREATHING_LED_ENABLE)
+        backlight_enable();
+#endif
         if (backlight_config.level == 0) {
             backlight_config.level = 1;
         }
     }
+    else {
+#ifndef BREATHING_LED_ENABLE
+#ifdef BACKLIGHT_CUSTOM
+        backlight_disable();
+#endif
+#endif
+    }
     eeconfig_write_backlight(backlight_config.raw);
     dprintf("backlight toggle: %u\n", backlight_config.enable);
     backlight_set(backlight_config.enable ? backlight_config.level : 0);
+#ifdef BREATHING_LED_ENABLE
+    if (!backlight_config.enable) {
+        breathing_led_enable();
+    }
+#endif
 }
 
 void backlight_step(void)
