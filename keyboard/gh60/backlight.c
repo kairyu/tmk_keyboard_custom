@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 
-#if defined(GH60_REV_CHN)
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
@@ -28,81 +27,62 @@ static const uint8_t backlight_table[] PROGMEM = {
 /* Backlight pin configuration
  * PWM: PB7
  */
-void backlight_set(uint8_t level)
+void backlight_enable(void)
 {
-    if (level > 0) {
-        // Turn on PWM
-        cli();
-        DDRB |= (1<<PB6);
-        TCCR1A |= ( (1<<WGM10) | (1<<COM1B1) );
-        TCCR1B |= ( (1<<CS11) | (1<<CS10) );
-        sei();
-        // Set PWM
-        OCR1B = pgm_read_byte(&backlight_table[level]);
-    }
-    else {
-        // Turn off PWM
-        cli();
-        DDRB &= ~(1<<PB6);
-        TCCR1A &= ~( (1<<WGM10) | (1<<COM1B1) );
-        TCCR1B &= ~( (1<<CS11) | (1<<CS10) );
-        sei();
-        // Set PWM
-        OCR1B = 0;
-    }
-}
-#elif defined(GH60_REV_CNY)
-static const uint8_t backlight_table[] PROGMEM = {
-    0, 16, 128, 255
-};
-
-void backlight_set(uint8_t level)
-{
-#ifdef LED_MATRIX_ENABLE
-    if (level > 0) {
-        led_matrix_disable();
-        for (uint8_t row = 0; row < LED_MATRIX_ROWS; row++) {
-            for (uint8_t col = 0; col < LED_MATRIX_COLS; col++) {
-                led_matrix_set_value(row, col, pgm_read_byte(&backlight_table[level]));
-            }
-        }
-        led_matrix_enable();
-    }
-    else {
-        led_matrix_disable();
-    }
+#if defined(GH60_REV_CHN)
+    // Turn on PWM
+    cli();
+    DDRB |= (1<<PB6);
+    TCCR1A |= ( (1<<WGM10) | (1<<COM1B1) );
+    TCCR1B |= ( (1<<CS11) | (1<<CS10) );
+    sei();
+#else
+    DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    cli();
+    TCCR1A |= (1<<WGM10);
+    TCCR1B |= ((1<<CS11) | (1<<CS10));
+    TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
+    TIFR1 |= (1<<TOV1);
+    sei();
 #endif
 }
+
+void backlight_disable(void)
+{
+#if defined(GH60_REV_CHN)
+    // Turn off PWM
+    cli();
+    DDRB &= ~(1<<PB6);
+    TCCR1A &= ~( (1<<WGM10) | (1<<COM1B1) );
+    TCCR1B &= ~( (1<<CS11) | (1<<CS10) );
+    sei();
+    OCR1A = 0;
 #else
-static const uint8_t backlight_table[] PROGMEM = {
-    0, 16, 128, 255
-};
+    DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    cli();
+    TCCR1A &= ~(1<<WGM10);
+    TCCR1B &= ~((1<<CS11) | (1<<CS10));
+    TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
+    TIFR1 |= (1<<TOV1);
+    sei();
+    OCR1A = 0;
+#endif
+}
 
 void backlight_set(uint8_t level)
 {
     if (level > 0) {
-        DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-        PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-        cli();
-        TCCR1A |= (1<<WGM10);
-        TCCR1B |= ((1<<CS11) | (1<<CS10));
-        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
-        TIFR1 |= (1<<TOV1);
-        sei();
-        OCR1A = pgm_read_byte(&backlight_table[level]);
-    }
-    else {
-        DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-        cli();
-        TCCR1A &= ~(1<<WGM10);
-        TCCR1B &= ~((1<<CS11) | (1<<CS10));
-        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
-        TIFR1 |= (1<<TOV1);
-        sei();
-        OCR1A = 0;
+        backlight_set_raw(pgm_read_byte(&backlight_table[level]));
     }
 }
 
+void backlight_set_raw(uint8_t raw)
+{
+    OCR1A = raw;
+}
+
+#ifndef GH60_REV_CHN
 ISR(TIMER1_COMPA_vect)
 {
     // LED off

@@ -14,6 +14,9 @@ void eeconfig_init(void)
 #ifdef BACKLIGHT_ENABLE
     eeprom_write_byte(EECONFIG_BACKLIGHT,      0);
 #endif
+#ifdef BREATHING_LED_ENABLE
+    eeprom_write_byte(EECONFIG_BREATHING_LED,  0);
+#endif
 #ifdef KEYMAP_EX_ENABLE
     keymap_ex_init();
 #endif
@@ -49,4 +52,9 @@ void eeconfig_write_keymap(uint8_t val) { eeprom_write_byte(EECONFIG_KEYMAP, val
 #ifdef BACKLIGHT_ENABLE
 uint8_t eeconfig_read_backlight(void)      { return eeprom_read_byte(EECONFIG_BACKLIGHT); }
 void eeconfig_write_backlight(uint8_t val) { eeprom_write_byte(EECONFIG_BACKLIGHT, val); }
+#endif
+
+#ifdef BREATHING_LED_ENABLE
+uint8_t eeconfig_read_breathing_led(void)      { return eeprom_read_byte(EECONFIG_BREATHING_LED); }
+void eeconfig_write_breathing_led(uint8_t val) { eeprom_write_byte(EECONFIG_BREATHING_LED, val); }
 #endif
