@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #define BACKLIGHT_LEVELS 3
-#define BREATHING_LED_LEVELS 4
+#define BREATHING_LED_LEVELS 5
 
 #ifdef GH60_REV_CNY
 #   define LED_MATRIX_ROWS 6
