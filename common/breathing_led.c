@@ -97,7 +97,7 @@ ISR(TIMER3_COMPA_vect)
     step++;
     if (step >= BREATHING_LED_LEVELS - breathing_led_config.level) {
         step = 0;
-        index++;
         backlight_set_raw(pgm_read_byte(&breathing_table[index]));
+        index++;
     }
 }
