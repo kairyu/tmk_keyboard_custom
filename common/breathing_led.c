@@ -1,22 +1,20 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include "led.h"
 #include "breathing_led.h"
-#include "backlight.h"
 #include "debug.h"
 
 #define BREATHING_LED_TIMER_TOP F_CPU/256
 
-breathing_led_config_t breathing_led_config;
+static uint8_t breathing_led_duration = 0;
 
 void breathing_led_init(void)
 {
     /* Timer3 setup */
     /* CTC mode */
-    TCCR3B |= _BV(WGM32);
+    TCCR3B |= (1<<WGM32);
     /* Clock selelct: clk/8 */
-    TCCR3B |= _BV(CS30);
+    TCCR3B |= (1<<CS30);
     /* Set TOP value */
     uint8_t sreg = SREG;
     cli();
@@ -25,59 +23,31 @@ void breathing_led_init(void)
     SREG = sreg;
 }
 
-bool breathing_led_is_enabled(void)
-{
-    return breathing_led_config.enable;
-}
-
 void breathing_led_enable(void)
 {
     /* Enable Compare Match Interrupt */
-    TIMSK3 |= _BV(OCIE3A);
-    breathing_led_config.enable = true;
-    dprintf("breathing led on: %u\n", breathing_led_config.enable);
-    eeconfig_write_breathing_led(breathing_led_config.raw);
+    TIMSK3 |= (1<<OCIE3A);
+    dprintf("breathing led on: %u\n", TIMSK3 & (1<<OCIE3A));
 }
 
 void breathing_led_disable(void)
 {
     /* Disable Compare Match Interrupt */
-    TIMSK3 &= ~_BV(OCIE3A);
-    breathing_led_config.enable = false;
-    dprintf("breathing led off: %u\n", breathing_led_config.enable);
-    eeconfig_write_breathing_led(breathing_led_config.raw);
+    TIMSK3 &= ~(1<<OCIE3A);
+    dprintf("breathing led off: %u\n", TIMSK3 & (1<<OCIE3A));
 }
 
 void breathing_led_toggle(void)
 {
     /* Disable Compare Match Interrupt */
-    TIMSK3 ^= _BV(OCIE3A);
-    breathing_led_config.enable ^= 1;
-    dprintf("breathing led toggle: %u\n", breathing_led_config.enable);
-    eeconfig_write_breathing_led(breathing_led_config.raw);
+    TIMSK3 ^= (1<<OCIE3A);
+    dprintf("breathing led toggle: %u\n", TIMSK3 & (1<<OCIE3A));
 }
 
-void breathing_led_increase(void)
+void breathing_led_set_duration(uint8_t dur)
 {
-    if (breathing_led_config.enable) {
-        if (breathing_led_config.level < BREATHING_LED_LEVELS) {
-            breathing_led_config.level++;
-            eeconfig_write_breathing_led(breathing_led_config.raw);
-        }
-        dprintf("breathing led speed increase: %u\n", breathing_led_config.level);
-    }
-}
-
-void breathing_led_decrease(void)
-{
-    if (breathing_led_config.enable) {
-        if (breathing_led_config.level > 0)
-        {
-            breathing_led_config.level--;
-            eeconfig_write_breathing_led(breathing_led_config.raw);
-        }
-        dprintf("breathing led speed decrease: %u\n", breathing_led_config.level);
-    }
+    breathing_led_duration = dur;
+    dprintf("breathing led set duration: %u\n", breathing_led_duration);
 }
 
 /* Breathing LED brighness(PWM On period) table
@@ -87,7 +57,7 @@ void breathing_led_decrease(void)
  * (0..255).each {|x| print ((exp(sin(x/256.0*2*PI+3.0/2*PI))-1/E)*(256/(E-1/E))).to_i, ', ' }
  */
 static const uint8_t breathing_table[256] PROGMEM = {
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 8, 8, 9, 10, 11, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 56, 58, 61, 63, 66, 68, 71, 74, 77, 80, 83, 86, 89, 92, 95, 98, 102, 105, 108, 112, 116, 119, 123, 126, 130, 134, 138, 142, 145, 149, 153, 157, 161, 165, 169, 173, 176, 180, 184, 188, 192, 195, 199, 203, 206, 210, 213, 216, 219, 223, 226, 228, 231, 234, 236, 239, 241, 243, 245, 247, 248, 250, 251, 252, 253, 254, 255, 255, 255, 255, 255, 255, 255, 254, 253, 252, 251, 250, 248, 247, 245, 243, 241, 239, 236, 234, 231, 228, 226, 223, 219, 216, 213, 210, 206, 203, 199, 195, 192, 188, 184, 180, 176, 173, 169, 165, 161, 157, 153, 149, 145, 142, 138, 134, 130, 126, 123, 119, 116, 112, 108, 105, 102, 98, 95, 92, 89, 86, 83, 80, 77, 74, 71, 68, 66, 63, 61, 58, 56, 53, 51, 49, 47, 45, 43, 41, 39, 37, 35, 34, 32, 30, 29, 27, 26, 25, 23, 22, 21, 19, 18, 17, 16, 15, 14, 13, 12, 11, 11, 10, 9, 8, 8, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 8, 8, 9, 10, 11, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 56, 58, 61, 63, 66, 68, 71, 74, 77, 80, 83, 86, 89, 92, 95, 98, 102, 105, 108, 112, 116, 119, 123, 126, 130, 134, 138, 142, 145, 149, 153, 157, 161, 165, 169, 173, 176, 180, 184, 188, 192, 195, 199, 203, 206, 210, 213, 216, 219, 223, 226, 228, 231, 234, 236, 239, 241, 243, 245, 247, 248, 250, 251, 252, 253, 254, 255, 255, 255, 255, 255, 255, 255, 254, 253, 252, 251, 250, 248, 247, 245, 243, 241, 239, 236, 234, 231, 228, 226, 223, 219, 216, 213, 210, 206, 203, 199, 195, 192, 188, 184, 180, 176, 173, 169, 165, 161, 157, 153, 149, 145, 142, 138, 134, 130, 126, 123, 119, 116, 112, 108, 105, 102, 98, 95, 92, 89, 86, 83, 80, 77, 74, 71, 68, 66, 63, 61, 58, 56, 53, 51, 49, 47, 45, 43, 41, 39, 37, 35, 34, 32, 30, 29, 27, 26, 25, 23, 22, 21, 19, 18, 17, 16, 15, 14, 13, 12, 11, 11, 10, 9, 8, 8, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 ISR(TIMER3_COMPA_vect)
@@ -95,9 +65,9 @@ ISR(TIMER3_COMPA_vect)
     static uint8_t index = 0;
     static uint8_t step = 0;
     step++;
-    if (step >= BREATHING_LED_LEVELS - breathing_led_config.level) {
+    if (step > breathing_led_duration) {
         step = 0;
-        backlight_set_raw(pgm_read_byte(&breathing_table[index]));
+        breathing_led_set_raw(pgm_read_byte(&breathing_table[index]));
         index++;
     }
 }
