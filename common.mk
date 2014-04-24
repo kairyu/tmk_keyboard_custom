@@ -54,6 +54,11 @@ ifdef SLEEP_LED_ENABLE
     OPT_DEFS += -DNO_SUSPEND_POWER_DOWN
 endif
 
+ifdef BREATHING_LED_ENABLE
+    SRC += $(COMMON_DIR)/breathing_led.c
+    OPT_DEFS += -DBREATHING_LED_ENABLE
+endif
+
 ifdef BACKLIGHT_ENABLE
     SRC += $(COMMON_DIR)/backlight.c
     OPT_DEFS += -DBACKLIGHT_ENABLE

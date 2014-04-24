@@ -81,6 +81,10 @@ void keyboard_init(void)
     backlight_init();
 #endif
 
+#ifdef BREATHING_LED_ENABLE
+    breathing_led_init();
+#endif
+
 #ifdef KEYMAP_EX_ENABLE
     keymap_ex_init();
 #endif
