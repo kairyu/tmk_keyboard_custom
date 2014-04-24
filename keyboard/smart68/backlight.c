@@ -32,21 +32,21 @@ void backlight_set(uint8_t level)
     if (level > 0) {
         // Turn on PWM
         cli();
-        DDRB |= (1<<PB6);
-        TCCR1A |= ( (1<<WGM10) | (1<<COM1B1) );
+        DDRB |= (1<<PB7);
+        TCCR1A |= ( (1<<WGM10) | (1<<COM1C1) );
         TCCR1B |= ( (1<<CS11) | (1<<CS10) );
         sei();
         // Set PWM
-        OCR1B = pgm_read_byte(&backlight_table[level]);
+        OCR1C = pgm_read_byte(&backlight_table[level]);
     }
     else {
         // Turn off PWM
         cli();
-        DDRB &= ~(1<<PB6);
-        TCCR1A &= ~( (1<<WGM10) | (1<<COM1B1) );
+        DDRB &= ~(1<<PB7);
+        TCCR1A &= ~( (1<<WGM10) | (1<<COM1C1) );
         TCCR1B &= ~( (1<<CS11) | (1<<CS10) );
         sei();
         // Set PWM
-        OCR1B = 0;
+        OCR1C = 0;
     }
 }
