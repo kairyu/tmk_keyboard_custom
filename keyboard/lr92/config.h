@@ -24,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PRODUCT_ID      0x9696
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Lt`y & Romeo.
-#define PRODUCT         LR96
-#define DESCRIPTION     t.m.k. keyboard firmware for LR96
+#define PRODUCT         LR92
+#define DESCRIPTION     t.m.k. keyboard firmware for LR92
 
 /* key matrix size */
 #define MATRIX_ROWS 16

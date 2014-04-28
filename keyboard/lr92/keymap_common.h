@@ -42,7 +42,7 @@ extern const uint16_t fn_actions[];
 //#endif
 
 
-/* LR96 keymap definition macro
+/* LR92 keymap definition macro
  * K1J, K3M and  K2B are extra keys for ISO
  */
 #define KEYMAP( \

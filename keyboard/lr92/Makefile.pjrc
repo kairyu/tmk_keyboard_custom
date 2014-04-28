@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = lr96_pjrc
+TARGET = lr92_pjrc
 
 # Directory common source filess exist
 TOP_DIR = ../..
