@@ -42,7 +42,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE    5
 
 /* number of backlight levels */
+#ifdef BREATHING_LED_ENABLE
+#define BACKLIGHT_LEVELS 6
+#else
 #define BACKLIGHT_LEVELS 3
+#endif
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
