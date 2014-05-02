@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "backlight.h"
+#include "breathing_led.h"
 
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
@@ -27,32 +28,68 @@ static const uint8_t backlight_table[] PROGMEM = {
 /* Backlight pin configuration
  * PWM: PC6(OC3A)
  */
+void backlight_enable(void)
+{
+    // Turn on PWM
+    cli();
+    DDRC |= (1<<PC6);
+    TCCR3A |= ( (1<<WGM10) | (1<<COM3A1) );
+    TCCR3B |= ( (1<<CS31) | (1<<CS30) );
+    sei();
+}
+void backlight_disable(void)
+{
+    // Turn off PWM
+    cli();
+    DDRC &= ~(1<<PC6);
+    TCCR3A &= ~( (1<<WGM10) | (1<<COM3A1) );
+    TCCR3B &= ~( (1<<CS31) | (1<<CS30) );
+    sei();
+}
+
 void backlight_set(uint8_t level)
 {
+#ifdef BREATHING_LED_ENABLE
+    switch (level) {
+        case 1:
+        case 2:
+        case 3:
+            backlight_enable();
+            breathing_led_disable();
+            backlight_set_raw(pgm_read_byte(&backlight_table[level]));
+            break;
+        case 4:
+        case 5:
+        case 6:
+            backlight_enable();
+            breathing_led_enable();
+            breathing_led_set_duration(6 - level);
+            break;
+        case 0:
+        default:
+            breathing_led_disable();
+            backlight_disable();
+            break;
+    }
+#else
     if (level > 0) {
-        // Turn on PWM
-        cli();
-        DDRC |= (1<<PC6);
-	//TCCR3A = 0b10101001;
-	//TCCR3B = 0b00000011;
-        TCCR3A |= ( (1<<WGM30) | (1<<COM3A1) | (1<<COM3B1) | (1<<COM3C1) );
-        TCCR3B |= ( (1<<CS31) | (1<<CS30) );
-        sei();
-        // Set PWM
-        OCR3A = pgm_read_byte(&backlight_table[level]);
-        OCR3B = pgm_read_byte(&backlight_table[level]);
+        backlight_enable();
+        backlight_set_raw(pgm_read_byte(&backlight_table[level]));
     }
     else {
-        // Turn off PWM
-        cli();
-        DDRC &= ~(1<<PC6);
-	//TCCR3A = 0b00000000;
-	//TCCR3B = 0b00000000;
-        TCCR3A &= ~( (1<<WGM30) | (1<<COM3A1) | (1<<COM3B1) | (1<<COM3C1) );
-        TCCR3B &= ~( (1<<CS31) | (1<<CS30) );
-        sei();
-        // Set PWM
-        OCR3A = 0;
-        OCR3B = 0;
+        backlight_disable();
     }
+#endif
+}
+
+#ifdef BREATHING_LED_ENABLE
+void breathing_led_set_raw(uint8_t raw)
+{
+    backlight_set_raw(raw);
+}
+#endif
+
+inline void backlight_set_raw(uint8_t raw)
+{
+    OCR3A = raw;
 }
