@@ -41,15 +41,6 @@ static void init_cols(void);
 static void unselect_rows(void);
 static void select_row(uint8_t row);
 
-#ifdef PS2_MOUSE_ENABLE
-static uint8_t ps2_mouse_detected;
-
-uint8_t ps2_enabled(void)
-{
-    return ps2_mouse_detected;
-}
-#endif
-
 inline
 uint8_t matrix_rows(void)
 {
@@ -150,7 +141,7 @@ uint8_t matrix_key_count(void)
  *  pin: D12 D13 A0  A1  A2  A3  (arduino)
  *       PD6 PC7 PF7 PF6 PF5 PF4
  */
-static void  init_cols(void)
+static void init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
     DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
@@ -163,12 +154,12 @@ static void  init_cols(void)
 
 static matrix_row_t read_cols(void)
 {
-    return (PINF&(1<<PD6) ? 0 : (1<<0)) |
-           (PINF&(1<<PC7) ? 0 : (1<<1)) |
-           (PINE&(1<<PF7) ? 0 : (1<<2)) |
-           (PINC&(1<<PF6) ? 0 : (1<<3)) |
-           (PINC&(1<<PF5) ? 0 : (1<<4)) |
-           (PINB&(1<<PF4) ? 0 : (1<<5));
+    return (PIND&(1<<PD6) ? 0 : (1<<0)) |
+           (PINC&(1<<PC7) ? 0 : (1<<1)) |
+           (PINF&(1<<PF7) ? 0 : (1<<2)) |
+           (PINF&(1<<PF6) ? 0 : (1<<3)) |
+           (PINF&(1<<PF5) ? 0 : (1<<4)) |
+           (PINF&(1<<PF4) ? 0 : (1<<5));
 }
 
 static void unselect_rows(void)
