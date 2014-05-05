@@ -138,21 +138,21 @@ uint8_t matrix_key_count(void)
 
 /* Column pin configuration
  *  col: 0   1   2   3   4   5
- *  pin: D14 D15 A0  A1  A2  A3  (arduino)
- *       PB0 PB1 PF7 PF6 PF5 PF4
+ *  pin: D17 D15 A0  A1  A2  A3  (arduino)
+ *       PB3 PB1 PF7 PF6 PF5 PF4
  */
 static void init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
     DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
     PORTF |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-    DDRB  &= ~(1<<PB1 | 1<<PB0);
-    PORTB |=  (1<<PB1 | 1<<PB0);
+    DDRB  &= ~(1<<PB3 | 1<<PB1);
+    PORTB |=  (1<<PB3 | 1<<PB1);
 }
 
 static matrix_row_t read_cols(void)
 {
-    return (PINB&(1<<PB0) ? 0 : (1<<0)) |
+    return (PINB&(1<<PB3) ? 0 : (1<<0)) |
            (PINB&(1<<PB1) ? 0 : (1<<1)) |
            (PINF&(1<<PF7) ? 0 : (1<<2)) |
            (PINF&(1<<PF6) ? 0 : (1<<3)) |
@@ -173,7 +173,7 @@ static void unselect_rows(void)
     DDRD  |=  (1<<PD3 | 1<<PD2 | 1<<PD0);
     PORTD &= ~(1<<PD3 | 1<<PD2 | 1<<PD0);
     DDRC  |=  (1<<PC6);
-    PORTC &= ~(1<<PC6);
+    PORTC |=  (1<<PC6);
 }
 
 /* Row pin configuration

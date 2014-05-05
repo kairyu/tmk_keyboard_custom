@@ -27,7 +27,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,     BSLS,P7,  P8,  P9,  PPLS, \
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,          ENT, P4,  P5,  P6,        \
         LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,               RSFT,P1,  P2,  P3,  PENT, \
-        LCTL,LGUI,LALT,          SPC,                     RALT,FN0, RGUI,     RCTL,P0,  PDOT,PCMM       ),
+        LCTL,LGUI,LALT,          SPC,                RALT,RGUI,FN0,           RCTL,P0,  PDOT,PCMM       ),
     /* Keymap 1: Fn Layer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
@@ -49,7 +49,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
         TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,               TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,          FN4,                     TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS       ),
+        TRNS,TRNS,TRNS,          FN4,                TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS       ),
     /* Keymap 2: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
@@ -71,7 +71,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,               TRNS,TRNS,UP,  TRNS,TRNS, \
-        TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,TRNS,     TRNS,LEFT,DOWN,RGHT       ),
+        TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,LEFT,DOWN,RGHT       ),
 };
 
 /*
