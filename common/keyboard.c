@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "bootmagic.h"
 #include "eeconfig.h"
 #include "backlight.h"
+#include "breathing_led.h"
 #include "keymap_ex.h"
 #ifdef MOUSEKEY_ENABLE
 #   include "mousekey.h"
