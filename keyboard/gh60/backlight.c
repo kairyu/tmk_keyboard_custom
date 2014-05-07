@@ -21,6 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #include "breathing_led.h"
 
+#ifdef BACKLIGHT_ENABLE
+
+void backlight_enable(void);
+void backlight_disable(void);
+inline void backlight_set_raw(uint8_t raw);
+
 #ifdef GH60_REV_CHN
 #else
 #define SOFTPWM_TIMER_TOP F_CPU/(256*64)
@@ -148,4 +154,6 @@ ISR(TIMER1_COMPA_vect)
         PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
     }
 }
+#endif
+
 #endif
