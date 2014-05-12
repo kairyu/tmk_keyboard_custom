@@ -30,9 +30,9 @@ static inline void del_key_bit(uint8_t code);
 static uint8_t real_mods = 0;
 static uint8_t weak_mods = 0;
 
-#ifdef _6KRO_ENABLE
+#ifdef USB_6KRO_ENABLE
 #define RO_ADD(a, b) ((a + b) % REPORT_KEYS)
-#define RO_SUB(a, b) ((a - b) % REPORT_KEYS)
+#define RO_SUB(a, b) ((a - b + REPORT_KEYS) % REPORT_KEYS)
 #define RO_INC(a) RO_ADD(a, 1)
 #define RO_DEC(a) RO_SUB(a, 1)
 static int8_t cb_head = 0;
@@ -144,12 +144,16 @@ void clear_oneshot_mods(void)
  */
 uint8_t has_anykey(void)
 {
+#ifdef USB_6KRO_ENABLE
+    return cb_count;
+#else
     uint8_t cnt = 0;
     for (uint8_t i = 1; i < REPORT_SIZE; i++) {
         if (keyboard_report->raw[i])
             cnt++;
     }
     return cnt;
+#endif
 }
 
 uint8_t has_anymod(void)
@@ -167,7 +171,11 @@ uint8_t get_first_key(void)
         return i<<3 | biton(keyboard_report->nkro.bits[i]);
     }
 #endif
+#ifdef USB_6KRO_ENABLE
+    return keyboard_report->keys[cb_head];
+#else
     return keyboard_report->keys[0];
+#endif
 }
 
 
@@ -175,59 +183,52 @@ uint8_t get_first_key(void)
 /* local functions */
 static inline void add_key_byte(uint8_t code)
 {
-#ifdef _6KRO_ENABLE
+#ifdef USB_6KRO_ENABLE
     int8_t i = cb_head;
     int8_t idle = -1;
     if (cb_count) {
         do {
             if (keyboard_report->keys[i] == code) {
-                break;
+                return;
             }
             if (idle == -1 && keyboard_report->keys[i] == 0) {
                 idle = i;
             }
             i = RO_INC(i);
         } while (i != cb_tail);
-    }
-    else {
-        // buffer is empty
-        keyboard_report->keys[cb_head] = code;
-        cb_tail = RO_INC(cb_tail);
-        cb_count++;
-        return;
-    }
-    // code is unique
-    if (i == cb_tail) {
-        // buffer is full
-        if (cb_tail == cb_head) {
-            if (idle == -1) {
-                // pop head when has no idle space
-                cb_head = RO_INC(cb_head);
-                cb_count--;
-            }
-            else {
-                // pack when has idle space
-                uint8_t offset = 1;
-                i = RO_INC(idle);
-                do {
-                    if (keyboard_report->keys[i] != 0) {
-                        keyboard_report->keys[idle] = keyboard_report->keys[i];
-                        keyboard_report->keys[i] = 0;
-                        idle = RO_INC(idle);
-                    }
-                    else {
-                        offset++;
-                    }
-                    i = RO_INC(i);
-                } while (i != cb_tail);
-                cb_tail = RO_SUB(cb_tail, offset);
+        if (i == cb_tail) {
+            // code is unique
+            if (cb_tail == cb_head) {
+                // buffer is full
+                if (idle == -1) {
+                    // pop head when has no idle space
+                    cb_head = RO_INC(cb_head);
+                    cb_count--;
+                }
+                else {
+                    // pack when has idle space
+                    uint8_t offset = 1;
+                    i = RO_INC(idle);
+                    do {
+                        if (keyboard_report->keys[i] != 0) {
+                            keyboard_report->keys[idle] = keyboard_report->keys[i];
+                            keyboard_report->keys[i] = 0;
+                            idle = RO_INC(idle);
+                        }
+                        else {
+                            offset++;
+                        }
+                        i = RO_INC(i);
+                    } while (i != cb_tail);
+                    cb_tail = RO_SUB(cb_tail, offset);
+                }
             }
         }
-        // add to tail
-        keyboard_report->keys[cb_tail] = code;
-        cb_tail = RO_INC(cb_tail);
-        cb_count++;
     }
+    // add to tail
+    keyboard_report->keys[cb_tail] = code;
+    cb_tail = RO_INC(cb_tail);
+    cb_count++;
 #else
     int8_t i = 0;
     int8_t empty = -1;
@@ -245,27 +246,42 @@ static inline void add_key_byte(uint8_t code)
         }
     }
 #endif
+    /*
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%02X ", keyboard_report->keys[i]);
+    }
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%c%c ", i==cb_head?'H':' ', i==cb_tail?'T':' ');
+    }
+    dprintf("\n");
+    */
 }
 
 static inline void del_key_byte(uint8_t code)
 {
-#ifdef _6KRO_ENABLE
+#ifdef USB_6KRO_ENABLE
     uint8_t i = cb_head;
     if (cb_count) {
         do {
             if (keyboard_report->keys[i] == code) {
                 keyboard_report->keys[i] = 0;
                 cb_count--;
-                if (i == cb_tail) {
+                if (cb_count == 0) {
+                    cb_tail = cb_head = 0;
+                }
+                if (i == RO_DEC(cb_tail)) {
                     do {
                         cb_tail = RO_DEC(cb_tail);
-                        if (keyboard_report->keys[cb_tail] != 0) {
+                        if (keyboard_report->keys[RO_DEC(cb_tail)] != 0) {
                             break;
                         }
                     } while (cb_tail != cb_head);
                 }
                 break;
             }
+            i = RO_INC(i);
         } while (i != cb_tail);
     }
 #else
@@ -275,6 +291,17 @@ static inline void del_key_byte(uint8_t code)
         }
     }
 #endif
+    /*
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%02X ", keyboard_report->keys[i]);
+    }
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%c%c ", i==cb_head?'H':' ', i==cb_tail?'T':' ');
+    }
+    dprintf("\ntail=%d\n", cb_tail);
+    */
 }
 
 #ifdef NKRO_ENABLE
