@@ -178,42 +178,55 @@ uint8_t get_first_key(void)
 #endif
 }
 
-
+#ifdef USB_6KRO_ENABLE
+#ifdef DEBUG
+static void dump_report_keys(void) {
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%02X ", keyboard_report->keys[i]);
+    }
+    dprintf("\n");
+    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
+        dprintf("%c%c ", i==cb_head?'H':' ', i==cb_tail?'T':' ');
+    }
+    dprintf("\n");
+}
+#endif
+#endif
 
 /* local functions */
 static inline void add_key_byte(uint8_t code)
 {
 #ifdef USB_6KRO_ENABLE
     int8_t i = cb_head;
-    int8_t idle = -1;
+    int8_t empty = -1;
     if (cb_count) {
         do {
             if (keyboard_report->keys[i] == code) {
                 return;
             }
-            if (idle == -1 && keyboard_report->keys[i] == 0) {
-                idle = i;
+            if (empty == -1 && keyboard_report->keys[i] == 0) {
+                empty = i;
             }
             i = RO_INC(i);
         } while (i != cb_tail);
         if (i == cb_tail) {
-            // code is unique
             if (cb_tail == cb_head) {
                 // buffer is full
-                if (idle == -1) {
-                    // pop head when has no idle space
+                if (empty == -1) {
+                    // pop head when has no empty space
                     cb_head = RO_INC(cb_head);
                     cb_count--;
                 }
                 else {
-                    // pack when has idle space
+                    // left shift when has empty space
                     uint8_t offset = 1;
-                    i = RO_INC(idle);
+                    i = RO_INC(empty);
                     do {
                         if (keyboard_report->keys[i] != 0) {
-                            keyboard_report->keys[idle] = keyboard_report->keys[i];
+                            keyboard_report->keys[empty] = keyboard_report->keys[i];
                             keyboard_report->keys[i] = 0;
-                            idle = RO_INC(idle);
+                            empty = RO_INC(empty);
                         }
                         else {
                             offset++;
@@ -229,6 +242,9 @@ static inline void add_key_byte(uint8_t code)
     keyboard_report->keys[cb_tail] = code;
     cb_tail = RO_INC(cb_tail);
     cb_count++;
+#ifdef DEBUG
+    dump_report_keys();
+#endif
 #else
     int8_t i = 0;
     int8_t empty = -1;
@@ -246,17 +262,6 @@ static inline void add_key_byte(uint8_t code)
         }
     }
 #endif
-    /*
-    dprintf("\n");
-    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
-        dprintf("%02X ", keyboard_report->keys[i]);
-    }
-    dprintf("\n");
-    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
-        dprintf("%c%c ", i==cb_head?'H':' ', i==cb_tail?'T':' ');
-    }
-    dprintf("\n");
-    */
 }
 
 static inline void del_key_byte(uint8_t code)
@@ -269,9 +274,11 @@ static inline void del_key_byte(uint8_t code)
                 keyboard_report->keys[i] = 0;
                 cb_count--;
                 if (cb_count == 0) {
+                    // reset head and tail
                     cb_tail = cb_head = 0;
                 }
                 if (i == RO_DEC(cb_tail)) {
+                    // left shift when next to tail
                     do {
                         cb_tail = RO_DEC(cb_tail);
                         if (keyboard_report->keys[RO_DEC(cb_tail)] != 0) {
@@ -284,6 +291,9 @@ static inline void del_key_byte(uint8_t code)
             i = RO_INC(i);
         } while (i != cb_tail);
     }
+#ifdef DEBUG
+    dump_report_keys();
+#endif
 #else
     for (uint8_t i = 0; i < REPORT_KEYS; i++) {
         if (keyboard_report->keys[i] == code) {
@@ -291,17 +301,6 @@ static inline void del_key_byte(uint8_t code)
         }
     }
 #endif
-    /*
-    dprintf("\n");
-    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
-        dprintf("%02X ", keyboard_report->keys[i]);
-    }
-    dprintf("\n");
-    for (uint8_t i = 0; i < REPORT_KEYS; i++) {
-        dprintf("%c%c ", i==cb_head?'H':' ', i==cb_tail?'T':' ');
-    }
-    dprintf("\ntail=%d\n", cb_tail);
-    */
 }
 
 #ifdef NKRO_ENABLE
