@@ -145,7 +145,13 @@ void clear_oneshot_mods(void)
 uint8_t has_anykey(void)
 {
 #ifdef USB_6KRO_ENABLE
-    return cb_count;
+#ifdef NKRO_ENABLE
+    if (!keyboard_nkro) {
+#endif
+        return cb_count;
+#ifdef NKRO_ENABLE
+    }
+#endif
 #else
     uint8_t cnt = 0;
     for (uint8_t i = 1; i < REPORT_SIZE; i++) {
@@ -172,7 +178,14 @@ uint8_t get_first_key(void)
     }
 #endif
 #ifdef USB_6KRO_ENABLE
-    return keyboard_report->keys[cb_head];
+    uint8_t i = cb_head;
+    do {
+        if (keyboard_report->keys[i] != 0) {
+            break;
+        }
+        i = RO_INC(i);
+    } while (i != cb_tail);
+    return keyboard_report->keys[i];
 #else
     return keyboard_report->keys[0];
 #endif
