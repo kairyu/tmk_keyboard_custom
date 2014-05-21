@@ -173,7 +173,7 @@ static void unselect_rows(void)
     DDRD  |=  (1<<PD3 | 1<<PD2 | 1<<PD0);
     PORTD &= ~(1<<PD3 | 1<<PD2 | 1<<PD0);
     DDRC  |=  (1<<PC6);
-    PORTC |=  (1<<PC6);
+    PORTC &= ~(1<<PC6);
 }
 
 /* Row pin configuration
@@ -197,7 +197,7 @@ static void select_row(uint8_t row)
         (row & (1<<0)) ? (PORTD |= (1<<PD3)) : (PORTD &= ~(1<<PD3));
         (row & (1<<1)) ? (PORTD |= (1<<PD2)) : (PORTD &= ~(1<<PD2));
         (row & (1<<2)) ? (PORTD |= (1<<PD0)) : (PORTD &= ~(1<<PD0));
-        (row & (1<<3)) ? (PORTC &= ~(1<<PC6)) : (PORTC |= (1<<PC6));
+        (row & (1<<3)) ? (PORTC |= (1<<PC6)) : (PORTC &= ~(1<<PC6));
     }
     else if (row == 16) {
         DDRD |= (1<<PD7);
