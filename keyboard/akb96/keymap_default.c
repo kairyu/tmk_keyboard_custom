@@ -10,7 +10,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * ,---------------------------------------------------------------------------.
      * |Esc| F1| F2| F3| F4| F5| F6| F7| F8| F9|F10|F11|F12|Psc|Pau|Ins|Del|PgU|PgD|
      * |-----------------------------------------------------------+---+---+---+---|
-     * |  `|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |Num|  /|  *|  -|
+     * |  `|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |Fn4|  /|  *|  -|
      * |-----------------------------------------------------------+---+---+---+---|
      * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|    \|  7|  8|  9|   |
      * |-----------------------------------------------------------+---+---+---|  +|
@@ -23,7 +23,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      */
     KEYMAP(
         ESC, F1,  F2,  F3,  F4,  F5,  F6,  F7,  F8,  F9,  F10, F11, F12, PSCR,PAUS,INS, DEL, PGUP,PGDN, \
-        GRV, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL,      BSPC,NLCK,PSLS,PAST,PMNS, \
+        GRV, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL,      BSPC,FN4, PSLS,PAST,PMNS, \
         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,     BSLS,P7,  P8,  P9,  PPLS, \
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,          ENT, P4,  P5,  P6,        \
         LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,               RSFT,P1,  P2,  P3,  PENT, \
@@ -32,7 +32,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
-     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |   |   |   |   |
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |Num|   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
      * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---|   |
@@ -40,16 +40,16 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * |-----------------------------------------------------------+---+---+---+---|
      * |        |Fn1|Fn2|Fn3|   |   |   |   |   |   |   |          |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---|   |
-     * |    |    |    |           Fn4          |    |    |    |    |   |   |   |   |
+     * |    |    |    |                        |    |    |    |    |   |   |   |   |
      * `---------------------------------------------------------------------------'
      */
     KEYMAP(
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,NLCK,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
         TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,               TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,          FN4,                TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS       ),
+        TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS       ),
     /* Keymap 2: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
@@ -84,8 +84,8 @@ const uint16_t fn_actions[] PROGMEM = {
 #endif
     /* Poker2 Layout */
     [0] = ACTION_LAYER_MOMENTARY(1),
-    [1] = ACTION_BACKLIGHT_DECREASE(),
-    [2] = ACTION_BACKLIGHT_TOGGLE(),
+    [1] = ACTION_BACKLIGHT_TOGGLE(),
+    [2] = ACTION_BACKLIGHT_DECREASE(),
     [3] = ACTION_BACKLIGHT_INCREASE(),
     [4] = ACTION_LAYER_TOGGLE(2)
 };
