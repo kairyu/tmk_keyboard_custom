@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/io.h>
 #include "stdint.h"
 #include "led.h"
+#include "action_layer.h"
 
 
 /* LED pin configration
@@ -27,12 +28,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void led_set(uint8_t usb_led)
 {
     if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
-        // output low
+        // output high
         DDRB |= (1<<PB5);
-        PORTB &= ~(1<<PB5);
+        PORTB |= (1<<PB5);
     } else {
         // Hi-Z
         DDRB &= ~(1<<PB5);
         PORTB &= ~(1<<PB5);
     }
 }
+
+#ifdef ON_LAYER_CHANGE
+void layer_change(uint32_t state)
+{
+    if (state & (1UL<<2)) {
+        // output high
+        DDRB |= (1<<PB7);
+        PORTB |= (1<<PB7);
+    } else {
+        // Hi-Z
+        DDRB &= ~(1<<PB7);
+        PORTB &= ~(1<<PB7);
+    }
+}
+#endif
