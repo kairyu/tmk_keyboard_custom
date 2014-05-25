@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* LED pin configration
  *  CapsLock  PB5 (D9)  
- *  NumLock   PB7 (D11)
+ *  NumLock   PB2 (D16)
  */
 void led_set(uint8_t usb_led)
 {
@@ -43,12 +43,12 @@ void layer_change(uint32_t state)
 {
     if (state & (1UL<<2)) {
         // output high
-        DDRB |= (1<<PB7);
-        PORTB |= (1<<PB7);
+        DDRB |= (1<<PB2);
+        PORTB |= (1<<PB2);
     } else {
         // Hi-Z
-        DDRB &= ~(1<<PB7);
-        PORTB &= ~(1<<PB7);
+        DDRB &= ~(1<<PB2);
+        PORTB &= ~(1<<PB2);
     }
 }
 #endif
