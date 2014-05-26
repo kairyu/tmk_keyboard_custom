@@ -22,7 +22,7 @@ ifdef BOOTMAGIC_ENABLE
     OPT_DEFS += -DBOOTMAGIC_ENABLE
 endif
 
-ifdef MOUSEKEY_ENABLE
+ifdef $(or MOUSEKEY_ENABLE, PS2_MOUSE_ENABLE)
     SRC += $(COMMON_DIR)/mousekey.c
     OPT_DEFS += -DMOUSEKEY_ENABLE
     OPT_DEFS += -DMOUSE_ENABLE
@@ -67,11 +67,6 @@ endif
 ifdef KEYMAP_SECTION_ENABLE
     OPT_DEFS += -DKEYMAP_SECTION_ENABLE
     EXTRALDFLAGS = -Wl,-L$(TOP_DIR),-Tldscript_keymap_avr5.x
-endif
-
-ifdef KEYMAP_EX_ENABLE
-    SRC += $(COMMON_DIR)/keymap_ex.c
-    OPT_DEFS += -DKEYMAP_EX_ENABLE
 endif
 
 ifdef LED_MATRIX_ENABLE
