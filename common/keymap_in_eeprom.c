@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/eeprom.h>
 #include "eeconfig.h"
 #include "keymap_in_eeprom.h"
+#include "matrix.h"
 #include "debug.h"
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE

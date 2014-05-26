@@ -23,14 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifndef EECONFIG_KEYMAP_IN_EEPROM
 #define EECONFIG_KEYMAP_IN_EEPROM 0x10
+#endif
 #ifndef FN_ACTIONS_COUNT
 #define FN_ACTIONS_COUNT 32
 #endif
 #ifndef KEYMAPS_COUNT
 #define KEYMAPS_COUNT 1
 #endif
-#define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_ROWS * MATRIX_COLS)
+#define KEYS_COUNT (KEYMAPS_COUNT * matrix_rows() * matrix_cols())
 
 typedef struct {
     uint16_t checksum;
@@ -45,7 +47,7 @@ typedef struct {
 
 #define KEYMAP_SIZE (sizeof(uint16_t) * FN_ACTIONS_COUNT + sizeof(uint8_t) * KEYS_COUNT)
 #define KEYMAP_WORD_SIZE ((KEYMAP_SIZE + 1) / 2)
-#define KEY_OFFSET(layer, row, col) (layer * MATRIX_ROWS * MATRIX_COLS + row * MATRIX_COLS + col)
+#define KEY_OFFSET(layer, row, col) (layer * matrix_rows() * matrix_cols() + row * matrix_cols() + col)
 
 void keymap_in_eeprom_init(void);
 void keymap_in_eeprom_disable(void);
