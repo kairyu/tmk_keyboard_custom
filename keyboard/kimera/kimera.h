@@ -159,7 +159,7 @@ const uint16_t PROGMEM mux_inh_to_shift_out[] = {
 #define EECONFIG_MUX_MAPPING        (uint8_t *)7
 #define EECONFIG_ROW_COL_MAPPING    (uint8_t *)8
 #define MATRIX_MAPPING_SIZE         MUX_COUNT * MUX_PORTS
-#define EECONFIG_KEYMAP_EX          40
+#define EECONFIG_KEYMAP_IN_EEPROM   40
 
 typedef struct {
     uint8_t mux_mapping;

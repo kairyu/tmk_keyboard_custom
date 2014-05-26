@@ -38,17 +38,19 @@ static uint8_t debouncing = DEBOUNCE;
 static matrix_row_t matrix[MATRIX_ROWS];
 static matrix_row_t matrix_debouncing[MATRIX_ROWS];
 
+extern uint8_t row_max_count;
+extern uint8_t col_max_count;
 
 inline
 uint8_t matrix_rows(void)
 {
-    return MATRIX_ROWS;
+    return row_max_count;
 }
 
 inline
 uint8_t matrix_cols(void)
 {
-    return MATRIX_COLS;
+    return col_max_count;
 }
 
 void matrix_init(void)
@@ -64,7 +66,7 @@ void matrix_init(void)
     init_cols();
 
     // initialize matrix state: all keys off
-    for (uint8_t i=0; i < MATRIX_ROWS; i++) {
+    for (uint8_t i=0; i < matrix_rows(); i++) {
         matrix[i] = 0;
         matrix_debouncing[i] = 0;
     }
@@ -72,7 +74,7 @@ void matrix_init(void)
 
 uint8_t matrix_scan(void)
 {
-    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+    for (uint8_t i = 0; i < matrix_rows(); i++) {
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.
         matrix_row_t cols = read_cols();
@@ -90,7 +92,7 @@ uint8_t matrix_scan(void)
         if (--debouncing) {
             _delay_ms(1);
         } else {
-            for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+            for (uint8_t i = 0; i < matrix_rows(); i++) {
                 matrix[i] = matrix_debouncing[i];
             }
         }
@@ -120,7 +122,7 @@ matrix_row_t matrix_get_row(uint8_t row)
 void matrix_print(void)
 {
     print("\nr/c 0123456789ABCDEF\n");
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+    for (uint8_t row = 0; row < matrix_rows(); row++) {
         phex(row); print(": ");
         pbin_reverse16(matrix_get_row(row));
         print("\n");
@@ -130,7 +132,7 @@ void matrix_print(void)
 uint8_t matrix_key_count(void)
 {
     uint8_t count = 0;
-    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
+    for (uint8_t i = 0; i < matrix_rows(); i++) {
         count += bitpop16(matrix[i]);
     }
     return count;

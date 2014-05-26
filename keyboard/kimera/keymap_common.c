@@ -15,12 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "keymap_common.h"
+#include "matrix.h"
 
 /* translates key to keycode */
 uint8_t keymap_key_to_keycode(uint8_t layer, key_t key)
 {
 #ifndef KEYMAP_IN_EEPROM_ENABLE
-    return pgm_read_byte(&keymaps[(layer)][(key.row)][(key.col)]);
+    return pgm_read_byte(&keymaps[(layer)][(key.row) * matrix_cols() + (key.col)]);
 #else
     return eeconfig_read_keymap_key(layer, key.row, key.col);
 #endif

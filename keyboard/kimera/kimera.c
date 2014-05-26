@@ -34,6 +34,8 @@ uint8_t col_mapping[MATRIX_COLS] = {
     16, 17, 18, 19, 20, 21, 22, 23,
     24, 25, 26, 27, 28, 29, 30, 31
 };
+uint8_t row_max_count = MUX_PORTS * 1;
+uint8_t col_max_count = MUX_PORTS * (MUX_COUNT - 1);
 uint16_t shift_out_cache = 0;
 
 void kimera_init(void)
@@ -58,8 +60,8 @@ uint8_t read_matrix_mapping(void)
 {
     uint8_t error = 0;
     uint8_t mux_config = 0;
-    uint8_t row_max_count = 0;
-    uint8_t col_max_count = 0;
+    row_max_count = 0;
+    col_max_count = 0;
 
     mux_config = eeprom_read_byte(EECONFIG_MUX_MAPPING);
     if (mux_config & (1<<7)) {
@@ -106,8 +108,8 @@ uint8_t read_matrix_mapping(void)
 void write_matrix_mapping(void)
 {
     uint8_t mux_config = 0;
-    uint8_t row_max_count = 0;
-    uint8_t col_max_count = 0;
+    row_max_count = 0;
+    col_max_count = 0;
 
     for (uint8_t i = 0; i < MUX_COUNT; i++) {
         mux_config |= (mux_mapping[i] << i);

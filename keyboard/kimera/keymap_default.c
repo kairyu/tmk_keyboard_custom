@@ -2,9 +2,9 @@
 
 // Default
 #ifdef KEYMAP_SECTION_ENABLE
-const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
+const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_SIZE] __attribute__ ((section (".keymap.keymaps"))) = {
 #else
-const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
+const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
 #endif
     /* Keymap 0: Default Layer
      * ,---------------------------------------------------------------------------------------.
@@ -67,9 +67,9 @@ const uint16_t fn_actions[] PROGMEM = {
     [3] = ACTION_BACKLIGHT_INCREASE(),
 };
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 uint16_t keys_count(void) {
-    return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
+    return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_SIZE;
 }
 
 uint16_t fn_actions_count(void) {
