@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eeconfig.h"
 #include "backlight.h"
 #include "breathing_led.h"
+#include "keymap_in_eeprom.h"
 #ifdef MOUSEKEY_ENABLE
 #   include "mousekey.h"
 #endif
@@ -83,6 +84,10 @@ void keyboard_init(void)
 
 #ifdef BREATHING_LED_ENABLE
     breathing_led_init();
+#endif
+
+#ifdef KEYMAP_IN_EEPROM_ENABLE
+    keymap_in_eeprom_init();
 #endif
 }
 
