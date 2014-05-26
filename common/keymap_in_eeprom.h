@@ -32,7 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KEYMAPS_COUNT
 #define KEYMAPS_COUNT 1
 #endif
-#define KEYS_COUNT (KEYMAPS_COUNT * matrix_rows() * matrix_cols())
+#ifndef MATRIX_SIZE
+#define MATRIX_SIZE (matrix_rows() * matrix_cols())
+#endif
+#define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_SIZE)
 
 typedef struct {
     uint16_t checksum;
