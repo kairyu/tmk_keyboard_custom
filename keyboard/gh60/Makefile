@@ -50,13 +50,16 @@ TARGET_DIR = .
 # project specific files
 SRC =	keymap_common.c \
 	matrix.c \
-	led.c
+	led.c \
+	backlight.c \
+	led_matrix.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
 else
     SRC := keymap_poker.c $(SRC)
 endif
+
 
 CONFIG_H = config.h
 
@@ -110,6 +113,15 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
+# PCB Revision
+ifdef REV
+    OPT_DEFS += -DGH60_REV_$(REV)
+endif
+
+# Additional definitions from command line
+ifdef DEFS
+    OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
+endif
 
 # Build Options
 #   comment out to disable the options.
@@ -120,8 +132,13 @@ EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-NKRO_ENABLE = yes	# USB Nkey Rollover
+NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+#PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+#PS2_USE_BUSYWAIT = yes
+BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
+KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
+BREATHING_LED_ENABLE = yes # Enable breathing backlight
 
 
 # Optimize size but this may cause error "relocation truncated to fit"
@@ -132,5 +149,6 @@ VPATH += $(TARGET_DIR)
 VPATH += $(TOP_DIR)
 
 include $(TOP_DIR)/protocol/lufa.mk
+include $(TOP_DIR)/protocol.mk
 include $(TOP_DIR)/common.mk
 include $(TOP_DIR)/rules.mk

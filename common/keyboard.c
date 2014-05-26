@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "bootmagic.h"
 #include "eeconfig.h"
 #include "backlight.h"
+#include "breathing_led.h"
 #include "keymap_in_eeprom.h"
 #ifdef MOUSEKEY_ENABLE
 #   include "mousekey.h"
@@ -62,8 +63,15 @@ void keyboard_init(void)
 {
     timer_init();
     matrix_init();
+
+#ifdef LED_MATRIX_ENABLE
+    led_matrix_init();
+#endif
+
 #ifdef PS2_MOUSE_ENABLE
-    ps2_mouse_init();
+    if (ps2_enabled()) {
+        ps2_mouse_init();
+    }
 #endif
 
 #ifdef BOOTMAGIC_ENABLE
@@ -72,6 +80,10 @@ void keyboard_init(void)
 
 #ifdef BACKLIGHT_ENABLE
     backlight_init();
+#endif
+
+#ifdef BREATHING_LED_ENABLE
+    breathing_led_init();
 #endif
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
@@ -128,7 +140,9 @@ MATRIX_LOOP_END:
 #endif
 
 #ifdef PS2_MOUSE_ENABLE
-    ps2_mouse_task();
+    if (ps2_enabled()) {
+        ps2_mouse_task();
+    }
 #endif
 
     // update LED

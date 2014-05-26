@@ -269,7 +269,7 @@ Default Layer is a layer which always is valid and referred to when actions is n
 
 This sets Default Layer to given parameter `layer` and activate it.
 
-    ACTION_DEFAULT_LAYER(layer)
+    ACTION_DEFAULT_LAYER_SET(layer)
 
 
 #### 2.2.2 Momentary 
@@ -443,6 +443,10 @@ Decrease backlight level.
 Step through backlight levels.
 
     ACTION_BACKLIGHT_STEP()
+
+Turn a specific backlight level on or off.
+
+    ACTION_BACKLIGHT_LEVEL(1)
 
 #### 2.5.2 Turn on / off backlight
 Turn the backlight on and off without changing level.

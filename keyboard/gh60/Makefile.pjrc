@@ -50,7 +50,8 @@ TARGET_DIR = .
 # project specific files
 SRC =	keymap_common.c \
 	matrix.c \
-	led.c
+	led.c \
+	backlight.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -81,18 +82,29 @@ F_CPU = 16000000
 #   LUFA bootloader  4096
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
+# PCB Revision
+ifdef REV
+    OPT_DEFS += -DGH60_REV_$(REV)
+endif
+
+# Additional definitions from command line
+ifdef DEFS
+    OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
+endif
 
 # Build Options
 #   comment out to disable the options.
 #
 BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes	# Mouse keys(+5000)
-EXTRAKEY_ENABLE = yes	# Audio control and System control(+600)
-CONSOLE_ENABLE = yes	# Console for debug
+MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
+EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
+CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-NKRO_ENABLE = yes	# USB Nkey Rollover(+500)
+NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
+KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
 
 
@@ -103,15 +115,3 @@ VPATH += $(TOP_DIR)
 include $(TOP_DIR)/protocol/pjrc.mk
 include $(TOP_DIR)/common.mk
 include $(TOP_DIR)/rules.mk
-
-plain: OPT_DEFS += -DKEYMAP_PLAIN
-plain: all
-
-poker: OPT_DEFS += -DKEYMAP_POKER
-poker: all
-
-poker_set: OPT_DEFS += -DKEYMAP_POKER_SET
-poker_set: all
-
-poker_bit: OPT_DEFS += -DKEYMAP_POKER_BIT
-poker_bit: all

@@ -41,8 +41,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Set 0 if debouncing isn't needed */
 #define DEBOUNCE    5
 
+/* number of backlight levels */
+#ifdef BREATHING_LED_ENABLE
+#define BACKLIGHT_LEVELS 6
+#else
+#define BACKLIGHT_LEVELS 3
+#endif
+
+#ifdef GH60_REV_CNY
+#define LED_MATRIX_ROWS 6
+#define LED_MATRIX_COLS 14
+#endif
+
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
+
 /* Locking resynchronize hack */
 #define LOCKING_RESYNC_ENABLE
 
@@ -51,7 +64,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
 )
 
+/* PS2 mouse support */
+#ifdef PS2_MOUSE_ENABLE
+#define PS2_CLOCK_PORT	PORTF
+#define PS2_CLOCK_PIN	PINF
+#define PS2_CLOCK_DDR	DDRF
+#define PS2_CLOCK_BIT	PF7
 
+#define PS2_DATA_PORT	PORTF
+#define PS2_DATA_PIN	PINF
+#define PS2_DATA_DDR	DDRF
+#define PS2_DATA_BIT	PF6
+#endif
 
 /*
  * Feature disable options
