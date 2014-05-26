@@ -131,7 +131,7 @@ NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 #PS2_USE_BUSYWAIT = yes
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
-KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
+KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
 KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
 
