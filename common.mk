@@ -69,6 +69,11 @@ ifdef KEYMAP_SECTION_ENABLE
     EXTRALDFLAGS = -Wl,-L$(TOP_DIR),-Tldscript_keymap_avr5.x
 endif
 
+ifdef KEYMAP_IN_EEPROM_ENABLE
+    SRC += $(COMMON_DIR)/keymap_in_eeprom.c
+    OPT_DEFS += -DKEYMAP_IN_EEPROM_ENABLE
+endif
+
 ifdef LED_MATRIX_ENABLE
     SRC += $(COMMON_DIR)/led_matrix.c
     OPT_DEFS += -DLED_MATRIX_ENABLE
