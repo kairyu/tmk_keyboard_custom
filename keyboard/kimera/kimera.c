@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdbool.h>
 #include <avr/eeprom.h>
+#include <util/delay.h>
 #include "kimera.h"
 #include "debug.h"
 
@@ -42,6 +43,7 @@ uint16_t shift_out_cache = 0;
 void kimera_init(void)
 {
     // read config
+    write_matrix_mapping();
     if (read_matrix_mapping()) {
         write_matrix_mapping();
     }
@@ -70,9 +72,9 @@ uint8_t read_matrix_mapping(void)
         return error;
     }
 
-    for (uint8_t i = 0; i < MUX_COUNT; i++) {
-        mux_mapping[i] = mux_config & (1<<i);
-        if (mux_mapping[i] == MUX_FOR_COL) {
+    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
+        mux_mapping[mux] = mux_config & (1 << mux);
+        if (mux_mapping[mux] == MUX_FOR_COL) {
             col_max_count += MUX_PORTS;
         }
         else {
@@ -84,20 +86,20 @@ uint8_t read_matrix_mapping(void)
     }
 
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
-    for (uint8_t i = 0; i < row_max_count; i++) {
-        row_mapping[i] = eeprom_read_byte(mapping++);
-        if (row_mapping[i] != UNCONFIGURED) {
-            if (mux_mapping[PX_TO_MUX(row_mapping[i])] != MUX_FOR_ROW) {
-                row_mapping[i] = UNCONFIGURED;
+    for (uint8_t row = 0; row < row_max_count; row++) {
+        row_mapping[row] = eeprom_read_byte(mapping++);
+        if (row_mapping[row] != UNCONFIGURED) {
+            if (mux_mapping[PX_TO_MUX(row_mapping[row])] != MUX_FOR_ROW) {
+                row_mapping[row] = UNCONFIGURED;
                 error++;
             }
         }
     }
-    for (uint8_t i = 0; i < col_max_count; i++) {
-        col_mapping[i] = eeprom_read_byte(mapping++);
-        if (col_mapping[i] != UNCONFIGURED) {
-            if (mux_mapping[PX_TO_MUX(col_mapping[i])] != MUX_FOR_COL) {
-                col_mapping[i] = UNCONFIGURED;
+    for (uint8_t col = 0; col < col_max_count; col++) {
+        col_mapping[col] = eeprom_read_byte(mapping++);
+        if (col_mapping[col] != UNCONFIGURED) {
+            if (mux_mapping[PX_TO_MUX(col_mapping[col])] != MUX_FOR_COL) {
+                col_mapping[col] = UNCONFIGURED;
                 error++;
             }
         }
@@ -112,9 +114,9 @@ void write_matrix_mapping(void)
     row_max_count = 0;
     col_max_count = 0;
 
-    for (uint8_t i = 0; i < MUX_COUNT; i++) {
-        mux_config |= (mux_mapping[i] << i);
-        if (mux_mapping[i] == MUX_FOR_COL) {
+    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
+        mux_config |= (mux_mapping[mux] << mux);
+        if (mux_mapping[mux] == MUX_FOR_COL) {
             col_max_count += MUX_PORTS;
         }
         else {
@@ -124,11 +126,11 @@ void write_matrix_mapping(void)
     eeprom_write_byte(EECONFIG_MUX_MAPPING, mux_config);
 
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
-    for (uint8_t i = 0; i < row_max_count; i++) {
-        eeprom_write_byte(mapping++, row_mapping[i]);
+    for (uint8_t row = 0; row < row_max_count; row++) {
+        eeprom_write_byte(mapping++, row_mapping[row]);
     }
-    for (uint8_t i = 0; i < col_max_count; i++) {
-        eeprom_write_byte(mapping++, col_mapping[i]);
+    for (uint8_t col = 0; col < col_max_count; col++) {
+        eeprom_write_byte(mapping++, col_mapping[col]);
     }
 }
 
@@ -145,14 +147,15 @@ void shift_out_word(uint16_t data)
 void  init_cols(void)
 {
     // init mux io pins
-    for (uint8_t i = 0; i < MUX_COUNT; i++) {
-        if (mux_mapping[i] == MUX_FOR_COL) {
-            ZX_DDR  &= ~(1 << zx_bit[i]);
-            ZX_PORT |=  (1 << zx_bit[i]);
+    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
+        uint8_t bit = MUX_TO_ZX_BIT(mux);
+        if (mux_mapping[mux] == MUX_FOR_COL) {
+            ZX_DDR  &= ~(1 << bit);
+            ZX_PORT |=  (1 << bit);
         }
         else {
-            ZX_DDR  |=  (1 << zx_bit[i]);
-            ZX_PORT |=  (1 << zx_bit[i]);
+            ZX_DDR  |=  (1 << bit);
+            ZX_PORT |=  (1 << bit);
         }
     }
 }
@@ -160,13 +163,13 @@ void  init_cols(void)
 matrix_row_t read_cols(void)
 {
     matrix_row_t cols = 0;
-    for (uint8_t i = 0; i < MATRIX_COLS; i++) {
-        uint8_t px = col_mapping[i];
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+        uint8_t px = col_mapping[col];
         if (px != UNCONFIGURED) {
-            shift_out_word(shift_out_cache | px_to_shift_out[px]);
-            // TODO: delay
-            if (!(ZX_PIN & (1 << zx_bit[PX_TO_MUX(px)]))) {
-                cols |= (1 << i);
+            shift_out_word(shift_out_cache | PX_TO_SHIFT_OUT(px));
+            _delay_us(10);
+            if (!(ZX_PIN & (1 << MUX_TO_ZX_BIT(PX_TO_MUX(px))))) {
+                cols |= (1 << col);
             }
         }
     }
@@ -182,8 +185,8 @@ void select_row(uint8_t row)
 {
     uint8_t px = row_mapping[row];
     if (px != UNCONFIGURED) {
-        ZX_PORT &= ~(1 << zx_bit[PX_TO_MUX(px)]);
-        shift_out_cache = px_to_shift_out[px] | mux_inh_to_shift_out[PX_TO_MUX(px)];
+        ZX_PORT &= ~(1 << MUX_TO_ZX_BIT(PX_TO_MUX(row)));
+        shift_out_cache = PX_TO_SHIFT_OUT(px) | MUX_INH_TO_SHIFT_OUT(PX_TO_MUX(px));
         shift_out_word(shift_out_cache);
     }
 }

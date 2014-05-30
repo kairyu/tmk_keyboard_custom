@@ -89,6 +89,7 @@ const uint8_t PROGMEM zx_bit[] = {
     PF5, PF6, PF7, PF4
 };
 #endif
+#define MUX_TO_ZX_BIT(x) (pgm_read_byte(zx_bit + (x)))
 
 /*
         Shift Register    Multiplexer
@@ -153,6 +154,8 @@ const uint16_t PROGMEM mux_inh_to_shift_out[] = {
     1<<MUX1_INH, 1<<MUX2_INH, 1<<MUX3_INH, 1<<MUX4_INH
 };
 #endif
+#define PX_TO_SHIFT_OUT(x) (pgm_read_word(px_to_shift_out + (x)))
+#define MUX_INH_TO_SHIFT_OUT(x) (pgm_read_word(mux_inh_to_shift_out + (x)))
 
 /* Matrix Mapping in EEPROM */
 
