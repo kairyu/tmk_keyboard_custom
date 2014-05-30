@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 #include <avr/eeprom.h>
 #include "kimera.h"
+#include "debug.h"
 
 uint8_t mux_mapping[MUX_COUNT] = {
     MUX_FOR_ROW, MUX_FOR_COL, MUX_FOR_COL, MUX_FOR_COL
@@ -64,7 +65,7 @@ uint8_t read_matrix_mapping(void)
     col_max_count = 0;
 
     mux_config = eeprom_read_byte(EECONFIG_MUX_MAPPING);
-    if (mux_config & (1<<7)) {
+    if (mux_config == 0 || (mux_config & (1<<7))) {
         error++;
         return error;
     }
