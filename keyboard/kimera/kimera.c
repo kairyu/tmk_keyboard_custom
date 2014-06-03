@@ -136,9 +136,9 @@ void write_matrix_mapping(void)
 
 void shift_out_word(uint16_t data)
 {
-    SPDR = (data & 0xFF);
-    while (!(SPSR & (1<<SPIF)));
     SPDR = ((data>>8) & 0xFF);
+    while (!(SPSR & (1<<SPIF)));
+    SPDR = (data & 0xFF);
     while (!(SPSR & (1<<SPIF)));
     RCK_PORT &= ~(1<<RCK_BIT);
     RCK_PORT |=  (1<<RCK_BIT);
@@ -163,13 +163,14 @@ void  init_cols(void)
 matrix_row_t read_cols(void)
 {
     matrix_row_t cols = 0;
-    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+    for (uint8_t col = 0; col < col_max_count; col++) {
         uint8_t px = col_mapping[col];
         if (px != UNCONFIGURED) {
-            shift_out_word(shift_out_cache | PX_TO_SHIFT_OUT(px));
+            uint8_t mux = PX_TO_MUX(px);
+            shift_out_word((shift_out_cache | PX_TO_SHIFT_OUT(px)) & ~(MUX_INH_TO_SHIFT_OUT(mux)));
             _delay_us(10);
-            if (!(ZX_PIN & (1 << MUX_TO_ZX_BIT(PX_TO_MUX(px))))) {
-                cols |= (1 << col);
+            if (!(ZX_PIN & (1 << MUX_TO_ZX_BIT(mux)))) {
+                cols |= (1UL << col);
             }
         }
     }
@@ -185,8 +186,9 @@ void select_row(uint8_t row)
 {
     uint8_t px = row_mapping[row];
     if (px != UNCONFIGURED) {
-        ZX_PORT &= ~(1 << MUX_TO_ZX_BIT(PX_TO_MUX(row)));
-        shift_out_cache = PX_TO_SHIFT_OUT(px) | MUX_INH_TO_SHIFT_OUT(PX_TO_MUX(px));
+        uint8_t mux = PX_TO_MUX(px);
+        ZX_PORT &= ~(1 << MUX_TO_ZX_BIT(mux));
+        shift_out_cache = ((MUX_OFF_TO_SHIFT_OUT | PX_TO_SHIFT_OUT(px)) & ~(MUX_INH_TO_SHIFT_OUT(mux)));
         shift_out_word(shift_out_cache);
     }
 }

@@ -156,6 +156,7 @@ const uint16_t PROGMEM mux_inh_to_shift_out[] = {
 #endif
 #define PX_TO_SHIFT_OUT(x) (pgm_read_word(px_to_shift_out + (x)))
 #define MUX_INH_TO_SHIFT_OUT(x) (pgm_read_word(mux_inh_to_shift_out + (x)))
+#define MUX_OFF_TO_SHIFT_OUT (1<<MUX1_INH | 1<<MUX2_INH | 1<<MUX3_INH | 1<<MUX4_INH)
 
 /* Matrix Mapping in EEPROM */
 
