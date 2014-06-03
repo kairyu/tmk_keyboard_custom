@@ -38,9 +38,9 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * |-----------------------------------------------------------+---+---+---|   |
      * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
-     * |        |Fn1|Fn2|Fn3|   |   |   |   |   |   |   |          |   |   |   |   |
+     * |        |Fn1|Fn2|Fn3|   |   |   |App|   |   |   |          |   |Up |   |   |
      * |-----------------------------------------------------------+---+---+---|   |
-     * |    |    |    |                        |    |    |    |    |   |   |   |   |
+     * |    |    |    |                        |    |    |    |    |Lef|Dow|Rig|   |
      * `---------------------------------------------------------------------------'
      */
     KEYMAP(
@@ -48,8 +48,8 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,NLCK,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
-        TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,               TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS       ),
+        TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,APP, TRNS,TRNS,TRNS,               TRNS,TRNS,UP,  TRNS,TRNS, \
+        TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,LEFT,DOWN,RGHT       ),
     /* Keymap 2: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
