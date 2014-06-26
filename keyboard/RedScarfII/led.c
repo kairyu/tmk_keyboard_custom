@@ -36,7 +36,7 @@ void led_set(uint8_t usb_led)
         PORTC &= ~(1<<PC7);
     }
     if (usb_led & (1<<USB_LED_NUM_LOCK)) {
-        // outpu low
+        // output low
         DDRE |= (1<<PE6);
         PORTE &= ~(1<<PE6);
     }
@@ -44,5 +44,15 @@ void led_set(uint8_t usb_led)
         // Hi-Z
         DDRE &= ~(1<<PE6);
         PORTE &= ~(1<<PE6);
+    }
+    if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
+        // output high
+        DDRC |= (1<<PC6);
+        PORTC |= (1<<PC6);
+    }
+    else {
+        // Hi-Z
+        DDRC &= ~(1<<PC6);
+        PORTC &= ~(1<<PC6);
     }
 }
