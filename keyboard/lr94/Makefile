@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = lr92_lufa
+TARGET = lr94_lufa
 
 # Directory common source filess exist
 TOP_DIR = ../..
@@ -112,11 +112,6 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
-# PCB Revision
-ifdef REV
-    OPT_DEFS += -DGH60_REV_$(REV)
-endif
-
 # Additional definitions from command line
 ifdef DEFS
     OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
@@ -131,10 +126,11 @@ EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+NKRO_ENABLE = yes	# USB Nkey Rollover
+USB_6KRO_ENABLE = yes	# USB 6key Rollover
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
-KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
+KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
 KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
 
