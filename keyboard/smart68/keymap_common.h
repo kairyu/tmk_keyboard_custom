@@ -28,18 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "print.h"
 #include "debug.h"
 #include "keymap.h"
-#include "keymap_ex.h"
+#include "keymap_in_eeprom.h"
 
 
-/*
-#ifdef KEYMAP_EX_ENABLE
-extern const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS];
-extern const uint16_t fn_actions[FN_ACTIONS_COUNT];
-#else
-*/
 extern const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS];
 extern const uint16_t fn_actions[];
-//#endif
 
 
 /* SMART68 keymap definition macro */

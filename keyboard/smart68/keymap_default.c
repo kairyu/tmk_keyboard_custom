@@ -32,9 +32,9 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * ,---------------------------------------------------------------.
      * |Mut| F1| F2| F3| F4| F5| F6| F7| F8| F9|F10|F11|F12|       |   |
      * |---------------------------------------------------------------|
-     * |     |   |   |   |   |   |   |   |   |   |Psc|Slk|Pau|  Ins|   |
+     * |     |   |Up |   |   |   |   |   |   |   |Psc|Slk|Pau|  Ins|   |
      * |---------------------------------------------------------------|
-     * |      |   |   |   |   |   |   |   |   |   |   |   |Fn1     |Hom|
+     * |      |Lef|Dow|Rig|   |   |   |   |   |   |   |   |Fn1     |Hom|
      * |---------------------------------------------------------------|
      * |        |   |   |   |   |   |   |   |   |   |   |      |VoU|End|
      * |---------------------------------------------------------------|
@@ -45,8 +45,8 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      */
     KEYMAP(
         MUTE,F1,  F2,  F3,  F4,  F5,  F6,  F7,  F8,  F9,  F10, F11, F12, TRNS,TRNS, \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PSCR,SLCK,PAUS,INS, TRNS, \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     FN1, HOME, \
+        TRNS,TRNS,UP,  TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PSCR,SLCK,PAUS,INS, TRNS, \
+        TRNS,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     FN1, HOME, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,VOLU,END,  \
         TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,FN3, VOLD,FN3,  \
                                  TRNS                                               ),
@@ -67,7 +67,7 @@ const uint16_t fn_actions[] PROGMEM = {
     [3] = ACTION_BACKLIGHT_INCREASE()
 };
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 uint16_t keys_count(void) {
     return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
 }
