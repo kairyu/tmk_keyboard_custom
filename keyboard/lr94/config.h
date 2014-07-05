@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0x4C52
-#define PRODUCT_ID      0x9696
+#define PRODUCT_ID      0x9494
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Lt`y & Romeo.
-#define PRODUCT         LR92
-#define DESCRIPTION     t.m.k. keyboard firmware for LR92
+#define PRODUCT         LR94
+#define DESCRIPTION     t.m.k. keyboard firmware for LR94
 
 /* key matrix size */
 #define MATRIX_ROWS 16
