@@ -77,7 +77,7 @@ extern const uint16_t fn_actions[];
     K5A, K5B, K5C, K5D, K5E, K5F, K5G, K5H, K5I, K5J, K5K, K5L, K5M, K5N, NO,  K5Q, K0K, K4P, \
     K4A, K4B, K4C, K4D, K4E, K4F, K4G, K4H, K4I, K4J, K4K, K4L, K4M,      K4N, K4Q, K0L, K3P, \
     K3A, K3B, K3C, K3D, K3E, K3F, K3G, K3H, K3I, K3J, K3K, K3L, NO,       K3N, NO,  NO,  NO,  \
-    K2A, NO,  K2C, K2D, K2E, K2F, K2G, K2H, K2I, K2J, K2K, K2L,      NO,  K2N, NO,  K0N, NO,  \
+    K2A, NO,  K2C, K2D, K2E, K2F, K2G, K2H, K2I, K2J, K2K, K2L,      K2N, NO,  NO,  K0N, NO,  \
     K1A, K1B, K1C,           K1F,                          K1K, K1L, K1M, K1N, K1Q, K0P, K0Q  \
 )
 
