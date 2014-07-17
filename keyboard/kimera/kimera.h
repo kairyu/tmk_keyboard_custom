@@ -92,29 +92,30 @@ const uint8_t PROGMEM zx_bit[] = {
 #define MUX_TO_ZX_BIT(x) (pgm_read_byte(zx_bit + (x)))
 
 /*
+
         Shift Register    Multiplexer
          ,----------.    ,------------.
   MOSI --| SER    0 |----| INH  X0~X7 |===============.
-   SCK --|>SCK    1 |----| A          |                |
+   SCK --|>SCK    1 |----| C          |                |
    RCK --|>RCK    2 |----| B          |  ,-------------+-------------.
-         |        3 |----| C          |  |   |   |   |   |   |   |   |
+         |        3 |----| A          |  |   |   |   |   |   |   |   |
          |          |    `------------'  P26 P27 P28 P25 P29 P32 P30 P31
          |          |    ,------------.
-         |        4 |----| A    X0~X7 |===============.
+         |        4 |----| C    X0~X7 |===============.
          |        5 |----| B          |                |
-         |        6 |----| C          |  ,-------------+-------------.
+         |        6 |----| A          |  ,-------------+-------------.
          |        7 |----| INH        |  |   |   |   |   |   |   |   |
          |          |    `------------'  P2  P3  P4  P1  P5  P8  P6  P7
          |          |    ,------------.
          |        8 |----| INH  X0~X7 |===============.
-         |        9 |----| A          |                |
+         |        9 |----| C          |                |
          |       10 |----| B          |  ,-------------+-------------.
-         |       11 |----| C          |  |   |   |   |   |   |   |   |
+         |       11 |----| A          |  |   |   |   |   |   |   |   |
          |          |    `------------'  P10 P11 P12 P9 P13  P16 P14 P15
          |          |    ,------------.
-         |       12 |----| A    X0~X7 |===============.
+         |       12 |----| C    X0~X7 |===============.
          |       13 |----| B          |                |
-         |       14 |----| C          |  ,-------------+-------------.
+         |       14 |----| A          |  ,-------------+-------------.
          |       15 |----| INH        |  |   |   |   |   |   |   |   |
          `----------'    `------------'  P18 P19 P20 P17 P21 P24 P22 P23
 */
@@ -123,6 +124,7 @@ const uint8_t PROGMEM zx_bit[] = {
 #define MUX_PORTS 8
 #define PX_TO_MUX(x) (x>>3) // (x / MUX_PORTS)
 
+#if defined(KIMERA_V1)
 enum {
     MUX4_INH = 0,
     MUX4_A,
@@ -141,14 +143,44 @@ enum {
     MUX3_C,
     MUX3_INH
 };
+#elif defined(KIMERA_V2)
+enum {
+    MUX4_INH = 0,
+    MUX4_C,
+    MUX4_B,
+    MUX4_A,
+    MUX1_C,
+    MUX1_B,
+    MUX1_A,
+    MUX1_INH,
+    MUX2_INH,
+    MUX2_C,
+    MUX2_B,
+    MUX2_A,
+    MUX3_C,
+    MUX3_B,
+    MUX3_A,
+    MUX3_INH
+};
+#endif
 
 #ifdef KIMERA_C
+#if defined(KIMERA_V1)
 const uint16_t PROGMEM px_to_shift_out[] = {
     3<<MUX1_A, 0<<MUX1_A, 1<<MUX1_A, 2<<MUX1_A, 4<<MUX1_A, 6<<MUX1_A, 7<<MUX1_A, 5<<MUX1_A,
     3<<MUX2_A, 0<<MUX2_A, 1<<MUX2_A, 2<<MUX2_A, 4<<MUX2_A, 6<<MUX2_A, 7<<MUX2_A, 5<<MUX2_A,
     3<<MUX3_A, 0<<MUX3_A, 1<<MUX3_A, 2<<MUX3_A, 4<<MUX3_A, 6<<MUX3_A, 7<<MUX3_A, 5<<MUX3_A,
     3<<MUX4_A, 0<<MUX4_A, 1<<MUX4_A, 2<<MUX4_A, 4<<MUX4_A, 6<<MUX4_A, 7<<MUX4_A, 5<<MUX4_A
 };
+#elif defined(KIMERA_V2)
+#define R(x) (((x&1)?4:0)|((x&2)?2:0)|((x&4)?1:0))
+const uint16_t PROGMEM px_to_shift_out[] = {
+    R(3)<<MUX1_C, R(0)<<MUX1_C, R(1)<<MUX1_C, R(2)<<MUX1_C, R(4)<<MUX1_C, R(6)<<MUX1_C, R(7)<<MUX1_C, R(5)<<MUX1_C,
+    R(3)<<MUX2_C, R(0)<<MUX2_C, R(1)<<MUX2_C, R(2)<<MUX2_C, R(4)<<MUX2_C, R(6)<<MUX2_C, R(7)<<MUX2_C, R(5)<<MUX2_C,
+    R(3)<<MUX3_C, R(0)<<MUX3_C, R(1)<<MUX3_C, R(2)<<MUX3_C, R(4)<<MUX3_C, R(6)<<MUX3_C, R(7)<<MUX3_C, R(5)<<MUX3_C,
+    R(3)<<MUX4_C, R(0)<<MUX4_C, R(1)<<MUX4_C, R(2)<<MUX4_C, R(4)<<MUX4_C, R(6)<<MUX4_C, R(7)<<MUX4_C, R(5)<<MUX4_C
+};
+#endif
 
 const uint16_t PROGMEM mux_inh_to_shift_out[] = {
     1<<MUX1_INH, 1<<MUX2_INH, 1<<MUX3_INH, 1<<MUX4_INH
