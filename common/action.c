@@ -294,6 +294,10 @@ void process_action(keyrecord_t *record)
 #ifdef BACKLIGHT_ENABLE
         case ACT_BACKLIGHT:
             if (!event.pressed) {
+                /* Backwards compatibility */
+                if (action.backlight.level != 0 && action.backlight.opt != BACKLIGHT_LEVEL) {
+                    action.backlight.opt = action.backlight.level;
+                }
                 switch (action.backlight.opt) {
                     case BACKLIGHT_INCREASE:
                         backlight_increase();
