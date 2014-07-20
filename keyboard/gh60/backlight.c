@@ -169,6 +169,7 @@ inline void backlight_set_raw(uint8_t raw)
 }
 
 #ifdef SOFTPWM_LED_ENABLE
+#ifndef LEDMAP_ENABLE
 
 void softpwm_led_on(void)
 {
@@ -188,6 +189,7 @@ void softpwm_led_off(void)
 #endif
 }
 
+#endif
 #endif
 
 

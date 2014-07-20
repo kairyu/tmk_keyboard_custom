@@ -53,6 +53,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LED_MATRIX_COLS 14
 #endif
 
+/* LED mapping */
+#ifdef LEDMAP_ENABLE
+#if defined(GH60_REV_CHN)
+#define LED_COUNT 2
+#else
+#define LED_COUNT 5
+#endif
+#endif
+
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
 
