@@ -1,18 +1,18 @@
 COMMON_DIR = common
-SRC +=	$(COMMON_DIR)/host.c \
-	$(COMMON_DIR)/keyboard.c \
-	$(COMMON_DIR)/action.c \
-	$(COMMON_DIR)/action_tapping.c \
-	$(COMMON_DIR)/action_macro.c \
-	$(COMMON_DIR)/action_layer.c \
-	$(COMMON_DIR)/action_util.c \
-	$(COMMON_DIR)/keymap.c \
-	$(COMMON_DIR)/timer.c \
-	$(COMMON_DIR)/print.c \
-	$(COMMON_DIR)/bootloader.c \
-	$(COMMON_DIR)/suspend.c \
-	$(COMMON_DIR)/xprintf.S \
-	$(COMMON_DIR)/util.c
+SRC +=  $(COMMON_DIR)/host.c \
+    $(COMMON_DIR)/keyboard.c \
+    $(COMMON_DIR)/action.c \
+    $(COMMON_DIR)/action_tapping.c \
+    $(COMMON_DIR)/action_macro.c \
+    $(COMMON_DIR)/action_layer.c \
+    $(COMMON_DIR)/action_util.c \
+    $(COMMON_DIR)/keymap.c \
+    $(COMMON_DIR)/timer.c \
+    $(COMMON_DIR)/print.c \
+    $(COMMON_DIR)/bootloader.c \
+    $(COMMON_DIR)/suspend.c \
+    $(COMMON_DIR)/xprintf.S \
+    $(COMMON_DIR)/util.c
 
 
 # Option modules
@@ -74,6 +74,11 @@ endif
 ifdef BACKLIGHT_ENABLE
     SRC += $(COMMON_DIR)/backlight.c
     OPT_DEFS += -DBACKLIGHT_ENABLE
+endif
+
+ifdef LEDMAP_ENABLE
+    SRC += $(COMMON_DIR)/ledmap.c
+    OPT_DEFS += -DLEDMAP_ENABLE
 endif
 
 ifdef KEYMAP_SECTION_ENABLE

@@ -70,6 +70,14 @@ void layer_xor(uint32_t state);
 #define layer_debug()
 #endif
 
+#ifdef LEDMAP_ENABLE
+void default_layer_state_change(uint32_t state);
+void layer_state_change(uint32_t state);
+#else
+#define default_layer_state_change()
+#define layer_state_change()
+#endif
+
 
 /* return action depending on current layer status */
 action_t layer_switch_get_action(key_t key);

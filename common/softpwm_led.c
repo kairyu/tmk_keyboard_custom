@@ -44,10 +44,10 @@ void softpwm_led_enable(void)
     /* Enable Compare Match Interrupt */
 #ifdef SOFTPWM_LED_TIMER3
     TIMSK3 |= (1<<OCIE3A);
-    dprintf("softpwm led on: %u\n", TIMSK3 & (1<<OCIE3A));
+    //dprintf("softpwm led on: %u\n", TIMSK3 & (1<<OCIE3A));
 #else
     TIMSK1 |= (1<<OCIE1A);
-    dprintf("softpwm led on: %u\n", TIMSK1 & (1<<OCIE1A));
+    //dprintf("softpwm led on: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
 }
 
@@ -56,10 +56,10 @@ void softpwm_led_disable(void)
     /* Disable Compare Match Interrupt */
 #ifdef SOFTPWM_LED_TIMER3
     TIMSK3 &= ~(1<<OCIE3A);
-    dprintf("softpwm led off: %u\n", TIMSK3 & (1<<OCIE3A));
+    //dprintf("softpwm led off: %u\n", TIMSK3 & (1<<OCIE3A));
 #else
     TIMSK1 &= ~(1<<OCIE1A);
-    dprintf("softpwm led off: %u\n", TIMSK1 & (1<<OCIE1A));
+    //dprintf("softpwm led off: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
 }
 
@@ -68,10 +68,10 @@ void softpwm_led_toggle(void)
     /* Disable Compare Match Interrupt */
 #ifdef SOFTPWM_LED_TIMER3
     TIMSK3 ^= (1<<OCIE3A);
-    dprintf("softpwm led toggle: %u\n", TIMSK3 & (1<<OCIE3A));
+    //dprintf("softpwm led toggle: %u\n", TIMSK3 & (1<<OCIE3A));
 #else
     TIMSK1 ^= (1<<OCIE1A);
-    dprintf("softpwm led toggle: %u\n", TIMSK1 & (1<<OCIE1A));
+    //dprintf("softpwm led toggle: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
 }
 
@@ -112,7 +112,7 @@ void breathing_led_toggle(void)
 void breathing_led_set_duration(uint8_t dur)
 {
     breathing_led_duration = dur;
-    dprintf("breathing led set duration: %u\n", breathing_led_duration);
+    //dprintf("breathing led set duration: %u\n", breathing_led_duration);
 }
 
 #endif
