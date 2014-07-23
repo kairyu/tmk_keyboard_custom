@@ -36,7 +36,8 @@ typedef enum {
     LEDMAP_SCROLL_LOCK,
     LEDMAP_COMPOSE,
     LEDMAP_KANA,
-    LEDMAP_BACKLIGHT
+    LEDMAP_BACKLIGHT = 0x80,
+    LEDMAP_UNCONFIGURED = 0xFF
 } ledmap_code_t;
 
 #define LEDMAP_LAYER(x) (x)

@@ -1,4 +1,5 @@
 #include "ledmap.h"
+#include "ledmap_in_eeprom.h"
 #include "led.h"
 #include "softpwm_led.h"
 #include "action_layer.h"
