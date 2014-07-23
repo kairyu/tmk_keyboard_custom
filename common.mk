@@ -79,7 +79,12 @@ endif
 ifdef LEDMAP_ENABLE
     SRC += $(COMMON_DIR)/ledmap.c
     OPT_DEFS += -DLEDMAP_ENABLE
+ifdef LEDMAP_IN_EEPROM_ENABLE
+    SRC += $(COMMON_DIR)/ledmap_in_eeprom.c
+    OPT_DEFS += -DLEDMAP_IN_EEPROM_ENABLE
 endif
+endif
+
 
 ifdef KEYMAP_SECTION_ENABLE
     OPT_DEFS += -DKEYMAP_SECTION_ENABLE
