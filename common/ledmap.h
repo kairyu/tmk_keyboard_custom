@@ -40,10 +40,8 @@ typedef enum {
     LEDMAP_UNCONFIGURED = 0xFF
 } ledmap_code_t;
 
-#define LEDMAP_LAYER(x) (x)
-#define LEDMAP_DEFAULT_LAYER(x) (32 + x)
-
-void ledmap_init(void);
+#define LEDMAP_DEFAULT_LAYER(x) (LEDMAP_DEFAULT_LAYER_0 + x)
+#define LEDMAP_LAYER(x) (LEDMAP_LAYER_0 + x)
 
 #ifdef LEDMAP_ENABLE
 uint8_t ledmap_get_code(uint8_t index);
