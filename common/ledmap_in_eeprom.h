@@ -11,9 +11,11 @@
 #ifdef LEDMAP_IN_EEPROM_ENABLE
 #define ledmap_get_code ledmap_in_eeprom_get_code
 void ledmap_in_eeprom_init(void);
+void write_ledmap_to_eeprom(void);
 uint8_t ledmap_in_eeprom_get_code(uint8_t index);
 #else
 #define ledmap_in_eeprom_init()
+#define write_ledmap_to_eeprom()
 #define ledmap_in_eeprom_get_code()
 #endif
 

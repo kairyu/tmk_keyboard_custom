@@ -36,6 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "breathing_led.h"
 #endif
+#include "ledmap.h"
+#include "ledmap_in_eeprom.h"
 #include "keymap_in_eeprom.h"
 #ifdef MOUSEKEY_ENABLE
 #   include "mousekey.h"
@@ -80,6 +82,13 @@ void keyboard_init(void)
 
 #ifdef BOOTMAGIC_ENABLE
     bootmagic();
+#endif
+
+#ifdef LEDMAP_ENABLE
+    ledmap_led_init();
+#ifdef LEDMAP_IN_EEPROM_ENABLE
+    ledmap_in_eeprom_init();
+#endif
 #endif
 
 #ifdef BACKLIGHT_ENABLE

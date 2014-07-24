@@ -1,5 +1,6 @@
-#include "ledmap.h"
 #include <avr/pgmspace.h>
+#include "ledmap.h"
+#include "debug.h"
 
 
 #ifdef LEDMAP_ENABLE
