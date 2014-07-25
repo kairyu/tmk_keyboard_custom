@@ -2,6 +2,7 @@
 #define LEDMAP_H
 
 #include "stdint.h"
+#include "stdbool.h"
 
 #if (LED_COUNT <= 8)
 typedef uint8_t  led_pack_t;
@@ -14,6 +15,7 @@ typedef uint32_t led_pack_t;
 #endif
 
 typedef led_pack_t led_state_t;
+typedef led_pack_t led_binding_t;
 
 #if (LED_COUNT <= 16)
 #define LED_BIT(i) (1U<<(i))
@@ -23,8 +25,9 @@ typedef led_pack_t led_state_t;
 #error "LED_COUNT: invalid value"
 #endif
 
-#define LED_BIT_ON(state, i) ((state) |= LED_BIT(i))
-#define LED_BIT_OFF(state, i) ((state) &= ~LED_BIT(i))
+#define LED_BIT_SET(x, i) ((x) |= LED_BIT(i))
+#define LED_BIT_CLEAR(x, i) ((x) &= ~LED_BIT(i))
+#define LED_BIT_IS_SET(x, i) ((x) & LED_BIT(i))
 
 typedef enum {
     LEDMAP_DEFAULT_LAYER_0 = 0,
@@ -40,8 +43,20 @@ typedef enum {
     LEDMAP_UNCONFIGURED = 0xFF
 } ledmap_code_t;
 
+#define LEDMAP_MASK 0x7F
+
+typedef union {
+    uint8_t raw;
+    struct {
+        uint8_t binding : 7;
+        bool backlight : 1;
+    };
+} ledmap_t;
+
 #define LEDMAP_DEFAULT_LAYER(x) (LEDMAP_DEFAULT_LAYER_0 + x)
 #define LEDMAP_LAYER(x) (LEDMAP_LAYER_0 + x)
+
+void ledmap_init(void);
 
 #ifdef LEDMAP_ENABLE
 uint8_t ledmap_get_code(uint8_t index);
