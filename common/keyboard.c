@@ -85,10 +85,10 @@ void keyboard_init(void)
 #endif
 
 #ifdef LEDMAP_ENABLE
-    ledmap_led_init();
 #ifdef LEDMAP_IN_EEPROM_ENABLE
     ledmap_in_eeprom_init();
 #endif
+    ledmap_init();
 #endif
 
 #ifdef BACKLIGHT_ENABLE

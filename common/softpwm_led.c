@@ -7,8 +7,9 @@
 #define SOFTPWM_LED_FREQ 64
 #define SOFTPWM_LED_TIMER_TOP F_CPU / (256 * SOFTPWM_LED_FREQ)
 
-uint8_t softpwm_ocr = 0;
-uint8_t softpwm_ocr_buff = 0;
+static uint8_t softpwm_state = 0;
+static uint8_t softpwm_ocr = 0;
+static uint8_t softpwm_ocr_buff = 0;
 
 void softpwm_led_init(void)
 {
@@ -49,6 +50,8 @@ void softpwm_led_enable(void)
     TIMSK1 |= (1<<OCIE1A);
     //dprintf("softpwm led on: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
+    softpwm_state = 1;
+    softpwm_led_state_change(softpwm_state);
 }
 
 void softpwm_led_disable(void)
@@ -61,6 +64,9 @@ void softpwm_led_disable(void)
     TIMSK1 &= ~(1<<OCIE1A);
     //dprintf("softpwm led off: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
+    softpwm_state = 0;
+    softpwm_led_off();
+    softpwm_led_state_change(softpwm_state);
 }
 
 void softpwm_led_toggle(void)
@@ -73,10 +79,19 @@ void softpwm_led_toggle(void)
     TIMSK1 ^= (1<<OCIE1A);
     //dprintf("softpwm led toggle: %u\n", TIMSK1 & (1<<OCIE1A));
 #endif
+    softpwm_state ^= 1;
+    if (!softpwm_state) softpwm_led_off();
+    softpwm_led_state_change(softpwm_state);
 }
 
-void softpwm_led_set(uint8_t val) {
+void softpwm_led_set(uint8_t val)
+{
     softpwm_ocr_buff = val;
+}
+
+inline uint8_t softpwm_led_get_state(void)
+{
+    return softpwm_state;
 }
 
 #ifdef BREATHING_LED_ENABLE

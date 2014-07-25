@@ -13,7 +13,7 @@ void ledmap_in_eeprom_init(void)
 {
     for (uint8_t i = 0; i < LED_COUNT; i++) {
         ledmap[i] = eeprom_read_byte(EECONFIG_LEDMAP + i);
-        ledmap[i] = LEDMAP_UNCONFIGURED;
+        //ledmap[i] = LEDMAP_UNCONFIGURED;
         if (ledmap[i] == LEDMAP_UNCONFIGURED) {
             ledmap[i] = ledmap_get_code(i);
             eeprom_write_byte(EECONFIG_LEDMAP + i, ledmap[i]);
