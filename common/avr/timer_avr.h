@@ -15,43 +15,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HOST_H
-#define HOST_H
+#ifndef TIMER_AVR_H
+#define TIMER_AVR_H 1
 
 #include <stdint.h>
-#include <stdbool.h>
-#include "report.h"
-#include "host_driver.h"
 
-
-#ifdef __cplusplus
-extern "C" {
+#ifndef TIMER_PRESCALER
+#   if F_CPU > 16000000
+#       define TIMER_PRESCALER      256
+#   elif F_CPU > 2000000
+#       define TIMER_PRESCALER      64
+#   elif F_CPU > 250000
+#       define TIMER_PRESCALER      8
+#   else
+#       define TIMER_PRESCALER      1
+#   endif
 #endif
+#define TIMER_RAW_FREQ      (F_CPU/TIMER_PRESCALER)
+#define TIMER_RAW           TCNT0
+#define TIMER_RAW_TOP       (TIMER_RAW_FREQ/1000)
 
-#ifdef NKRO_ENABLE
-extern bool keyboard_nkro;
-#endif
-
-extern uint8_t keyboard_idle;
-extern uint8_t keyboard_protocol;
-
-
-/* host driver */
-void host_set_driver(host_driver_t *driver);
-host_driver_t *host_get_driver(void);
-
-/* host driver interface */
-uint8_t host_keyboard_leds(void);
-void host_keyboard_send(report_keyboard_t *report);
-void host_mouse_send(report_mouse_t *report);
-void host_system_send(uint16_t data);
-void host_consumer_send(uint16_t data);
-
-uint16_t host_last_sysytem_report(void);
-uint16_t host_last_consumer_report(void);
-
-#ifdef __cplusplus
-}
+#if (TIMER_RAW_TOP > 255)
+#   error "Timer0 can't count 1ms at this clock freq. Use larger prescaler."
 #endif
 
 #endif
