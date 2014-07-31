@@ -51,13 +51,6 @@ static const uint8_t backlight_table[] PROGMEM = {
 void backlight_enable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
-#if defined(GH60_REV_CHN)
-    DDRB  |= (1<<PB6);
-    PORTB &= ~(1<<PB6);
-#else
-    DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-    PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-#endif
     softpwm_led_enable();
 #else
 #if defined(GH60_REV_CHN)
@@ -85,11 +78,6 @@ void backlight_disable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
     softpwm_led_disable();
-#if defined(GH60_REV_CHN)
-    DDRB &= ~(1<<PB6);
-#else
-    DDRF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-#endif
 #else
 #if defined(GH60_REV_CHN)
     // Turn off PWM

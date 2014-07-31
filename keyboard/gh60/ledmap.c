@@ -8,7 +8,7 @@
 static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
 #if defined(GH60_REV_CHN)
     [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,  // CapsLock - PB2
-    [1] = LEDMAP_BACKLIGHT,                     // PWM      - PB6
+    [1] = LEDMAP_LAYER(1) | LEDMAP_BACKLIGHT,   // PWM      - PB6
 #else
     [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,  // CapsLock - PB2
     [1] = LEDMAP_BACKLIGHT,                     // Esc      - GPIO1 - PF6
