@@ -3,31 +3,10 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-
-#if (LED_COUNT <= 8)
-typedef uint8_t  led_pack_t;
-#elif (LED_COUNT <= 16)
-typedef uint16_t led_pack_t;
-#elif (LED_COUNT <= 32)
-typedef uint32_t led_pack_t;
-#else
-#error "LED_COUNT: invalid value"
-#endif
+#include "led.h"
 
 typedef led_pack_t led_state_t;
 typedef led_pack_t led_binding_t;
-
-#if (LED_COUNT <= 16)
-#define LED_BIT(i) (1U<<(i))
-#elif (LED_COUNT <= 32)
-#define LED_BIT(i) (1UL<<(i))
-#else
-#error "LED_COUNT: invalid value"
-#endif
-
-#define LED_BIT_SET(x, i) ((x) |= LED_BIT(i))
-#define LED_BIT_CLEAR(x, i) ((x) &= ~LED_BIT(i))
-#define LED_BIT_IS_SET(x, i) ((x) & LED_BIT(i))
 
 typedef enum {
     LEDMAP_DEFAULT_LAYER_0 = 0,

@@ -83,21 +83,17 @@ void layer_state_change(uint32_t state)
 #endif
 
 #ifdef SOFTPWM_LED_ENABLE
-void softpwm_led_on()
+void softpwm_led_on(uint8_t index)
 {
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        if (backlight_binding & LED_BIT(i)) {
-            ledmap_led_on(i);
-        }
+    if (backlight_binding & LED_BIT(index)) {
+        ledmap_led_on(index);
     }
 }
 
-void softpwm_led_off()
+void softpwm_led_off(uint8_t index)
 {
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        if (backlight_binding & LED_BIT(i)) {
-            ledmap_led_off(i);
-        }
+    if (backlight_binding & LED_BIT(index)) {
+        ledmap_led_off(index);
     }
 }
 
