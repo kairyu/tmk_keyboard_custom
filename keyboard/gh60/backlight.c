@@ -51,13 +51,6 @@ static const uint8_t backlight_table[] PROGMEM = {
 void backlight_enable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
-#if defined(GH60_REV_CHN)
-    DDRB  |= (1<<PB6);
-    PORTB &= ~(1<<PB6);
-#else
-    DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-    PORTF |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-#endif
     softpwm_led_enable();
 #else
 #if defined(GH60_REV_CHN)
@@ -85,11 +78,6 @@ void backlight_disable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
     softpwm_led_disable();
-#if defined(GH60_REV_CHN)
-    DDRB &= ~(1<<PB6);
-#else
-    DDRF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-#endif
 #else
 #if defined(GH60_REV_CHN)
     // Turn off PWM
@@ -119,19 +107,32 @@ void backlight_set(uint8_t level)
         case 2:
         case 3:
             backlight_enable();
+#ifdef SOFTPWM_LED_ENABLE
+            breathing_led_disable_all();
+#else
             breathing_led_disable();
+#endif
             backlight_set_raw(pgm_read_byte(&backlight_table[level]));
             break;
         case 4:
         case 5:
         case 6:
             backlight_enable();
+#ifdef SOFTPWM_LED_ENABLE
+            breathing_led_enable_all();
+            breathing_led_set_duration_all(6 - level);
+#else
             breathing_led_enable();
             breathing_led_set_duration(6 - level);
+#endif
             break;
         case 0:
         default:
+#ifdef SOFTPWM_LED_ENABLE
+            breathing_led_disable_all();
+#else
             breathing_led_disable();
+#endif
             backlight_disable();
             break;
     }
@@ -158,7 +159,9 @@ void breathing_led_set_raw(uint8_t raw)
 inline void backlight_set_raw(uint8_t raw)
 {
 #ifdef SOFTPWM_LED_ENABLE
-    softpwm_led_set(raw);
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        softpwm_led_set(i, raw);
+    }
 #else
 #if defined(GH60_REV_CHN)
     OCR1B = raw;
@@ -169,8 +172,9 @@ inline void backlight_set_raw(uint8_t raw)
 }
 
 #ifdef SOFTPWM_LED_ENABLE
+#ifndef LEDMAP_ENABLE
 
-void softpwm_led_on(void)
+void softpwm_led_on(uint8_t index)
 {
 #if defined(GH60_REV_CHN)
     PORTB |= (1<<PB6);
@@ -179,7 +183,7 @@ void softpwm_led_on(void)
 #endif
 }
 
-void softpwm_led_off(void)
+void softpwm_led_off(uint8_t index)
 {
 #if defined(GH60_REV_CHN)
     PORTB &= ~(1<<PB6);
@@ -188,6 +192,7 @@ void softpwm_led_off(void)
 #endif
 }
 
+#endif
 #endif
 
 
