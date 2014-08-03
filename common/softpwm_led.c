@@ -11,7 +11,7 @@ static uint8_t softpwm_led_state = 0;
 static uint8_t softpwm_led_ocr[LED_COUNT] = {0};
 static uint8_t softpwm_led_ocr_buff[LED_COUNT] = {0};
 
-void softpwm_led_init(void)
+void softpwm_init(void)
 {
 #ifdef SOFTPWM_LED_TIMER3
     /* Timer3 setup */
@@ -38,6 +38,7 @@ void softpwm_led_init(void)
     OCR1AL = SOFTPWM_LED_TIMER_TOP & 0xff;
     SREG = sreg;
 #endif
+    softpwm_led_init();
 }
 
 void softpwm_led_enable(void)
