@@ -8,6 +8,8 @@
 #define EECONFIG_LEDMAP (uint8_t*)EECONFIG_LEDMAP_IN_EEPROM
 #define LEDMAP_SIZE (sizeof(uint8_t) * LED_COUNT)
 
+#define LEDMAP_UNCONFIGURED 0xFF
+
 #ifdef LEDMAP_IN_EEPROM_ENABLE
 #define ledmap_get_code ledmap_in_eeprom_get_code
 void ledmap_in_eeprom_init(void);
