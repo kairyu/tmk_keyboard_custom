@@ -174,6 +174,15 @@ inline void backlight_set_raw(uint8_t raw)
 #ifdef SOFTPWM_LED_ENABLE
 #ifndef LEDMAP_ENABLE
 
+void softpwm_led_init(void)
+{
+#if defined(GH60_REV_CHN)
+    DDRB |= (1<<PB6);
+#else
+    DDRF  |= (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+#endif
+}
+
 void softpwm_led_on(uint8_t index)
 {
 #if defined(GH60_REV_CHN)

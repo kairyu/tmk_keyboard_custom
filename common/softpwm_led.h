@@ -8,6 +8,7 @@ typedef led_pack_t led_state_t;
 
 #ifdef SOFTPWM_LED_ENABLE
 
+void softpwm_init(void);
 void softpwm_led_init(void);
 void softpwm_led_enable(void);
 void softpwm_led_disable(void);
@@ -43,6 +44,7 @@ void breathing_led_set_duration_all(uint8_t dur);
 
 #else
 
+#define softpwm_init()
 #define softpwm_led_init()
 #define softpwm_led_enable()
 #define softpwm_led_disable()

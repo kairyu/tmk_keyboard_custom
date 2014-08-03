@@ -91,16 +91,16 @@ void keyboard_init(void)
     ledmap_init();
 #endif
 
-#ifdef BACKLIGHT_ENABLE
-    backlight_init();
-#endif
-
 #ifdef SOFTPWM_LED_ENABLE
-    softpwm_led_init();
+    softpwm_init();
 #endif
 
 #ifdef BREATHING_LED_ENABLE
     breathing_led_init();
+#endif
+
+#ifdef BACKLIGHT_ENABLE
+    backlight_init();
 #endif
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
