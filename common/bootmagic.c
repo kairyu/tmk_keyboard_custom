@@ -9,6 +9,7 @@
 #include "action_layer.h"
 #include "eeconfig.h"
 #include "keymap_in_eeprom.h"
+#include "ledmap_in_eeprom.h"
 #include "bootmagic.h"
 
 
@@ -36,6 +37,9 @@ void bootmagic(void)
         eeconfig_init();
 #ifdef KEYMAP_IN_EEPROM_ENABLE
         write_keymap_to_eeprom();
+#endif
+#ifdef LEDMAP_IN_EEPROM_ENABLE
+        write_ledmap_to_eeprom();
 #endif
     }
 
