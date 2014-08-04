@@ -138,30 +138,40 @@ uint8_t matrix_key_count(void)
 
 /* Column pin configuration
  *  col: 0   1   2   3   4   5
- *  pin: D17 D15 A0  A1  A2  A3  (arduino)
+ *  pin: D17 D15 A0  A1  A2  A3  (arduino) REV_V2
  *       PB3 PB1 PF7 PF6 PF5 PF4
+ *       PF0 PF1 PF4 PF5 PF6 PF7           REV_V3
  */
 static void init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
+#if defined(REV_V2)
     DDRF  &= ~(1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
     PORTF |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
     DDRB  &= ~(1<<PB3 | 1<<PB1);
     PORTB |=  (1<<PB3 | 1<<PB1);
+#elif defined(REV_V3)
+    DDRF  &= ~(1<<PF0 | 1<<PF1 | 1<<PF4 | 1<<PF5 | 1<<PF6 | 1<<PF7);
+#endif
 }
 
 static matrix_row_t read_cols(void)
 {
+#if defined(REV_V2)
     return (PINB&(1<<PB3) ? 0 : (1<<0)) |
            (PINB&(1<<PB1) ? 0 : (1<<1)) |
            (PINF&(1<<PF7) ? 0 : (1<<2)) |
            (PINF&(1<<PF6) ? 0 : (1<<3)) |
            (PINF&(1<<PF5) ? 0 : (1<<4)) |
            (PINF&(1<<PF4) ? 0 : (1<<5));
+#elif defined(REV_V3)
+    return (~(PINF) >> 4) | (~(PINF) & (1<<PF0 | 1<<PF1));
+#endif
 }
 
 static void unselect_rows(void)
 {
+#if defined(REV_V2)
     // Hi-Z(DDR:0, PORT:0) to unselect
     DDRB  &= ~(1<<PB4);
     PORTB &= ~(1<<PB4);
@@ -174,20 +184,39 @@ static void unselect_rows(void)
     PORTD &= ~(1<<PD3 | 1<<PD2 | 1<<PD0);
     DDRC  |=  (1<<PC6);
     PORTC &= ~(1<<PC6);
+#elif defined(REV_V3)
+    // Hi-Z(DDR:0, PORT:0) to unselect
+    DDRB  &= ~(1<<PB4 | 1<<PB5 | 1<<PB6);
+    PORTB &= ~(1<<PB4 | 1<<PB5 | 1<<PB6);
+    // Select 0
+    DDRD  |=  (1<<PD4 | 1<<PD5 | 1<<PD6 | 1<<PD7);
+    PORTD &= ~(1<<PD4 | 1<<PD5 | 1<<PD6 | 1<<PD7);
+#endif
 }
 
 /* Row pin configuration
  * row:          x  0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17
- * pin: D8  PB4  -  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
- *    / TX  PD3  0  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  0
- *    | RX  PD2  0  0  0  1  1  0  0  1  1  0  0  1  1  0  0  1  1  0  0
- *    | D3  PD0  0  0  0  0  0  1  1  1  1  0  0  0  0  1  1  1  1  0  0
- *    \ D5  PC6  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  0  0
- *      D6  PD7  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  1
- *      D7  PE6  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0
+ *
+ * pin: D8  PB4  -  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  \
+ *    / TX  PD3  0  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  0  |
+ *    | RX  PD2  0  0  0  1  1  0  0  1  1  0  0  1  1  0  0  1  1  0  0  |
+ *    | D3  PD0  0  0  0  0  0  1  1  1  1  0  0  0  0  1  1  1  1  0  0  |- REV_V2
+ *    \ D5  PC6  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  0  0  |
+ *      D6  PD7  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  1  |
+ *      D7  PE6  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  /
+ *
+ *          PB4  -  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  \
+ *        / PD4  0  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  0  |
+ *        | PD5  0  0  0  1  1  0  0  1  1  0  0  1  1  0  0  1  1  0  0  |
+ *        | PD6  0  0  0  0  0  1  1  1  1  0  0  0  0  1  1  1  1  0  0  |- REV_V3
+ *        \ PD7  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  0  0  |
+ *          PB5  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  1  |
+ *          PB6  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  /
+ *
  */
 static void select_row(uint8_t row)
 {
+#if defined(REV_V2)
     // Output low(DDR:1, PORT:0) to select
     if (row == 0) {
         DDRB |= (1<<PB4);
@@ -202,9 +231,31 @@ static void select_row(uint8_t row)
     else if (row == 16) {
         DDRD |= (1<<PD7);
         PORTD &= ~(1<<PD7);
+        DDRB |= (1<<PB5);
+        PORTB &= ~(1<<PB5);
     }
     else if (row == 17) {
         DDRE |= (1<<PE6);
         PORTE &= ~(1<<PE6);
+        DDRB |= (1<<PB6);
+        PORTB &= ~(1<<PB6);
     }
+#elif defined(REV_V3)
+    // Output low(DDR:1, PORT:0) to select
+    if (row == 0) {
+        DDRB |= (1<<PB4);
+        PORTB &= ~(1<<PB4);
+    }
+    else if (row < 16) {
+        PORTD = (PORTD & 0x0F) | ((row & 0x0F) << 4);
+    }
+    else if (row == 16) {
+        DDRB |= (1<<PB5);
+        PORTB &= ~(1<<PB5);
+    }
+    else if (row == 17) {
+        DDRB |= (1<<PB6);
+        PORTB &= ~(1<<PB6);
+    }
+#endif
 }

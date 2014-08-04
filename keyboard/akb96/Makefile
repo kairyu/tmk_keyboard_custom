@@ -112,6 +112,11 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
+# PCB Revision
+ifdef REV
+    OPT_DEFS += -DREV_$(REV)
+endif
+
 # Additional definitions from command line
 ifdef DEFS
     OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
