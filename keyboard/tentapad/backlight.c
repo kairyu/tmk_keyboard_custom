@@ -55,23 +55,35 @@ void backlight_set(uint8_t level)
 #ifndef LEDMAP_ENABLE
 void softpwm_led_init(void)
 {
+#ifndef EXPERIMENTAL
     DDRD |= (1<<PD0);
     DDRB |= (1<<PB7);
     DDRC |= (1<<PD5 | 1<<PD6);
+#else
+    DDRB |= (1<<PB6);
+#endif
 }
 
 void softpwm_led_on(uint8_t index)
 {
+#ifndef EXPERIMENTAL
     PORTD |= (1<<PD0);
     PORTB |= (1<<PB7);
     PORTC |= (1<<PD5 | 1<<PD6);
+#else
+    PORTB |= (1<<PB6);
+#endif
 }
 
 void softpwm_led_off(uint8_t index)
 {
+#ifndef EXPERIMENTAL
     PORTD &= ~(1<<PD0);
     PORTB &= ~(1<<PB7);
     PORTC &= ~(1<<PD5 | 1<<PD6);
+#else
+    PORTB &= ~(1<<PB6);
+#endif
 }
 #endif
 
