@@ -14,17 +14,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+//#include <stdbool.h>
+#include <avr/pgmspace.h>
+#include "keymap.h"
+#include "keymap_in_eeprom.h"
 #include "keymap_common.h"
 
+static uint8_t keymaps_cache[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS];
+
+void keymaps_cache_init(void)
+{
+    for (uint8_t layer = 0; layer < KEYMAPS_COUNT; layer++) {
+        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+            for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+#ifndef KEYMAP_IN_EEPROM_ENABLE
+                keymaps_cache[layer][row][col] = pgm_read_byte(&keymaps[layer][row][col]);
+#else
+                keymaps_cache[layer][row][col] = eeconfig_read_keymap_key(layer, row, col);
+#endif
+            }
+        }
+    }
+}
 
 /* translates key to keycode */
 uint8_t keymap_key_to_keycode(uint8_t layer, key_t key)
 {
-#ifndef KEYMAP_IN_EEPROM_ENABLE
-    return pgm_read_byte(&keymaps[(layer)][(key.row)][(key.col)]);
-#else
-    return eeconfig_read_keymap_key(layer, key.row, key.col);
-#endif
+    return keymaps_cache[layer][key.row][key.col];
 }
 
 /* translates Fn keycode to action */
