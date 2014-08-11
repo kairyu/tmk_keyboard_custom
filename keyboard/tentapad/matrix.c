@@ -92,39 +92,21 @@ uint8_t matrix_scan(void)
 {
     matrix_row_t cols = read_cols();
     for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-        if ((cols & (1<<col)) != (matrix_debouncing & (1<<col))) {
-            // state changed
-            if (debouncing & (1<<col)) {
-                // debouncing
-                if (timer_elapsed(debouncing_last[col]) > DEBOUNCE) {
-                    // released
+        if (debouncing & (1<<col)) {
+            if (timer_elapsed(debouncing_last[col]) > DEBOUNCE) {
+                debouncing &= ~(1<<col);
+                if (!(cols & (1<<col))) {
                     matrix &= ~(1<<col);
-                    debouncing &= ~(1<<col);
-                }
-                else {
-                    // reset debounce time
-                    debouncing_last[col] = timer_read();
-                }
-            }
-            else {
-                if (cols & (1<<col)) {
-                    // pressed
-                    matrix |= (1<<col);
-                }
-                else {
-                    // start debounce
-                    debouncing_last[col] = timer_read();
-                    debouncing |= (1<<col);
                 }
             }
         }
-        else {
-            if (debouncing & (1<<col)) {
-                if (timer_elapsed(debouncing_last[col]) > DEBOUNCE) {
-                    // released
-                    matrix &= ~(1<<col);
-                    debouncing &= ~(1<<col);
-                }
+        if ((cols & (1<<col)) != (matrix_debouncing & (1<<col))) {
+            if (!(debouncing & (1<<col)) && (cols & (1<<col))) {
+                matrix |= (1<<col);
+            }
+            else {
+                debouncing_last[col] = timer_read();
+                debouncing |= (1<<col);
             }
         }
     }
