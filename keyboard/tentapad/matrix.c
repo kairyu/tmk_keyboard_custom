@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 #include <avr/io.h>
 #include <util/delay.h>
+#include "timer.h"
 #include "print.h"
 #include "debug.h"
 #include "util.h"
@@ -29,12 +30,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef PS2_MOUSE_ENABLE
 #include "ps2.h"
 #endif
+#include "keymap_common.h"
 
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE	5
 #endif
 static uint8_t debouncing = DEBOUNCE;
+static uint16_t debouncing_last[MATRIX_COLS];
 
 /* matrix state(1:on, 0:off) */
 static matrix_row_t matrix;
@@ -79,6 +82,8 @@ void matrix_init(void)
     PORTC &= ~(1<<PC2);
 #endif
 
+    keymaps_cache_init();
+
     // initialize cols
     init_cols();
 
@@ -90,6 +95,36 @@ void matrix_init(void)
 uint8_t matrix_scan(void)
 {
     matrix_row_t cols = read_cols();
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+        if ((cols & (1<<col)) != (matrix & (1<<col))) {
+            // state changed
+            if (debouncing & (1<<col)) {
+                // debouncing
+                if (timer_elapsed(debouncing_last[col]) > DEBOUNCE) {
+                    // released
+                    matrix &= ~(1<<col);
+                    debouncing &= ~(1<<col);
+                }
+                else {
+                    // reset debounce time
+                    debouncing_last[col] = timer_read();
+                }
+            }
+            else {
+                if (cols & (1<<col)) {
+                    // pressed
+                    matrix |= (1<<col);
+                }
+                else {
+                    // start debounce
+                    debouncing_last[col] = timer_read();
+                    debouncing |= (1<<col);
+                }
+            }
+        }
+    }
+
+    /*
     if (matrix_debouncing != cols) {
         matrix_debouncing = cols;
         if (debouncing) {
@@ -105,6 +140,7 @@ uint8_t matrix_scan(void)
             matrix = matrix_debouncing;
         }
     }
+    */
 
     return 1;
 }
@@ -148,11 +184,24 @@ uint8_t matrix_key_count(void)
  */
 static void  init_cols(void)
 {
+#ifndef EXPERIMENTAL
     // Input with pull-up(DDR:0, PORT:1)
     DDRD  &= ~(1<<PD1 | 1<<PD2 | 1<<PD5 | 1<<PD6);
     PORTD |=  (1<<PD1 | 1<<PD2 | 1<<PD5 | 1<<PD6);
     DDRB  &= ~(1<<PB3);
     PORTB |=  (1<<PB3);
+#else
+    DDRD  |=  (1<<PD3);
+    PORTD &= ~(1<<PD3);
+    DDRE  &= ~(1<<PE6);
+    PORTE |=  (1<<PE6);
+    DDRC  &= ~(1<<PC7 | 1<<PC6);
+    PORTC |=  (1<<PC7 | 1<<PC6);
+    DDRB  &= ~(1<<PB7);
+    PORTB |=  (1<<PB7);
+    DDRD  &= ~(1<<PD4);
+    PORTD |=  (1<<PD4);
+#endif
 }
 
 /* Column pin configuration
@@ -161,9 +210,17 @@ static void  init_cols(void)
  */
 static matrix_row_t read_cols(void)
 {
+#ifndef EXPERIMENTAL
     return (PIND&(1<<PD1) ? 0 : (1<<0)) |
            (PIND&(1<<PD2) ? 0 : (1<<1)) |
            (PIND&(1<<PD5) ? 0 : (1<<2)) |
            (PIND&(1<<PD6) ? 0 : (1<<3)) |
            (PINB&(1<<PB3) ? 0 : (1<<4));
+#else
+    return (PINE&(1<<PE6) ? 0 : (1<<0)) |
+           (PINC&(1<<PC7) ? 0 : (1<<1)) |
+           (PINC&(1<<PC6) ? 0 : (1<<2)) |
+           (PINB&(1<<PB7) ? 0 : (1<<3)) |
+           (PIND&(1<<PD4) ? 0 : (1<<4));
+#endif
 }
