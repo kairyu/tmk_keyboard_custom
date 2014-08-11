@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* matrix state(1:on, 0:off) */
 static matrix_row_t matrix = 0;
+static matrix_row_t matrix_debouncing = 0;
 static matrix_row_t debouncing = 0;
 static uint16_t debouncing_last[MATRIX_COLS];
 
@@ -91,7 +92,7 @@ uint8_t matrix_scan(void)
 {
     matrix_row_t cols = read_cols();
     for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-        if ((cols & (1<<col)) != (matrix & (1<<col))) {
+        if ((cols & (1<<col)) != (matrix_debouncing & (1<<col))) {
             // state changed
             if (debouncing & (1<<col)) {
                 // debouncing
@@ -117,7 +118,17 @@ uint8_t matrix_scan(void)
                 }
             }
         }
+        else {
+            if (debouncing & (1<<col)) {
+                if (timer_elapsed(debouncing_last[col]) > DEBOUNCE) {
+                    // released
+                    matrix &= ~(1<<col);
+                    debouncing &= ~(1<<col);
+                }
+            }
+        }
     }
+    matrix_debouncing = cols;
 
     /*
     if (matrix_debouncing != cols) {
