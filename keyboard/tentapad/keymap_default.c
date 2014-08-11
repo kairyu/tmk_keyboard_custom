@@ -15,6 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <avr/pgmspace.h>
+#include "keycode.h"
+#include "action_layer.h"
+#include "eeconfig.h"
+#include "backlight.h"
 #include "keymap_common.h"
 
 enum function_id {
@@ -24,7 +29,7 @@ enum function_id {
 };
 
 enum {
-    CONFIG_LAYER = 31,
+    CONFIG_LAYER = 8,
 };
 
 // Default
@@ -89,6 +94,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             if (record->event.pressed) {
                 if (config_mode) {
                     default_layer_set(1UL<<layer);
+                    eeconfig_write_default_layer(1UL<<layer);
                     layer = (layer + 1) % 6;
                 }
             }
@@ -97,7 +103,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             if (record->event.pressed) {
                 if (config_mode) {
                     backlight_level(backlight);
-                    backlight = (backlight + 1) % BACKLIGHT_LEVEL;
+                    backlight = (backlight + 1) % (BACKLIGHT_LEVELS + 1);
                 }
             }
             break;
