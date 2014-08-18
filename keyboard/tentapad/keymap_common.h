@@ -23,14 +23,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 extern const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS];
 extern const uint16_t fn_actions[];
 
+#define CONFIG_LAYER (KEYMAPS_COUNT - 1)
+#define RESERVED_FN (FN_ACTIONS_COUNT - 4)
+
 void keymaps_cache_init(void);
+uint8_t last_layer(void);
 
 /* TentaPad keymap definition macro
  */
 #define KEYMAP( \
-    K1, K2, TT, TP, FN \
+    K1, K2, TT \
 ) { \
-    { KC_##K1, KC_##K2, KC_##TT, KC_##TP, KC_##FN } \
+    { KC_##K1, KC_##K2, KC_##TT } \
 }
 
 #endif
