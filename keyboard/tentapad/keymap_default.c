@@ -23,13 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_common.h"
 
 enum function_id {
-    CONFIG_MODE = 0,
+    TOUCH_PROXIMITY = 0,
+    CONFIG_MODE,
     SWITCH_LAYOUT,
     SWITCH_BACKLIGHT
-};
-
-enum {
-    CONFIG_LAYER = 8,
 };
 
 // Default
@@ -38,13 +35,13 @@ const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] __attribute__ ((s
 #else
 const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
 #endif
-    [0]  = KEYMAP( Z,   X,   ESC, NO,  FN0 ),
-    [1]  = KEYMAP( BTN1,BTN2,ESC, NO,  FN0 ),
-    [2]  = KEYMAP( LEFT,RGHT,ESC, NO,  FN0 ),
-    [3]  = KEYMAP( UP,  DOWN,ESC, NO,  FN0 ),
-    [4]  = KEYMAP( PGUP,PGDN,ESC, NO,  FN0 ),
-    [5]  = KEYMAP( SPC, ESC, ESC, NO,  FN0 ),
-    [CONFIG_LAYER] = KEYMAP( FN1, FN2, NO,  NO,  FN0 ),
+    [0] = KEYMAP( Z,   X,   ESC ),
+    [1] = KEYMAP( BTN1,BTN2,ESC ),
+    [2] = KEYMAP( LEFT,RGHT,ESC ),
+    [3] = KEYMAP( UP,  DOWN,ESC ),
+    [4] = KEYMAP( PGUP,PGDN,ESC ),
+    [5] = KEYMAP( SPC, ESC, ESC ),
+    [CONFIG_LAYER] = KEYMAP( FN30, FN31, NO )
 };
 
 /*
@@ -55,9 +52,10 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    [0] = ACTION_FUNCTION(CONFIG_MODE),
-    [1] = ACTION_FUNCTION(SWITCH_LAYOUT),
-    [2] = ACTION_FUNCTION(SWITCH_BACKLIGHT)
+    [28] = ACTION_FUNCTION(TOUCH_PROXIMITY),
+    [29] = ACTION_FUNCTION(CONFIG_MODE),
+    [30] = ACTION_FUNCTION(SWITCH_LAYOUT),
+    [31] = ACTION_FUNCTION(SWITCH_BACKLIGHT)
 };
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
@@ -95,7 +93,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
                 if (config_mode) {
                     default_layer_set(1UL<<layer);
                     eeconfig_write_default_layer(1UL<<layer);
-                    layer = (layer + 1) % 6;
+                    layer = (layer + 1) % (last_layer() + 1);
                 }
             }
             break;
