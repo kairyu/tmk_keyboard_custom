@@ -66,6 +66,7 @@ void clear_keyboard(void);
 void clear_keyboard_but_mods(void);
 void layer_switch(uint8_t new_layer);
 bool is_tap_key(key_t key);
+void key_event(keyevent_t event);
 
 /* debug */
 void debug_event(keyevent_t event);
