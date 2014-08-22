@@ -43,6 +43,8 @@ void action_exec(keyevent_t event)
 
     keyrecord_t record = { .event = event };
 
+    key_event(event);
+
 #ifndef NO_ACTION_TAPPING
     action_tapping_process(record);
 #else
