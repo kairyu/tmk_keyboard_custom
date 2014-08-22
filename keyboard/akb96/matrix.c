@@ -152,6 +152,7 @@ static void init_cols(void)
     PORTB |=  (1<<PB3 | 1<<PB1);
 #elif defined(REV_V3)
     DDRF  &= ~(1<<PF0 | 1<<PF1 | 1<<PF4 | 1<<PF5 | 1<<PF6 | 1<<PF7);
+    PORTF |=  (1<<PF0 | 1<<PF1 | 1<<PF4 | 1<<PF5 | 1<<PF6 | 1<<PF7);
 #endif
 }
 
@@ -165,7 +166,7 @@ static matrix_row_t read_cols(void)
            (PINF&(1<<PF5) ? 0 : (1<<4)) |
            (PINF&(1<<PF4) ? 0 : (1<<5));
 #elif defined(REV_V3)
-    return (~(PINF) >> 4) | (~(PINF) & (1<<PF0 | 1<<PF1));
+    return ((~(PINF) >> 4) & 0x0F) | (~(PINF) & (1<<PF0 | 1<<PF1));
 #endif
 }
 
