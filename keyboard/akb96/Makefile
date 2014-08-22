@@ -115,6 +115,8 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 # PCB Revision
 ifdef REV
     OPT_DEFS += -DREV_$(REV)
+else
+    OPT_DEFS += -DREV_V3
 endif
 
 # Additional definitions from command line
