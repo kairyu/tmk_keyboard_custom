@@ -98,10 +98,96 @@ void softpwm_led_set_all(uint8_t val)
     }
 }
 
+void softpwm_led_increase(uint8_t index, uint8_t offset)
+{
+    if (softpwm_led_ocr_buff[index] > 0xFF - offset) {
+        softpwm_led_ocr_buff[index] = 0xFF;
+    }
+    else {
+        softpwm_led_ocr_buff[index] += offset;
+    }
+}
+
+void softpwm_led_increase_all(uint8_t offset)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        softpwm_led_increase(i, offset);
+    }
+}
+
+void softpwm_led_decrease(uint8_t index, uint8_t offset)
+{
+    if (softpwm_led_ocr_buff[index] < offset) {
+        softpwm_led_ocr_buff[index] = 0;
+    }
+    else {
+        softpwm_led_ocr_buff[index] -= offset;
+    }
+}
+
+void softpwm_led_decrease_all(uint8_t offset)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        softpwm_led_decrease(i, offset);
+    }
+}
+
 inline uint8_t softpwm_led_get_state(void)
 {
     return softpwm_led_state;
 }
+
+#ifdef FADING_LED_ENABLE
+
+static led_pack_t fading_led_state = 0;
+static led_pack_t fading_led_direction = 0;
+static uint8_t fading_led_duration = 0;
+
+void fading_led_enable(uint8_t index)
+{
+    LED_BIT_SET(fading_led_state, index);
+}
+
+void fading_led_enable_all(void)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        LED_BIT_SET(fading_led_state, i);
+    }
+}
+
+void fading_led_disable(uint8_t index)
+{
+    LED_BIT_CLEAR(fading_led_state, index);
+}
+
+void fading_led_disable_all(void)
+{
+    fading_led_state = 0;
+}
+
+void fading_led_toggle(uint8_t index)
+{
+    LED_BIT_XOR(fading_led_state, index);
+}
+
+void fading_led_toggle_all(void)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        LED_BIT_XOR(fading_led_state, i);
+    }
+}
+
+void fading_led_set_direction(uint8_t dir)
+{
+    fading_led_direction = dir;
+}
+
+void fading_led_set_duration(uint8_t dur)
+{
+    fading_led_duration = dur;
+}
+
+#endif
 
 #ifdef BREATHING_LED_ENABLE
 
@@ -116,11 +202,7 @@ static const uint8_t breathing_table[128] PROGMEM = {
 };
 
 static led_pack_t breathing_led_state = 0;
-static led_pack_t breathing_led_direction = 0;
-static led_pack_t breathing_led_rebound_low = 0;
-static led_pack_t breathing_led_rebound_high = 0;
-static uint8_t breathing_led_index[LED_COUNT] = {0};
-static uint8_t breathing_led_duration[LED_COUNT] = {0};
+static uint8_t breathing_led_duration = 0;
 
 void breathing_led_enable(uint8_t index)
 {
@@ -156,87 +238,9 @@ void breathing_led_toggle_all(void)
     }
 }
 
-void breathing_led_increase(uint8_t index, uint8_t offset)
+void breathing_led_set_duration(uint8_t dur)
 {
-    if (breathing_led_index[index] + offset > 0x7F) {
-        breathing_led_index[index] = 0x7F;
-        if (breathing_led_rebound_high & LED_BIT(index)) {
-            LED_BIT_SET(breathing_led_direction, index);
-        }
-    }
-    else {
-        breathing_led_index[index] += offset;
-    }
-}
-
-void breathing_led_decrease(uint8_t index, uint8_t offset)
-{
-    if (breathing_led_index[index] < offset) {
-        breathing_led_index[index] = 0;
-        if (breathing_led_rebound_low & LED_BIT(index)) {
-            LED_BIT_CLEAR(breathing_led_direction, index);
-        }
-    }
-    else {
-        breathing_led_index[index] -= offset;
-    }
-}
-
-void breathing_led_set_mode(uint8_t index, uint8_t mode)
-{
-    switch (mode) {
-        case BREATHING_LED_UP:
-            breathing_led_index[index] = 0;
-            LED_BIT_CLEAR(breathing_led_direction, index);
-            LED_BIT_CLEAR(breathing_led_rebound_low, index);
-            LED_BIT_CLEAR(breathing_led_rebound_high, index);
-            break;
-        case BREATHING_LED_DOWN:
-            breathing_led_index[index] = 0x7F;
-            LED_BIT_SET(breathing_led_direction, index);
-            LED_BIT_CLEAR(breathing_led_rebound_low, index);
-            LED_BIT_CLEAR(breathing_led_rebound_high, index);
-            break;
-        case BREATHING_LED_CYCLE:
-            breathing_led_index[index] = 0;
-            LED_BIT_CLEAR(breathing_led_direction, index);
-            LED_BIT_SET(breathing_led_rebound_low, index);
-            LED_BIT_SET(breathing_led_rebound_high, index);
-    }
-}
-
-void breathing_led_set_duration(uint8_t index, uint8_t dur)
-{
-    breathing_led_duration[index] = dur;
-    //dprintf("breathing led set duration: %u\n", breathing_led_duration);
-}
-
-void breathing_led_increase_all(uint8_t offset)
-{
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        breathing_led_increase(i, offset);
-    }
-}
-
-void breathing_led_decrease_all(uint8_t offset)
-{
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        breathing_led_decrease(i, offset);
-    }
-}
-
-void breathing_led_set_mode_all(uint8_t mode)
-{
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        breathing_led_set_mode(i, mode);
-    }
-}
-
-void breathing_led_set_duration_all(uint8_t dur)
-{
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-        breathing_led_duration[i] = dur;
-    }
+    breathing_led_duration = dur;
 }
 
 #endif
@@ -263,23 +267,59 @@ ISR(TIMER1_COMPA_vect)
         }
     }
 
-#ifdef BREATHING_LED_ENABLE
-    static uint8_t count = 0;
-    static uint8_t step[LED_COUNT] = {0};
-    if (breathing_led_state) {
-        if (++count > SOFTPWM_LED_FREQ) {
-            count = 0;
-            for (uint8_t i = 0; i < LED_COUNT; i++) {
-                if (breathing_led_state & LED_BIT(i)) {
-                    if (++step[i] > breathing_led_duration[i]) {
-                        step[i] = 0;
-                        softpwm_led_ocr_buff[i] = pgm_read_byte(&breathing_table[breathing_led_index[i]]);
-                        if (breathing_led_direction & LED_BIT(i)) {
-                            breathing_led_decrease(i, 1);
+#ifdef FADING_LED_ENABLE
+    static uint8_t fading_led_counter = 0;
+    static uint8_t fading_led_step = 0;
+    if (fading_led_state) {
+        if (++fading_led_counter > SOFTPWM_LED_FREQ) {
+            fading_led_counter = 0;
+            if (++fading_led_step > fading_led_duration) {
+                fading_led_step = 0;
+                for (uint8_t i = 0; i < LED_COUNT; i++) {
+                    if (fading_led_state & LED_BIT(i)) {
+                        if (fading_led_direction) {
+                            softpwm_led_decrease(i, 1);
                         }
                         else {
-                            breathing_led_increase(i, 1);
+                            softpwm_led_increase(i, 1);
                         }
+                    }
+                }
+            }
+        }
+    }
+#endif
+
+#ifdef BREATHING_LED_ENABLE
+    static uint8_t breathing_led_counter = 0;
+    static uint8_t breathing_led_step = 0;
+    static uint8_t breathing_led_index = 0;
+    static uint8_t breathing_led_direction = 0;
+    if (breathing_led_state) {
+        if (++breathing_led_counter > SOFTPWM_LED_FREQ) {
+            breathing_led_counter = 0;
+            if (++breathing_led_step > breathing_led_duration) {
+                breathing_led_step = 0;
+                uint8_t value = pgm_read_byte(&breathing_table[breathing_led_index]);
+                for (uint8_t i = 0; i < LED_COUNT; i++) {
+                    if (breathing_led_state & LED_BIT(i)) {
+                        softpwm_led_ocr_buff[i] = value;
+                    }
+                }
+                if (breathing_led_direction) {
+                    if (breathing_led_index == 0) {
+                        breathing_led_direction = 0;
+                    }
+                    else {
+                        breathing_led_index--;
+                    }
+                }
+                else {
+                    if (breathing_led_index == 0x7F) {
+                        breathing_led_direction = 1;
+                    }
+                    else {
+                        breathing_led_index++;
                     }
                 }
             }

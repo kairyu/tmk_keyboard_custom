@@ -112,6 +112,7 @@ void backlight_set(uint8_t level)
         case 3:
             backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
+            fading_led_disable_all();
             breathing_led_disable_all();
 #else
             breathing_led_disable();
@@ -124,8 +125,8 @@ void backlight_set(uint8_t level)
             backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
             breathing_led_enable_all();
-            breathing_led_set_mode_all(BREATHING_LED_CYCLE);
-            breathing_led_set_duration_all(6 - level);
+            fading_led_disable_all();
+            breathing_led_set_duration(6 - level);
 #else
             breathing_led_enable();
             breathing_led_set_duration(6 - level);
@@ -133,19 +134,22 @@ void backlight_set(uint8_t level)
             break;
         case 7:
             backlight_enable();
-            breathing_led_enable_all();
-            breathing_led_set_mode_all(BREATHING_LED_UP);
-            breathing_led_set_duration_all(3);
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_IN);
+            fading_led_set_duration(3);
             break;
         case 8:
             backlight_enable();
-            breathing_led_enable_all();
-            breathing_led_set_mode_all(BREATHING_LED_DOWN);
-            breathing_led_set_duration_all(3);
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_OUT);
+            fading_led_set_duration(3);
             break;
         case 0:
         default:
 #ifdef SOFTPWM_LED_ENABLE
+            fading_led_disable_all();
             breathing_led_disable_all();
 #else
             breathing_led_disable();
@@ -221,16 +225,16 @@ void softpwm_led_off(uint8_t index)
 #endif
 #endif
 
-void key_event(keyevent_t event)
+void action_keyevent(keyevent_t event)
 {
     if (backlight_mode == 7) {
         if (event.pressed) {
-            breathing_led_decrease_all(32);
+            softpwm_led_decrease_all(32);
         }
     }
     if (backlight_mode == 8) {
         if (event.pressed) {
-            breathing_led_increase_all(32);
+            softpwm_led_increase_all(32);
         }
     }
 }
