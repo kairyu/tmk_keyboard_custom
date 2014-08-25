@@ -24,8 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "breathing_led.h"
 #endif
+#include "action.h"
 
 #ifdef BACKLIGHT_ENABLE
+
+static uint8_t backlight_mode;
 
 void backlight_enable(void);
 void backlight_disable(void);
@@ -101,6 +104,7 @@ void backlight_disable(void)
 
 void backlight_set(uint8_t level)
 {
+    backlight_mode = level;
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
         case 1:
@@ -108,6 +112,7 @@ void backlight_set(uint8_t level)
         case 3:
             backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
+            fading_led_disable_all();
             breathing_led_disable_all();
 #else
             breathing_led_disable();
@@ -120,15 +125,31 @@ void backlight_set(uint8_t level)
             backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
             breathing_led_enable_all();
-            breathing_led_set_duration_all(6 - level);
+            fading_led_disable_all();
+            breathing_led_set_duration(6 - level);
 #else
             breathing_led_enable();
             breathing_led_set_duration(6 - level);
 #endif
             break;
+        case 7:
+            backlight_enable();
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_IN);
+            fading_led_set_duration(3);
+            break;
+        case 8:
+            backlight_enable();
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_OUT);
+            fading_led_set_duration(3);
+            break;
         case 0:
         default:
 #ifdef SOFTPWM_LED_ENABLE
+            fading_led_disable_all();
             breathing_led_disable_all();
 #else
             breathing_led_disable();
@@ -203,6 +224,20 @@ void softpwm_led_off(uint8_t index)
 
 #endif
 #endif
+
+void action_keyevent(keyevent_t event)
+{
+    if (backlight_mode == 7) {
+        if (event.pressed) {
+            softpwm_led_decrease_all(32);
+        }
+    }
+    if (backlight_mode == 8) {
+        if (event.pressed) {
+            softpwm_led_increase_all(32);
+        }
+    }
+}
 
 
 #ifndef SOFTPWM_LED_ENABLE

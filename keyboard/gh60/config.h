@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #ifdef BREATHING_LED_ENABLE
-#define BACKLIGHT_LEVELS 6
+#define BACKLIGHT_LEVELS 8
 #else
 #define BACKLIGHT_LEVELS 3
 #endif

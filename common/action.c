@@ -43,6 +43,8 @@ void action_exec(keyevent_t event)
 
     keyrecord_t record = { .event = event };
 
+    action_keyevent(event);
+
 #ifndef NO_ACTION_TAPPING
     action_tapping_process(record);
 #else
@@ -556,4 +558,9 @@ void debug_action(action_t action)
         default:                    dprint("UNKNOWN");               break;
     }
     dprintf("[%X:%02X]", action.kind.param>>8, action.kind.param&0xff);
+}
+
+__attribute__ ((weak))
+void action_keyevent(keyevent_t event)
+{
 }
