@@ -55,6 +55,9 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt);
 /* user defined special function */
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt);
 
+/* keyevent callback */
+void action_keyevent(keyevent_t event);
+
 /* Utilities for actions.  */
 void process_action(keyrecord_t *record);
 void register_code(uint8_t code);
@@ -66,7 +69,6 @@ void clear_keyboard(void);
 void clear_keyboard_but_mods(void);
 void layer_switch(uint8_t new_layer);
 bool is_tap_key(key_t key);
-void key_event(keyevent_t event);
 
 /* debug */
 void debug_event(keyevent_t event);
