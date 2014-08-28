@@ -42,11 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE    5
 
 /* number of backlight levels */
-#ifdef BREATHING_LED_ENABLE
-#define BACKLIGHT_LEVELS 6
-#else
-#define BACKLIGHT_LEVELS 3
-#endif
+#define BACKLIGHT_LEVELS 8
 
 /* number of LEDs */
 #define LED_COUNT 4
@@ -64,15 +60,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* PS2 mouse support */
 #ifdef PS2_MOUSE_ENABLE
+
 #define PS2_CLOCK_PORT	PORTD
 #define PS2_CLOCK_PIN	PIND
 #define PS2_CLOCK_DDR	DDRD
-#define PS2_CLOCK_BIT	PD3
+#define PS2_CLOCK_BIT	PD5
 
 #define PS2_DATA_PORT	PORTD
 #define PS2_DATA_PIN	PIND
 #define PS2_DATA_DDR	DDRD
-#define PS2_DATA_BIT	PD4
+#define PS2_DATA_BIT	PD2
+
+#ifdef PS2_USE_USART
+#define PS2_USART_INIT() do {   \
+    PS2_CLOCK_DDR &= ~(1<<PS2_CLOCK_BIT);   \
+    PS2_DATA_DDR &= ~(1<<PS2_DATA_BIT);     \
+    UCSR1C = ((1 << UMSEL10) |  \
+              (3 << UPM10)   |  \
+              (0 << USBS1)   |  \
+              (3 << UCSZ10)  |  \
+              (0 << UCPOL1));   \
+    UCSR1A = 0;                 \
+    UBRR1H = 0;                 \
+    UBRR1L = 0;                 \
+} while (0)
+#define PS2_USART_RX_INT_ON() do {  \
+    UCSR1B = ((1 << RXCIE1) |       \
+              (1 << RXEN1));        \
+} while (0)
+#define PS2_USART_RX_POLL_ON() do { \
+    UCSR1B = (1 << RXEN1);          \
+} while (0)
+#define PS2_USART_OFF() do {    \
+    UCSR1C = 0;                 \
+    UCSR1B &= ~((1 << RXEN1) |  \
+                (1 << TXEN1));  \
+} while (0)
+#define PS2_USART_RX_READY      (UCSR1A & (1<<RXC1))
+#define PS2_USART_RX_DATA       UDR1
+#define PS2_USART_ERROR         (UCSR1A & ((1<<FE1) | (1<<DOR1) | (1<<UPE1)))
+#define PS2_USART_RX_VECT       USART1_RX_vect
+#endif
+
 #endif
 
 /*

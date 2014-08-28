@@ -47,12 +47,7 @@ static matrix_row_t read_cols(void);
 static void init_cols(void);
 
 #ifdef PS2_MOUSE_ENABLE
-static uint8_t ps2_mouse_detected;
-
-uint8_t ps2_enabled(void)
-{
-    return ps2_mouse_detected;
-}
+uint8_t ps2_mouse_enabled;
 #endif
 
 inline
@@ -71,15 +66,16 @@ void matrix_init(void)
 {
 #ifdef PS2_MOUSE_ENABLE
     // ps2 mouse detect
-    DDRC &= ~(1<<PC2);
-    PORTC |= (1<<PC2);
-    if (PINC & (1<<PC2)) {
-        ps2_mouse_detected = 0;
+    DDRD &= ~(1<<PD3);
+    PORTD |= (1<<PD3);
+    _delay_us(30);
+    if (PIND & (1<<PD3)) {
+        ps2_mouse_enabled = 0;
     }
     else {
-        ps2_mouse_detected = 1;
+        ps2_mouse_enabled = 1;
     }
-    PORTC &= ~(1<<PC2);
+    PORTD &= ~(1<<PD3);
 #endif
 
     keymaps_cache_init();
