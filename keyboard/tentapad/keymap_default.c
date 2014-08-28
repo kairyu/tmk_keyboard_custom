@@ -68,42 +68,89 @@ uint16_t fn_actions_count(void) {
 }
 #endif
 
+uint8_t config_mode = 0;
+static uint8_t layer = 0;
+static uint8_t backlight = 0;
+static uint8_t layer_modified = 0;
+static uint8_t backlight_modified = 0;
+extern backlight_config_t backlight_config;
+
+void enter_config_mode(void);
+void exit_config_mode(void);
+void switch_layout(void);
+void switch_backlight(void);
+
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
-    static uint8_t config_mode = 0;
-    static uint8_t layer = 0;
-    static uint8_t backlight = 0;
     switch (id) {
         case CONFIG_MODE:
             if (record->event.pressed) {
                 if (config_mode) {
-                    config_mode = 0;
-                    layer_off(CONFIG_LAYER);
+                    exit_config_mode();
                 }
                 else {
-                    config_mode = 1;
-                    layer = 0;
-                    backlight = 0;
-                    layer_on(CONFIG_LAYER);
+                    enter_config_mode();
                 }
             }
             break;
         case SWITCH_LAYOUT:
             if (record->event.pressed) {
                 if (config_mode) {
-                    default_layer_set(1UL<<layer);
-                    eeconfig_write_default_layer(1UL<<layer);
-                    layer = (layer + 1) % (last_layer() + 1);
+                    switch_layout();
                 }
             }
             break;
         case SWITCH_BACKLIGHT:
             if (record->event.pressed) {
                 if (config_mode) {
-                    backlight_level(backlight);
-                    backlight = (backlight + 1) % (BACKLIGHT_LEVELS + 1);
+                    switch_backlight();
                 }
             }
             break;
     }
+}
+
+void enter_config_mode(void)
+{
+    config_mode = 1;
+    layer_modified = 0;
+    backlight_modified = 0;
+    backlight = backlight_config.level;
+    backlight_level(8);
+    layer_on(CONFIG_LAYER);
+}
+
+void exit_config_mode(void)
+{
+    config_mode = 0;
+    backlight_level(backlight);
+    layer_off(CONFIG_LAYER);
+    if (layer_modified) {
+        default_layer_set(1UL<<layer);
+        eeconfig_write_default_layer(1UL<<layer);
+    }
+}
+
+void switch_layout(void)
+{
+    if (!layer_modified) {
+        layer = 0;
+        layer_modified = 1;
+    }
+    else {
+        layer = (layer + 1) % (last_layer() + 1);
+    }
+    softpwm_led_set(0, 32 * (layer + 1));
+}
+
+void switch_backlight(void)
+{
+    if (!backlight_modified) {
+        backlight = 0;
+        backlight_modified = 1;
+    }
+    else {
+        backlight = (backlight + 1) % (BACKLIGHT_LEVELS);
+    }
+    softpwm_led_set(1, 32 * (backlight + 1));
 }
