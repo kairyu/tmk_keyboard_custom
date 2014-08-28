@@ -253,15 +253,13 @@ ISR(TIMER1_COMPA_vect)
 {
     static uint8_t pwm = 0;
     pwm++;
-    // LED on
-    if (pwm == 0) {
-        for (uint8_t i = 0; i < LED_COUNT; i++) {
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        // LED on
+        if (pwm == 0) {
             softpwm_led_on(i);
             softpwm_led_ocr[i] = softpwm_led_ocr_buff[i];
         }
-    }
-    // LED off
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        // LED off
         if (pwm == softpwm_led_ocr[i]) {
             softpwm_led_off(i);
         }
