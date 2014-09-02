@@ -41,7 +41,7 @@ extern const uint16_t fn_actions[];
     KA1, KB1, KC1, KD1, KE1, KF1, KG1, KH1, KI1, KJ1, KK1, KL1, KM1,      KN1, KP1, KQ1, KR1, KS2, \
     KA2, KB2, KC2, KD2, KE2, KF2, KG2, KH2, KI2, KJ2, KK2, KL2, KM2,      KN2, KP2, KQ2, KR2, KS3, \
     KA3, KB3, KC3, KD3, KE3, KF3, KG3, KH3, KI3, KJ3, KK3, KL3,           KN3, KP3, KQ3, KR3,      \
-    KA4, KB4, KC4, KD4, KE4, KF4, KG4, KH4, KI4, KJ4, KK4,                KN4, KP4, KQ4, KR4, KS5, \
+    KA4, KB4, KC4, KD4, KE4, KF4, KG4, KH4, KI4, KJ4, KK4,           KL4, KN4, KP4, KQ4, KR4, KS5, \
     KA5, KB5, KC5,           KF5,                KJ5, KK5, KL5,           KN5, KP5, KQ5, KR5       \
 ) { \
     { KC_##KA0, KC_##KA1, KC_##KA2, KC_##KA3, KC_##KA4, KC_##KA5 }, \
@@ -55,7 +55,7 @@ extern const uint16_t fn_actions[];
     { KC_##KI0, KC_##KI1, KC_##KI2, KC_##KI3, KC_##KI4, KC_NO    }, \
     { KC_##KJ0, KC_##KJ1, KC_##KJ2, KC_##KJ3, KC_##KJ4, KC_##KJ5 }, \
     { KC_##KK0, KC_##KK1, KC_##KK2, KC_##KK3, KC_##KK4, KC_##KK5 }, \
-    { KC_##KL0, KC_##KL1, KC_##KL2, KC_##KL3, KC_NO,    KC_##KL5 }, \
+    { KC_##KL0, KC_##KL1, KC_##KL2, KC_##KL3, KC_##KL4, KC_##KL5 }, \
     { KC_##KM0, KC_##KM1, KC_##KM2, KC_NO,    KC_NO,    KC_NO    }, \
     { KC_##KN0, KC_##KN1, KC_##KN2, KC_##KN3, KC_##KN4, KC_##KN5 }, \
     { KC_##KP0, KC_##KP1, KC_##KP2, KC_##KP3, KC_##KP4, KC_##KP5 }, \

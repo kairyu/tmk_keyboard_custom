@@ -18,7 +18,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * |-----------------------------------------------------------+---+---+---+---|
      * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |  1|  2|  3|   |
      * |-----------------------------------------------------------+---+---+---|Ent|
-     * |Ctrl|Gui |Alt |         Space          |Alt |Gui |Fn0 |Ctrl|  0|  .|  ,|   |
+     * |Ctrl|Gui |Alt |         Space          |Alt |Gui |Fn0 |Ctrl|  ,|  0|  .|   |
      * `---------------------------------------------------------------------------'
      */
     KEYMAP(
@@ -26,8 +26,8 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         GRV, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL,      BSPC,FN4, PSLS,PAST,PMNS, \
         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,     BSLS,P7,  P8,  P9,  PPLS, \
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,          ENT, P4,  P5,  P6,        \
-        LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,               RSFT,P1,  P2,  P3,  PENT, \
-        LCTL,LGUI,LALT,          SPC,                RALT,RGUI,FN0,           RCTL,P0,  PDOT,PCMM       ),
+        LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,          RSFT,FN0, P1,  P2,  P3,  PENT, \
+        LCTL,LGUI,LALT,          SPC,                RALT,RGUI,FN0,           RCTL,PCMM,P0,  PDOT       ),
     /* Keymap 1: Fn Layer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
@@ -48,7 +48,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,NLCK,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
-        TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,APP, TRNS,TRNS,TRNS,               TRNS,TRNS,UP,  TRNS,TRNS, \
+        TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,APP, TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,UP,  TRNS,TRNS, \
         TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,LEFT,DOWN,RGHT       ),
     /* Keymap 2: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
@@ -70,7 +70,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,TRNS,      \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,               TRNS,TRNS,UP,  TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,TRNS,TRNS,UP,  TRNS,TRNS, \
         TRNS,TRNS,TRNS,          TRNS,               TRNS,TRNS,TRNS,          TRNS,LEFT,DOWN,RGHT       ),
 };
 
