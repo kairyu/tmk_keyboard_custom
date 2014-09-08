@@ -24,7 +24,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSLS, \
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,NO,  ENT,  \
         LSFT,NO,  Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,FN0, RSFT, \
-        LCTL,LGUI,LALT,          SPC,                NO,  RALT,FN0, RGUI,RCTL),
+        LCTL,LGUI,LALT,          SPC,                     RALT,FN0, RGUI,RCTL),
     /* Keymap 1: Fn Layer
      * ,-----------------------------------------------------------.
      * |  `| F1| F2| F3| F4| F5| F6| F7| F8| F9|F10|F11|F12|Delete |
@@ -43,7 +43,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,UP,  TRNS,TRNS,TRNS,CALC,TRNS,INS, TRNS,PSCR,SLCK,PAUS,TRNS, \
         TRNS,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,HOME,PGUP,NO,  TRNS, \
         TRNS,NO,  TRNS,APP, FN1, FN2, FN3, VOLD,VOLU,MUTE,END, PGDN,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,          TRNS,               NO,  TRNS,TRNS,TRNS,TRNS),
+        TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,TRNS,TRNS),
 };
 
 /*
@@ -61,7 +61,7 @@ const uint16_t fn_actions[] PROGMEM = {
     [3] = ACTION_BACKLIGHT_INCREASE()
 };
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 uint16_t keys_count(void) {
     return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
 }

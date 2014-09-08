@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #ifdef BREATHING_LED_ENABLE
-#define BACKLIGHT_LEVELS 6
+#define BACKLIGHT_LEVELS 8
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
@@ -51,6 +51,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef GH60_REV_CNY
 #define LED_MATRIX_ROWS 6
 #define LED_MATRIX_COLS 14
+#endif
+
+/* LED mapping */
+#ifdef LEDMAP_ENABLE
+#if defined(GH60_REV_CHN)
+#define LED_COUNT 2
+#else
+#define LED_COUNT 5
+#endif
 #endif
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */

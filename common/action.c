@@ -43,6 +43,8 @@ void action_exec(keyevent_t event)
 
     keyrecord_t record = { .event = event };
 
+    action_keyevent(event);
+
 #ifndef NO_ACTION_TAPPING
     action_tapping_process(record);
 #else
@@ -294,7 +296,11 @@ void process_action(keyrecord_t *record)
 #ifdef BACKLIGHT_ENABLE
         case ACT_BACKLIGHT:
             if (!event.pressed) {
-                switch (action.backlight.id) {
+                /* Backwards compatibility */
+                if (action.backlight.level != 0 && action.backlight.opt != BACKLIGHT_LEVEL) {
+                    action.backlight.opt = action.backlight.level;
+                }
+                switch (action.backlight.opt) {
                     case BACKLIGHT_INCREASE:
                         backlight_increase();
                         break;
@@ -306,6 +312,9 @@ void process_action(keyrecord_t *record)
                         break;
                     case BACKLIGHT_STEP:
                         backlight_step();
+                        break;
+                    case BACKLIGHT_LEVEL:
+                        backlight_level(action.backlight.level);
                         break;
                 }
             }
@@ -549,4 +558,9 @@ void debug_action(action_t action)
         default:                    dprint("UNKNOWN");               break;
     }
     dprintf("[%X:%02X]", action.kind.param>>8, action.kind.param&0xff);
+}
+
+__attribute__ ((weak))
+void action_keyevent(keyevent_t event)
+{
 }

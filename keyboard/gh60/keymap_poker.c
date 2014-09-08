@@ -103,7 +103,7 @@ const uint16_t PROGMEM fn_actions[] = {
     [8] = ACTION_DEFAULT_LAYER_SET(3),  // set workman layout
 };
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 uint16_t keys_count(void) {
     return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
 }

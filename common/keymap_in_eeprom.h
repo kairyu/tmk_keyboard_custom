@@ -1,5 +1,5 @@
 /*
-Copyright 2013 Kai Ryu <kai1103@gmail.com>
+Copyright 2013,2014 Kai Ryu <kai1103@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,40 +15,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KEYMAP_EX_H
-#define KEYMAP_EX_H
+#ifndef KEYMAP_IN_EEPROM_H
+#define KEYMAP_IN_EEPROM_H
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 
 #include <stdint.h>
 #include <stdbool.h>
 
-#define EECONFIG_KEYMAP_EX 0x10
+#ifndef EECONFIG_KEYMAP_IN_EEPROM
+#define EECONFIG_KEYMAP_IN_EEPROM 0x10
+#endif
 #ifndef FN_ACTIONS_COUNT
 #define FN_ACTIONS_COUNT 32
 #endif
 #ifndef KEYMAPS_COUNT
-#define KEYMAPS_COUNT 8
+#define KEYMAPS_COUNT 1
 #endif
+#ifndef MATRIX_SIZE
+#define MATRIX_SIZE (matrix_rows() * matrix_cols())
+#endif
+#define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_SIZE)
 
 typedef struct {
     uint16_t checksum;
     uint16_t fn_actions[FN_ACTIONS_COUNT];
     uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS];
-} keymap_ex_t;
+} keymap_in_eeprom_t;
 
-#define EECONFIG_KEYMAP_DEBUG (EECONFIG_KEYMAP_EX - sizeof(uint16_t))
-#define EECONFIG_KEYMAP_CHECKSUM (EECONFIG_KEYMAP_EX)
-#define EECONFIG_KEYMAP_FN_ACTIONS (EECONFIG_KEYMAP_EX + sizeof(uint16_t))
-#define EECONFIG_KEYMAP_KEYMAPS (EECONFIG_KEYMAP_FN_ACTIONS + sizeof(uint16_t) * FN_ACTIONS_COUNT)
+#define EECONFIG_KEYMAP_CHECKSUM   (uint16_t *)(EECONFIG_KEYMAP_IN_EEPROM)
+#define EECONFIG_KEYMAP_FN_ACTIONS (uint16_t *)(EECONFIG_KEYMAP_CHECKSUM + 1)
+#define EECONFIG_KEYMAP_KEYMAPS    (uint8_t *)(EECONFIG_KEYMAP_FN_ACTIONS + FN_ACTIONS_COUNT)
+#define EECONFIG_KEYMAP_DEBUG      (uint16_t *)(EECONFIG_KEYMAP_CHECKSUM - 1)
 
-#define KEYS_COUNT (KEYMAPS_COUNT * MATRIX_ROWS * MATRIX_COLS)
 #define KEYMAP_SIZE (sizeof(uint16_t) * FN_ACTIONS_COUNT + sizeof(uint8_t) * KEYS_COUNT)
-#define FN_ACTION_OFFSET(index) (sizeof(uint16_t) * index)
-#define KEY_OFFSET(layer, row, col) (sizeof(uint8_t) * (layer * MATRIX_ROWS * MATRIX_COLS + row * MATRIX_COLS + col))
+#define KEYMAP_WORD_SIZE ((KEYMAP_SIZE + 1) / 2)
+#define KEY_OFFSET(layer, row, col) (layer * matrix_rows() * matrix_cols() + row * matrix_cols() + col)
 
-void keymap_ex_init(void);
-void keymap_ex_disable(void);
+void keymap_in_eeprom_init(void);
+void keymap_in_eeprom_disable(void);
 bool check_keymap_in_eeprom(void);
 void write_keymap_to_eeprom(void);
 uint8_t eeconfig_read_keymap_key(uint8_t layer, uint8_t row, uint8_t col);

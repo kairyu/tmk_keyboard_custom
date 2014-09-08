@@ -5,8 +5,11 @@
 #include "bootloader.h"
 #include "debug.h"
 #include "keymap.h"
+#include "host.h"
 #include "action_layer.h"
 #include "eeconfig.h"
+#include "keymap_in_eeprom.h"
+#include "ledmap_in_eeprom.h"
 #include "bootmagic.h"
 
 
@@ -32,6 +35,12 @@ void bootmagic(void)
     if (bootmagic_scan_keycode(BOOTMAGIC_KEY_EEPROM_CLEAR)) {
         eeconfig_disable();
         eeconfig_init();
+#ifdef KEYMAP_IN_EEPROM_ENABLE
+        write_keymap_to_eeprom();
+#endif
+#ifdef LEDMAP_IN_EEPROM_ENABLE
+        write_ledmap_to_eeprom();
+#endif
     }
 
     /* bootloader */
@@ -77,7 +86,14 @@ void bootmagic(void)
     if (bootmagic_scan_keycode(BOOTMAGIC_KEY_SWAP_BACKSLASH_BACKSPACE)) {
         keymap_config.swap_backslash_backspace = !keymap_config.swap_backslash_backspace;
     }
+    if (bootmagic_scan_keycode(BOOTMAGIC_HOST_NKRO)) {
+        keymap_config.nkro = !keymap_config.nkro;
+    }
     eeconfig_write_keymap(keymap_config.raw);
+
+#ifdef NKRO_ENABLE
+    keyboard_nkro = keymap_config.nkro;
+#endif
 
     /* default layer */
     uint8_t default_layer = 0;

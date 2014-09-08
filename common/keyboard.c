@@ -31,7 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "bootmagic.h"
 #include "eeconfig.h"
 #include "backlight.h"
-#include "keymap_ex.h"
+#ifdef SOFTPWM_LED_ENABLE
+#include "softpwm_led.h"
+#else
+#include "breathing_led.h"
+#endif
+#include "ledmap.h"
+#include "ledmap_in_eeprom.h"
+#include "keymap_in_eeprom.h"
 #ifdef MOUSEKEY_ENABLE
 #   include "mousekey.h"
 #endif
@@ -77,16 +84,27 @@ void keyboard_init(void)
     bootmagic();
 #endif
 
-#ifdef BACKLIGHT_ENABLE
-    backlight_init();
+#ifdef LEDMAP_ENABLE
+#ifdef LEDMAP_IN_EEPROM_ENABLE
+    ledmap_in_eeprom_init();
+#endif
+    ledmap_init();
+#endif
+
+#ifdef SOFTPWM_LED_ENABLE
+    softpwm_init();
 #endif
 
 #ifdef BREATHING_LED_ENABLE
     breathing_led_init();
 #endif
 
-#ifdef KEYMAP_EX_ENABLE
-    keymap_ex_init();
+#ifdef BACKLIGHT_ENABLE
+    backlight_init();
+#endif
+
+#ifdef KEYMAP_IN_EEPROM_ENABLE
+    keymap_in_eeprom_init();
 #endif
 }
 
