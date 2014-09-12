@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "action_layer.h"
 
 
+#ifndef LEDMAP_ENABLE
+
 /* LED pin configration
  *   REV_V2
  *     CapsLock  PB5 (D9)
@@ -41,6 +43,15 @@ void led_set(uint8_t usb_led)
         DDRB &= ~(1<<PB5);
         PORTB &= ~(1<<PB5);
     }
+    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
+        // output high
+        DDRB |= (1<<PB2);
+        PORTB |= (1<<PB2);
+    } else {
+        // Hi-Z
+        DDRB &= ~(1<<PB2);
+        PORTB &= ~(1<<PB2);
+    }
 #elif defined(REV_V3)
     if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
         // output high
@@ -51,24 +62,7 @@ void led_set(uint8_t usb_led)
         DDRC &= ~(1<<PC7);
         PORTC &= ~(1<<PC7);
     }
-#endif
-}
-
-#ifdef ON_LAYER_CHANGE
-void layer_change(uint32_t state)
-{
-#if defined(REV_V2)
-    if (state & (1UL<<2)) {
-        // output high
-        DDRB |= (1<<PB2);
-        PORTB |= (1<<PB2);
-    } else {
-        // Hi-Z
-        DDRB &= ~(1<<PB2);
-        PORTB &= ~(1<<PB2);
-    }
-#elif defined(REV_V3)
-    if (state & (1UL<<2)) {
+    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
         // output high
         DDRC |= (1<<PC6);
         PORTC |= (1<<PC6);
@@ -79,4 +73,5 @@ void layer_change(uint32_t state)
     }
 #endif
 }
+
 #endif
