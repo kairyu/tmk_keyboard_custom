@@ -232,14 +232,10 @@ static void select_row(uint8_t row)
     else if (row == 16) {
         DDRD |= (1<<PD7);
         PORTD &= ~(1<<PD7);
-        DDRB |= (1<<PB5);
-        PORTB &= ~(1<<PB5);
     }
     else if (row == 17) {
         DDRE |= (1<<PE6);
         PORTE &= ~(1<<PE6);
-        DDRB |= (1<<PB6);
-        PORTB &= ~(1<<PB6);
     }
 #elif defined(REV_V3)
     // Output low(DDR:1, PORT:0) to select
