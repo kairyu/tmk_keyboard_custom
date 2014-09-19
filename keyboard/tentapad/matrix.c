@@ -208,13 +208,14 @@ static matrix_row_t read_cols(void)
            (PIND&(1<<PD6) ? 0 : (1<<3)) |
            (PINB&(1<<PB3) ? 0 : (1<<4));
     */
+    /*
     return (PINB&(1<<PB0) ? 0 : (1<<0)) |
            (PINB&(1<<PB1) ? 0 : (1<<1)) |
            (PINB&(1<<PB3) ? 0 : (1<<2)) |
            (PINB&(1<<PB2) ? 0 : (1<<3)) |
            (PINB&(1<<PB4) ? 0 : (1<<4));
-
-    //return (~PINB) & 0b00011111;
+   */
+    return (~PINB) & 0b00011111;
 #else
     return (PINE&(1<<PE6) ? 0 : (1<<0)) |
            (PINC&(1<<PC7) ? 0 : (1<<1)) |
