@@ -1,0 +1,152 @@
+/*
+Copyright 2014 Kai Ryu <kai1103@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <stdint.h>
+#include "action.h"
+#include "action_layer.h"
+#include "backlight.h"
+#include "softpwm_led.h"
+#include "eeconfig.h"
+#include "keymap_common.h"
+#include "tentapad.h"
+#include "debug.h"
+
+uint8_t config_mode = 0;
+static uint8_t layer = 0;
+static uint8_t backlight = 0;
+static uint8_t layer_modified = 0;
+static uint8_t backlight_modified = 0;
+extern uint8_t backlight_mode;
+extern const uint8_t backlight_brightness;
+
+void action_keyevent(keyevent_t event)
+{
+    uint8_t key = event.key.col;
+    if (config_mode) {
+        /* config mode */
+        switch (key) {
+            case KEY_K1:
+                if (event.pressed) {
+                    switch_layout();
+                }
+                break;
+            case KEY_K2:
+                if (event.pressed) {
+                    switch_backlight();
+                }
+                break;
+            case KEY_CFG:
+                if (event.pressed) {
+                    exit_config_mode();
+                }
+                break;
+        }
+    }
+    else {
+        /* normal mode */
+        switch (key) {
+            case KEY_K1: case KEY_K2:
+                if (event.pressed) {
+                    /* press */
+                    switch (backlight_mode) {
+                        case 0: case 6:
+                            softpwm_led_on(key);
+                            break;
+                        case 1: case 2:
+                            softpwm_led_increase(LED_KEY_SIDE - 1 + backlight_mode, 32);
+                        case 3 ... 5:
+                            softpwm_led_set(key, backlight_brightness);
+                            break;
+                    }
+                }
+                else {
+                    /* release */
+                    switch (backlight_mode) {
+                        case 0: case 6:
+                            softpwm_led_off(key);
+                            break;
+                        case 1 ... 5:
+                            softpwm_led_set(key, 0);
+                            break;
+                    }
+                }
+                break;
+            case KEY_TT:
+                if (event.pressed) {
+                    switch (backlight_mode) {
+                        case 1: case 2:
+                            softpwm_led_increase(LED_KEY_SIDE - 1 + backlight_mode, 32);
+                            break;
+                    }
+                }
+                break;
+            case KEY_CFG:
+                if (event.pressed) {
+                    enter_config_mode();
+                }
+                break;
+        }
+    }
+}
+
+void enter_config_mode(void)
+{
+    config_mode = 1;
+    layer_modified = 0;
+    backlight_modified = 0;
+    backlight = backlight_mode;
+    backlight_level(8);
+    layer_on(CONFIG_LAYER);
+}
+
+void exit_config_mode(void)
+{
+    config_mode = 0;
+    backlight_level(backlight);
+    layer_off(CONFIG_LAYER);
+    if (layer_modified) {
+        default_layer_set(1UL<<layer);
+        eeconfig_write_default_layer(1UL<<layer);
+    }
+}
+
+void switch_layout(void)
+{
+    if (!layer_modified) {
+        layer = 0;
+        layer_modified = 1;
+    }
+    else {
+        layer = (layer + 1) % (last_layer() + 1);
+    }
+    xprintf("layer: %d\n", layer);
+    xprintf("last layer: %d\n", last_layer());
+    softpwm_led_set(0, 32 * (layer + 1));
+}
+
+void switch_backlight(void)
+{
+    if (!backlight_modified) {
+        backlight = 0;
+        backlight_modified = 1;
+    }
+    else {
+        backlight = (backlight + 1) % (BACKLIGHT_LEVELS);
+    }
+    xprintf("backlight: %d\n", backlight);
+    softpwm_led_set(1, 32 * (backlight + 1));
+}

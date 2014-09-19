@@ -15,23 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KEYMAP_COMMON_H
-#define KEYMAP_COMMON_H
+#ifndef TENTAPAD_H
+#define TENTAPAD_H
 
-#include <stdint.h>
+enum {
+    KEY_K1 = 0,
+    KEY_K2,
+    KEY_TT,
+    KEY_TP,
+    KEY_CFG
+};
 
-extern const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS];
-extern const uint16_t fn_actions[];
+enum {
+    LED_KEY_1 = 0,
+    LED_KEY_2,
+    LED_KEY_SIDE,
+    LED_BOARD_SIDE
+};
 
-void keymaps_cache_init(void);
-uint8_t last_layer(void);
+#define CONFIG_LAYER 31
 
-/* TentaPad keymap definition macro
- */
-#define KEYMAP( \
-    K1, K2, TT \
-) { \
-    { KC_##K1, KC_##K2, KC_##TT } \
-}
+void enter_config_mode(void);
+void exit_config_mode(void);
+void switch_layout(void);
+void switch_backlight(void);
 
 #endif
+
