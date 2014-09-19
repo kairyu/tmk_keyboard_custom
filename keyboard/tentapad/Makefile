@@ -49,6 +49,7 @@ TARGET_DIR = .
 
 # project specific files
 SRC =	keymap_common.c \
+	tentapad.c \
 	matrix.c \
 	led.c \
 	backlight.c \

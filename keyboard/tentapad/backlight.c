@@ -20,20 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 #include "softpwm_led.h"
-#include "action.h"
 #include "keymap_common.h"
+#include "tentapad.h"
 
 #ifdef BACKLIGHT_ENABLE
 
-static uint8_t backlight_mode;
-static const uint8_t backlight_brightness = 0xFF;
-
-enum {
-    LED_KEY_1 = 0,
-    LED_KEY_2,
-    LED_KEY_SIDE,
-    LED_BOARD_SIDE
-};
+uint8_t backlight_mode;
+const uint8_t backlight_brightness = 0xFF;
 
 void backlight_set(uint8_t level)
 {
@@ -160,46 +153,5 @@ void softpwm_led_off(uint8_t index)
 #endif
 }
 #endif
-
-extern uint8_t config_mode;
-
-void action_keyevent(keyevent_t event)
-{
-    if (config_mode) return;
-    if (event.key.col < 2) {
-        if (event.pressed) {
-            switch (backlight_mode) {
-                case 0: case 6:
-                    softpwm_led_on(event.key.col);
-                    break;
-                case 1 ... 5:
-                    softpwm_led_set(event.key.col, backlight_brightness);
-                    break;
-            }
-        }
-        else {
-            switch (backlight_mode) {
-                case 0: case 6:
-                    softpwm_led_off(event.key.col);
-                    break;
-                case 1 ... 5:
-                    softpwm_led_set(event.key.col, 0);
-                    break;
-            }
-        }
-    }
-    switch (backlight_mode) {
-        case 1:
-            if (event.pressed) {
-                softpwm_led_increase(LED_KEY_SIDE, 32);
-            }
-            break;
-        case 2:
-            if (event.pressed) {
-                softpwm_led_increase(LED_BOARD_SIDE, 32);
-            }
-            break;
-    }
-}
 
 #endif

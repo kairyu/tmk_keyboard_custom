@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_in_eeprom.h"
 #include "keymap_common.h"
 
-static uint8_t keymaps_cache[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS];
+static uint8_t keymaps_cache[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] = {0};
 static uint8_t last_layer_number = 1;
 
 void keymaps_cache_init(void)
@@ -30,26 +30,13 @@ void keymaps_cache_init(void)
         uint8_t non_empty_key = 0;
         for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
             for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-                if (col == 3) {
-                    keymaps_cache[layer][row][col] = KC_FN28;
-                }
-                else if (col == 4) {
-                    keymaps_cache[layer][row][col] = KC_FN29;
-                }
-                else {
-                    if (layer < CONFIG_LAYER) {
 #ifndef KEYMAP_IN_EEPROM_ENABLE
-                        keymaps_cache[layer][row][col] = pgm_read_byte(&keymaps[layer][row][col]);
+                keymaps_cache[layer][row][col] = pgm_read_byte(&keymaps[layer][row][col]);
 #else
-                        keymaps_cache[layer][row][col] = eeconfig_read_keymap_key(layer, row, col);
+                keymaps_cache[layer][row][col] = eeconfig_read_keymap_key(layer, row, col);
 #endif
-                        if (keymaps_cache[layer][row][col] > KC_TRANSPARENT) {
-                            non_empty_key++;
-                        }
-                    }
-                    else {
-                        keymaps_cache[layer][row][col] = pgm_read_byte(&keymaps[layer][row][col]);
-                    }
+                if (keymaps_cache[layer][row][col] > KC_TRANSPARENT) {
+                    non_empty_key++;
                 }
             }
         }
@@ -78,17 +65,9 @@ action_t keymap_fn_to_action(uint8_t keycode)
         .code = pgm_read_word(&fn_actions[FN_INDEX(keycode)])
     };
 #else
-    uint8_t index = FN_INDEX(keycode);
-    if (index < RESERVED_FN) {
-        return (action_t) {
-            .code = eeconfig_read_keymap_fn_action(index)
-        };
-    }
-    else {
-        return (action_t) {
-            .code = pgm_read_word(&fn_actions[index])
-        };
-    }
+    return (action_t) {
+        .code = pgm_read_word(&fn_actions[FN_INDEX(keycode)])
+    };
 #endif
 }
 
