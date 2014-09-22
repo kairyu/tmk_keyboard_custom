@@ -53,7 +53,8 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-	ledmap.c
+	ledmap.c \
+	vibration.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)

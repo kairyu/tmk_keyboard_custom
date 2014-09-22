@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef PS2_MOUSE_ENABLE
 #include "ps2.h"
 #endif
+#include "vibration.h"
 #include "keymap_common.h"
 
 
@@ -80,6 +81,8 @@ void matrix_init(void)
 
     keymaps_cache_init();
 
+    vibration_init();
+
     // initialize cols
     init_cols();
 }
@@ -125,6 +128,8 @@ uint8_t matrix_scan(void)
         }
     }
     */
+
+    vibration_task();
 
     return 1;
 }

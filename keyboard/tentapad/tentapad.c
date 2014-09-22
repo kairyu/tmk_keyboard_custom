@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "softpwm_led.h"
 #include "eeconfig.h"
 #include "keymap_common.h"
+#include "vibration.h"
 #include "tentapad.h"
 #include "debug.h"
 
@@ -87,6 +88,7 @@ void action_keyevent(keyevent_t event)
                 break;
             case KEY_TT:
                 if (event.pressed) {
+                    vibration(64);
                     switch (backlight_mode) {
                         case 1: case 2:
                             softpwm_led_increase(LED_KEY_SIDE - 1 + backlight_mode, 32);
