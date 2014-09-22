@@ -29,14 +29,14 @@ uint8_t ledmap_get_code(uint8_t index)
 void ledmap_led_init(void)
 {
 #if defined(REV_V2)
-    DDRB  |=  (1<<PB5 | 1<<PB2);
-    PORTB &= ~(1<<PB5 | 1<<PB2);
+    DDRB  |=  (1<<PB6 | 1<<PB5 | 1<<PB2);
+    PORTB &= ~(1<<PB6 | 1<<PB5 | 1<<PB2);
 #elif defined(REV_V3)
     DDRC  |=  (1<<PC7 | 1<<PC6);
     PORTC &= ~(1<<PC7 | 1<<PC6);
+    DDRB  |=  (1<<PB7);
+    PORTB &= ~(1<<PB7);
 #endif
-    DDRB  |=  (1<<PB6);
-    PORTB &= ~(1<<PB6);
 }
 
 void ledmap_led_on(uint8_t index)
@@ -62,7 +62,7 @@ void ledmap_led_on(uint8_t index)
             PORTC |= (1<<PC6);
             break;
         case 2:
-            PORTB |= (1<<PB6);
+            PORTB |= (1<<PB7);
             break;
     }
 #endif
@@ -91,7 +91,7 @@ void ledmap_led_off(uint8_t index)
             PORTC &= ~(1<<PC6);
             break;
         case 2:
-            PORTB &= ~(1<<PB6);
+            PORTB &= ~(1<<PB7);
             break;
     }
 #endif

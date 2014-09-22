@@ -47,7 +47,11 @@ void backlight_enable(void)
     softpwm_led_enable();
 #else
     // Turn on PWM
+#if defined(REV_V2)
     DDRB |= (1<<PB6);
+#elif defined(REV_V3)
+    DDRB |= (1<<PB7);
+#endif
     cli();
     TCCR1A |= ((1<<WGM10) | (1<<COM1B1));
     TCCR1B |= ((1<<CS11) | (1<<CS10));
@@ -62,7 +66,11 @@ void backlight_disable(void)
 #else
     // Turn off PWM
     cli();
+#if defined(REV_V2)
     DDRB &= ~(1<<PB6);
+#elif defined(REV_V3)
+    DDRB &= ~(1<<PB7);
+#endif
     TCCR1A &= ~( (1<<WGM10) | (1<<COM1B1) );
     TCCR1B &= ~( (1<<CS11) | (1<<CS10) );
     sei();
@@ -166,18 +174,31 @@ inline void backlight_set_raw(uint8_t raw)
 #ifndef LEDMAP_ENABLE
 void softpwm_led_init(void)
 {
+#if defined(REV_V2)
     DDRB |= (1<<PB6);
     PORTB &= ~(1<<PB6);
+#elif defined(REV_V3)
+    DDRB |= (1<<PB7);
+    PORTB &= ~(1<<PB7);
+#endif
 }
 
 void softpwm_led_on(uint8_t index)
 {
+#if defined(REV_V2)
     PORTB |= (1<<PB6);
+#elif defined(REV_V3)
+    PORTB |= (1<<PB7);
+#endif
 }
 
 void softpwm_led_off(uint8_t index)
 {
+#if defined(REV_V2)
     PORTB &= ~(1<<PB6);
+#elif defined(REV_V3)
+    PORTB &= ~(1<<PB7);
+#endif
 }
 #endif
 #endif
