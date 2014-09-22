@@ -31,6 +31,8 @@ static uint8_t real_mods = 0;
 static uint8_t weak_mods = 0;
 
 #ifdef USB_6KRO_ENABLE
+#undef REPORT_KEYS
+#define REPORT_KEYS 6
 #define RO_ADD(a, b) ((a + b) % REPORT_KEYS)
 #define RO_SUB(a, b) ((a - b + REPORT_KEYS) % REPORT_KEYS)
 #define RO_INC(a) RO_ADD(a, 1)
