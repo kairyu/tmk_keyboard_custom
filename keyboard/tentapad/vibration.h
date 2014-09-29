@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef VIBRATION_H
+#define VIBRATION_H
+
 #include <stdint.h>
 
 void vibration_init(void);
@@ -22,3 +25,5 @@ void vibration_task(void);
 void vibration_enable(void);
 void vibration_disable(void);
 void vibration(uint16_t duration);
+
+#endif
