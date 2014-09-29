@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "stdint.h"
 #include "led.h"
 
+#ifndef LEDMAP_ENABLE
+
 /* LED pin configuration
  * CapsLock: PC7
  * NumLock:  PE6
@@ -56,3 +58,5 @@ void led_set(uint8_t usb_led)
         PORTC &= ~(1<<PC6);
     }
 }
+
+#endif

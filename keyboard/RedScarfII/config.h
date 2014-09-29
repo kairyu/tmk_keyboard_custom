@@ -43,10 +43,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #ifdef BREATHING_LED_ENABLE
+#ifdef FADING_LED_ENABLE
+#define BACKLIGHT_LEVELS 8
+#else
 #define BACKLIGHT_LEVELS 6
+#endif
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
+
+#define LED_COUNT 4
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE

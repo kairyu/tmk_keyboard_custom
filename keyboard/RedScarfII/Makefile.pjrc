@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = RedScarfII__pjrc
+TARGET = RedScarfII_pjrc
 
 # Directory common source filess exist
 TOP_DIR = ../..
@@ -51,7 +51,8 @@ TARGET_DIR = .
 SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
-	backlight.c
+	backlight.c \
+	ledmap.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -99,9 +100,13 @@ COMMAND_ENABLE = yes	# Commands for debug and configuration
 #NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
-KEYMAP_EX_ENABLE = yes	# External keymap in eeprom
-KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
+KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
+#KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
+SOFTPWM_LED_ENABLE = yes # Enable SoftPWM to drive backlight
+FADING_LED_ENABLE = yes # Enable fading backlight
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
+LEDMAP_ENABLE = yes		# Enable LED mapping
+LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 
 # Search Path
