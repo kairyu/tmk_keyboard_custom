@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdint.h>
+#include <util/delay.h>
 #include "action.h"
 #include "action_layer.h"
 #include "backlight.h"
@@ -23,8 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eeconfig.h"
 #include "keymap_common.h"
 #include "vibration.h"
+#include "pitches.h"
+#include "buzzer.h"
 #include "tentapad.h"
 #include "debug.h"
+
+static const uint16_t tones[] PROGMEM = {
+    NOTE_C5, NOTE_D5, NOTE_E5, NOTE_F5, NOTE_G5, NOTE_A5, NOTE_B5,
+    NOTE_C6, NOTE_D6, NOTE_E6, NOTE_F6, NOTE_G6, NOTE_A6, NOTE_B6,
+    NOTE_C7
+};
 
 uint8_t config_mode = 0;
 static uint8_t layer = 0;
@@ -113,6 +122,11 @@ void enter_config_mode(void)
     backlight = backlight_mode;
     backlight_level(8);
     layer_on(CONFIG_LAYER);
+    softpwm_led_set(0, 32 * (layer + 1));
+    softpwm_led_set(1, 32 * (backlight + 1));
+    buzzer(pgm_read_word(&tones[0]), 50);
+    buzzer(pgm_read_word(&tones[4]), 50);
+    buzzer(pgm_read_word(&tones[7]), 50);
 }
 
 void exit_config_mode(void)
@@ -124,6 +138,9 @@ void exit_config_mode(void)
         default_layer_set(1UL<<layer);
         eeconfig_write_default_layer(1UL<<layer);
     }
+    buzzer(pgm_read_word(&tones[7]), 50);
+    buzzer(pgm_read_word(&tones[4]), 50);
+    buzzer(pgm_read_word(&tones[0]), 50);
 }
 
 void switch_layout(void)
@@ -135,9 +152,14 @@ void switch_layout(void)
     else {
         layer = (layer + 1) % (last_layer() + 1);
     }
-    xprintf("layer: %d\n", layer);
-    xprintf("last layer: %d\n", last_layer());
+    dprintf("layer: %d\n", layer);
+    dprintf("last layer: %d\n", last_layer());
     softpwm_led_set(0, 32 * (layer + 1));
+    buzzer(pgm_read_word(&tones[layer]), 50);
+    if (layer == 0) {
+        _delay_ms(10);
+        buzzer(pgm_read_word(&tones[layer]), 50);
+    }
 }
 
 void switch_backlight(void)
@@ -149,6 +171,11 @@ void switch_backlight(void)
     else {
         backlight = (backlight + 1) % (BACKLIGHT_LEVELS);
     }
-    xprintf("backlight: %d\n", backlight);
+    dprintf("backlight: %d\n", backlight);
     softpwm_led_set(1, 32 * (backlight + 1));
+    buzzer(pgm_read_word(&tones[7 + backlight]), 50);
+    if (backlight == 0) {
+        _delay_ms(10);
+        buzzer(pgm_read_word(&tones[7 + backlight]), 50);
+    }
 }
