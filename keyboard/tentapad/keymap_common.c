@@ -66,7 +66,7 @@ action_t keymap_fn_to_action(uint8_t keycode)
     };
 #else
     return (action_t) {
-        .code = pgm_read_word(&fn_actions[FN_INDEX(keycode)])
+        .code = eeconfig_read_keymap_fn_action(FN_INDEX(keycode))
     };
 #endif
 }
