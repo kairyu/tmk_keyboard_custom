@@ -17,11 +17,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <avr/io.h>
 #include "stdint.h"
+#include "bootloader.h"
+#include "timer.h"
 #include "led.h"
 
 
 #ifndef LEDMAP_ENABLE
 void led_set(uint8_t usb_led)
 {
+    static uint16_t start = 0;
+    static uint8_t count = 0;
+    if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
+        if (timer_elapsed(start) > 250) {
+            start = timer_read();
+            count = 0;
+        }
+        count++;
+        if (count >= 8) {
+            bootloader_jump();
+        }
+    }
 }
 #endif
