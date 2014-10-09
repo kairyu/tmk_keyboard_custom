@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef BACKLIGHT_ENABLE
 
 uint8_t backlight_mode;
-const uint8_t backlight_brightness = 0xFF;
+const uint8_t backlight_brightness_mid = 64;
+const uint8_t backlight_brightness_high = 255;
 
 void backlight_set(uint8_t level)
 {
@@ -44,14 +45,14 @@ void backlight_set(uint8_t level)
             softpwm_led_on(LED_BOARD_SIDE);
             break;
         case 1:
-            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness);
+            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness_mid);
             fading_led_disable_all();
             fading_led_enable(LED_KEY_SIDE);
             breathing_led_disable_all();
             softpwm_led_enable();
             break;
         case 2:
-            softpwm_led_set(LED_KEY_SIDE, backlight_brightness);
+            softpwm_led_set(LED_KEY_SIDE, backlight_brightness_mid);
             fading_led_disable_all();
             fading_led_enable(LED_BOARD_SIDE);
             breathing_led_disable_all();
@@ -65,14 +66,14 @@ void backlight_set(uint8_t level)
             softpwm_led_enable();
             break;
         case 4:
-            softpwm_led_set(LED_KEY_SIDE, backlight_brightness);
+            softpwm_led_set(LED_KEY_SIDE, backlight_brightness_mid);
             breathing_led_disable_all();
             breathing_led_enable(LED_BOARD_SIDE);
             fading_led_disable_all();
             softpwm_led_enable();
             break;
         case 5:
-            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness);
+            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness_mid);
             breathing_led_disable_all();
             breathing_led_enable(LED_KEY_SIDE);
             fading_led_disable_all();

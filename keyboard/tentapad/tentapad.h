@@ -33,12 +33,12 @@ enum {
     LED_BOARD_SIDE
 };
 
-#define CONFIG_LAYER 31
-
 void enter_config_mode(void);
 void exit_config_mode(void);
 void switch_layout(void);
 void switch_backlight(void);
+void set_layer_indicator(uint8_t layer);
+void set_backlight_indicator(uint8_t backlight);
 
 #endif
 
