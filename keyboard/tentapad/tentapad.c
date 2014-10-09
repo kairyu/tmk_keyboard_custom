@@ -41,7 +41,8 @@ static uint8_t backlight = 0;
 static uint8_t layer_modified = 0;
 static uint8_t backlight_modified = 0;
 extern uint8_t backlight_mode;
-extern const uint8_t backlight_brightness;
+extern const uint8_t backlight_brightness_mid;
+extern const uint8_t backlight_brightness_high;
 
 void action_keyevent(keyevent_t event)
 {
@@ -79,7 +80,7 @@ void action_keyevent(keyevent_t event)
                         case 1: case 2:
                             softpwm_led_increase(LED_KEY_SIDE - 1 + backlight_mode, 32);
                         case 3 ... 5:
-                            softpwm_led_set(key, backlight_brightness);
+                            softpwm_led_set(key, backlight_brightness_high);
                             break;
                     }
                 }
@@ -97,12 +98,32 @@ void action_keyevent(keyevent_t event)
                 break;
             case KEY_TT:
                 if (event.pressed) {
-                    vibration(64);
+                    vibration(32);
                     switch (backlight_mode) {
                         case 1: case 2:
                             softpwm_led_increase(LED_KEY_SIDE - 1 + backlight_mode, 32);
                             break;
                     }
+                }
+                break;
+            case KEY_TP:
+                switch (backlight_mode) {
+                    case 1: case 5:
+                        if (event.pressed) {
+                            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness_high);
+                        }
+                        else {
+                            softpwm_led_set(LED_BOARD_SIDE, backlight_brightness_mid);
+                        }
+                        break;
+                    case 2: case 4:
+                        if (event.pressed) {
+                            softpwm_led_set(LED_KEY_SIDE, backlight_brightness_high);
+                        }
+                        else {
+                            softpwm_led_set(LED_KEY_SIDE, backlight_brightness_mid);
+                        }
+                        break;
                 }
                 break;
             case KEY_CFG:
@@ -121,7 +142,6 @@ void enter_config_mode(void)
     backlight_modified = 0;
     backlight = backlight_mode;
     backlight_level(8);
-    layer_on(CONFIG_LAYER);
     softpwm_led_set(0, 32 * (layer + 1));
     softpwm_led_set(1, 32 * (backlight + 1));
     buzzer(pgm_read_word(&tones[0]), 50);
@@ -133,7 +153,6 @@ void exit_config_mode(void)
 {
     config_mode = 0;
     backlight_level(backlight);
-    layer_off(CONFIG_LAYER);
     if (layer_modified) {
         default_layer_set(1UL<<layer);
         eeconfig_write_default_layer(1UL<<layer);
@@ -154,12 +173,7 @@ void switch_layout(void)
     }
     dprintf("layer: %d\n", layer);
     dprintf("last layer: %d\n", last_layer());
-    softpwm_led_set(0, 32 * (layer + 1));
-    buzzer(pgm_read_word(&tones[layer]), 50);
-    if (layer == 0) {
-        _delay_ms(10);
-        buzzer(pgm_read_word(&tones[layer]), 50);
-    }
+    set_layer_indicator(layer);
 }
 
 void switch_backlight(void)
@@ -172,7 +186,23 @@ void switch_backlight(void)
         backlight = (backlight + 1) % (BACKLIGHT_LEVELS);
     }
     dprintf("backlight: %d\n", backlight);
-    softpwm_led_set(1, 32 * (backlight + 1));
+    set_backlight_indicator(backlight);
+}
+
+void set_layer_indicator(uint8_t layer)
+{
+    layer = (layer < 7) ? layer : 7;
+    softpwm_led_set(0, 32 * (layer + 1) - 1);
+    buzzer(pgm_read_word(&tones[layer]), 50);
+    if (layer == 0) {
+        _delay_ms(10);
+        buzzer(pgm_read_word(&tones[layer]), 50);
+    }
+}
+
+void set_backlight_indicator(uint8_t backlight)
+{
+    softpwm_led_set(1, 32 * (backlight + 1) - 1);
     buzzer(pgm_read_word(&tones[7 + backlight]), 50);
     if (backlight == 0) {
         _delay_ms(10);
