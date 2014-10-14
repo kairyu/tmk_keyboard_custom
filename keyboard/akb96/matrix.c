@@ -55,9 +55,11 @@ uint8_t matrix_cols(void)
 
 void matrix_init(void)
 {
+#ifndef REV_V3_LITE
     // disable JTAG
     MCUCR = (1<<JTD);
     MCUCR = (1<<JTD);
+#endif
 
     // initialize row and col
     unselect_rows();
@@ -141,6 +143,7 @@ uint8_t matrix_key_count(void)
  *  pin: D17 D15 A0  A1  A2  A3  (arduino) REV_V2
  *       PB3 PB1 PF7 PF6 PF5 PF4
  *       PF0 PF1 PF4 PF5 PF6 PF7           REV_V3
+ *       PD1 PD2 PD3 PD4 PD5 PD6
  */
 static void init_cols(void)
 {
@@ -153,6 +156,9 @@ static void init_cols(void)
 #elif defined(REV_V3)
     DDRF  &= ~(1<<PF0 | 1<<PF1 | 1<<PF4 | 1<<PF5 | 1<<PF6 | 1<<PF7);
     PORTF |=  (1<<PF0 | 1<<PF1 | 1<<PF4 | 1<<PF5 | 1<<PF6 | 1<<PF7);
+#elif defined(REV_V3_LITE)
+    DDRD  &= ~(1<<PD1 | 1<<PD2 | 1<<PD3 | 1<<PD4 | 1<<PD5 | 1<<PD6);
+    PORTD |=  (1<<PD1 | 1<<PD2 | 1<<PD3 | 1<<PD4 | 1<<PD5 | 1<<PD6);
 #endif
 }
 
@@ -168,6 +174,8 @@ static matrix_row_t read_cols(void)
 #elif defined(REV_V3)
     //return ((~(PINF) >> 4) & 0x0F) | (~(PINF) & (1<<PF0 | 1<<PF1));
     return (~(PINF) & 0b00000011) | ((~(PINF) >> 2) & 0b00111100);
+#elif defined(REV_V3_LITE)
+    return ~(PIND) >> 1;
 #endif
 }
 
@@ -193,6 +201,13 @@ static void unselect_rows(void)
     // Select 0
     DDRD  |=  (1<<PD4 | 1<<PD5 | 1<<PD6 | 1<<PD7);
     PORTD &= ~(1<<PD4 | 1<<PD5 | 1<<PD6 | 1<<PD7);
+#elif defined(REV_V3_LITE)
+    // Hi-Z(DDR:0, PORT:0) to unselect
+    DDRB  &= ~(1<<PB0 | 1<<PB1 | 1<<PB2);
+    PORTB &= ~(1<<PB0 | 1<<PB1 | 1<<PB2);
+    // Select 0
+    DDRB  |=  (1<<PB3 | 1<<PB4 | 1<<PB5 | 1<<PB6);
+    PORTB &= ~(1<<PB3 | 1<<PB4 | 1<<PB5 | 1<<PB6);
 #endif
 }
 
@@ -215,6 +230,13 @@ static void unselect_rows(void)
  *          PB5  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  1  |
  *          PB6  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  /
  *
+ *          PB0  -  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  \
+ *        / PB3  0  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  1  0  0  |
+ *        | PB4  0  0  0  1  1  0  0  1  1  0  0  1  1  0  0  1  1  0  0  |
+ *        | PB5  0  0  0  0  0  1  1  1  1  0  0  0  0  1  1  1  1  0  0  |- REV_V3_LITE
+ *        \ PB6  0  0  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  0  0  |
+ *          PB1  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  1  |
+ *          PB2  -  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  0  /
  */
 static void select_row(uint8_t row)
 {
@@ -254,6 +276,23 @@ static void select_row(uint8_t row)
     else if (row == 17) {
         DDRB |= (1<<PB6);
         PORTB &= ~(1<<PB6);
+    }
+#elif defined(REV_V3_LITE)
+    // Output low(DDR:1, PORT:0) to select
+    if (row == 0) {
+        DDRB |= (1<<PB0);
+        PORTB &= ~(1<<PB0);
+    }
+    else if (row < 16) {
+        PORTB = (PORTB & 0b10000111) | ((row & 0x0F) << 3);
+    }
+    else if (row == 16) {
+        DDRB |= (1<<PB1);
+        PORTB &= ~(1<<PB1);
+    }
+    else if (row == 17) {
+        DDRB |= (1<<PB2);
+        PORTB &= ~(1<<PB2);
     }
 #endif
 }

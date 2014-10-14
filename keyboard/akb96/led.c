@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *   REV_V3
  *     CapsLock  PC7
  *     NumLock   PC6
+ *   REV_V3_LITE
+ *     CapsLock  PC2
+ *     NumLock   PC4
  */
 void led_set(uint8_t usb_led)
 {
@@ -70,6 +73,25 @@ void led_set(uint8_t usb_led)
         // Hi-Z
         DDRC &= ~(1<<PC6);
         PORTC &= ~(1<<PC6);
+    }
+#elif defined(REV_V3_LITE)
+    if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
+        // output high
+        DDRC |= (1<<PC2);
+        PORTC |= (1<<PC2);
+    } else {
+        // Hi-Z
+        DDRC &= ~(1<<PC2);
+        PORTC &= ~(1<<PC2);
+    }
+    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
+        // output high
+        DDRC |= (1<<PC4);
+        PORTC |= (1<<PC4);
+    } else {
+        // Hi-Z
+        DDRC &= ~(1<<PC4);
+        PORTC &= ~(1<<PC4);
     }
 #endif
 }

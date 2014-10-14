@@ -39,7 +39,9 @@ static const uint8_t backlight_table[] PROGMEM = {
 };
 
 /* Backlight pin configuration
- * PWM:  PB6 (D10)
+ * PWM:  PB6 (D10)  REV_V2
+ *       PB7        REV_V3
+ *       PB7        REV_V3_LITE
  */
 void backlight_enable(void)
 {
@@ -49,7 +51,7 @@ void backlight_enable(void)
     // Turn on PWM
 #if defined(REV_V2)
     DDRB |= (1<<PB6);
-#elif defined(REV_V3)
+#elif defined(REV_V3) || defined(REV_V3_LITE)
     DDRB |= (1<<PB7);
 #endif
     cli();
@@ -68,7 +70,7 @@ void backlight_disable(void)
     cli();
 #if defined(REV_V2)
     DDRB &= ~(1<<PB6);
-#elif defined(REV_V3)
+#elif defined(REV_V3) || defined(REV_V3_LITE)
     DDRB &= ~(1<<PB7);
 #endif
     TCCR1A &= ~( (1<<WGM10) | (1<<COM1B1) );
@@ -177,7 +179,7 @@ void softpwm_led_init(void)
 #if defined(REV_V2)
     DDRB |= (1<<PB6);
     PORTB &= ~(1<<PB6);
-#elif defined(REV_V3)
+#elif defined(REV_V3) || defined(REV_V3_LITE)
     DDRB |= (1<<PB7);
     PORTB &= ~(1<<PB7);
 #endif
@@ -187,7 +189,7 @@ void softpwm_led_on(uint8_t index)
 {
 #if defined(REV_V2)
     PORTB |= (1<<PB6);
-#elif defined(REV_V3)
+#elif defined(REV_V3) || defined(REV_V3_LITE)
     PORTB |= (1<<PB7);
 #endif
 }
@@ -196,7 +198,7 @@ void softpwm_led_off(uint8_t index)
 {
 #if defined(REV_V2)
     PORTB &= ~(1<<PB6);
-#elif defined(REV_V3)
+#elif defined(REV_V3) || defined(REV_V3_LITE)
     PORTB &= ~(1<<PB7);
 #endif
 }

@@ -24,7 +24,11 @@ uint8_t ledmap_get_code(uint8_t index)
  *   REV_V3
  *     CapsLock  PC7
  *     NumLock   PC6
- *     Backlight PB6
+ *     Backlight PB7
+ *   REV_V3_LITE
+ *     CapsLock  PC2
+ *     NumLock   PC4
+ *     Backlight PB7
  */
 void ledmap_led_init(void)
 {
@@ -34,6 +38,11 @@ void ledmap_led_init(void)
 #elif defined(REV_V3)
     DDRC  |=  (1<<PC7 | 1<<PC6);
     PORTC &= ~(1<<PC7 | 1<<PC6);
+    DDRB  |=  (1<<PB7);
+    PORTB &= ~(1<<PB7);
+#elif defined(REV_V3_LITE)
+    DDRC  |=  (1<<PC2 | 1<<PC4);
+    PORTC &= ~(1<<PC2 | 1<<PC4);
     DDRB  |=  (1<<PB7);
     PORTB &= ~(1<<PB7);
 #endif
@@ -65,6 +74,18 @@ void ledmap_led_on(uint8_t index)
             PORTB |= (1<<PB7);
             break;
     }
+#elif defined(REV_V3_LITE)
+    switch (index) {
+        case 0:
+            PORTC |= (1<<PC2);
+            break;
+        case 1:
+            PORTC |= (1<<PC4);
+            break;
+        case 2:
+            PORTB |= (1<<PB7);
+            break;
+    }
 #endif
 }
 
@@ -89,6 +110,18 @@ void ledmap_led_off(uint8_t index)
             break;
         case 1:
             PORTC &= ~(1<<PC6);
+            break;
+        case 2:
+            PORTB &= ~(1<<PB7);
+            break;
+    }
+#elif defined(REV_V3_LITE)
+    switch (index) {
+        case 0:
+            PORTC &= ~(1<<PC2);
+            break;
+        case 1:
+            PORTC &= ~(1<<PC4);
             break;
         case 2:
             PORTB &= ~(1<<PB7);
