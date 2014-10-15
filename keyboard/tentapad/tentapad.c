@@ -145,6 +145,7 @@ void enter_config_mode(void)
     softpwm_led_set(0, 32 * (layer + 1));
     softpwm_led_set(1, 32 * (backlight + 1));
     buzzer(pgm_read_word(&tones[0]), 50);
+    buzzer(pgm_read_word(&tones[2]), 50);
     buzzer(pgm_read_word(&tones[4]), 50);
     buzzer(pgm_read_word(&tones[7]), 50);
 }
@@ -159,6 +160,7 @@ void exit_config_mode(void)
     }
     buzzer(pgm_read_word(&tones[7]), 50);
     buzzer(pgm_read_word(&tones[4]), 50);
+    buzzer(pgm_read_word(&tones[2]), 50);
     buzzer(pgm_read_word(&tones[0]), 50);
 }
 
