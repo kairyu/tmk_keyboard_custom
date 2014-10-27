@@ -38,19 +38,20 @@ static uint8_t debouncing = DEBOUNCE;
 static matrix_row_t matrix[MATRIX_ROWS];
 static matrix_row_t matrix_debouncing[MATRIX_ROWS];
 
-extern uint8_t row_max_count;
-extern uint8_t col_max_count;
+extern uint8_t row_count;
+extern uint8_t col_count;
+extern uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
 
 inline
 uint8_t matrix_rows(void)
 {
-    return row_max_count;
+    return row_count;
 }
 
 inline
 uint8_t matrix_cols(void)
 {
-    return col_max_count;
+    return col_count;
 }
 
 void matrix_init(void)
@@ -63,13 +64,13 @@ void matrix_init(void)
 
     // initialize row and col
     unselect_rows();
-    init_cols();
 
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < matrix_rows(); i++) {
         matrix[i] = 0;
         matrix_debouncing[i] = 0;
     }
+
 }
 
 uint8_t matrix_scan(void)

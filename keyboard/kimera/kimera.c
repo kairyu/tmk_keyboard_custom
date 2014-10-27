@@ -20,88 +20,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 #include <avr/eeprom.h>
 #include <util/delay.h>
+#include "i2cmaster.h"
 #include "kimera.h"
 #include "debug.h"
 
-uint8_t mux_mapping[MUX_COUNT] = {
-    MUX_FOR_ROW, MUX_FOR_COL, MUX_FOR_COL, MUX_FOR_COL
-};
-uint8_t row_mapping[MATRIX_ROWS] = {
+uint8_t row_mapping[PX_COUNT] = {
     0, 1, 2, 3, 4, 5, 6, 7,
+    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
 };
-uint8_t col_mapping[MATRIX_COLS] = {
+uint8_t col_mapping[PX_COUNT] = {
     8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23,
-    24, 25, 26, 27, 28, 29, 30, 31
+    24, 25, 26, 27, 28, 29, 30, 31,
+    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
 };
-uint8_t row_max_count = MUX_PORTS * 1;
-uint8_t col_max_count = MUX_PORTS * (MUX_COUNT - 1);
-uint16_t shift_out_cache = 0;
+uint8_t row_count = 8;
+uint8_t col_count = 24;
+uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
 
 void kimera_init(void)
 {
-    // read config
-    write_matrix_mapping();
+    /* read config */
+    write_matrix_mapping(); /* debug */
     if (read_matrix_mapping()) {
         write_matrix_mapping();
     }
 
-    // init shift out pins
-    MOSI_DDR |= (1<<MOSI_BIT);
-    SCK_DDR  |= (1<<SCK_BIT);
-    RCK_DDR  |= (1<<RCK_BIT);
-    RCK_PORT |= (1<<RCK_BIT);
-
-    // init spi
-    SPCR |= ((1<<SPE) | (1<<MSTR));
-    SPSR |= ((1<<SPI2X));
+    /* init i2c */
+    i2c_init();
+    
+    /* init i/o expander */
+    expander_init();
 }
 
 uint8_t read_matrix_mapping(void)
 {
     uint8_t error = 0;
-    uint8_t mux_config = 0;
-    row_max_count = 0;
-    col_max_count = 0;
 
-    mux_config = eeprom_read_byte(EECONFIG_MUX_MAPPING);
-    if (mux_config == 0 || (mux_config & (1<<7))) {
-        error++;
-        return error;
-    }
+    /* read number of rows and cols */
+    row_count = eeprom_read_byte(EECONFIG_ROW_COUNT);
+    col_count = eeprom_read_byte(EECONFIG_COL_COUNT);
+    if (row_count == 0) error++;
+    if (row_count == UNCONFIGURED) error++;
+    if (col_count == 0) error++;
+    if (col_count == UNCONFIGURED) error++;
+    if (row_count + col_count > PX_COUNT) error++;
 
-    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
-        mux_mapping[mux] = mux_config & (1 << mux);
-        if (mux_mapping[mux] == MUX_FOR_COL) {
-            col_max_count += MUX_PORTS;
+    /* read row mapping */
+    uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
+    for (uint8_t i = 0; i < PX_COUNT; i++) {
+        if (i < row_count) {
+            row_mapping[i] = eeprom_read_byte(mapping++);
+            if (row_mapping[i] >= PX_COUNT) error++;
         }
         else {
-            row_max_count += MUX_PORTS;
+            row_mapping[i] = UNCONFIGURED;
         }
     }
-    if ((col_max_count == 0) || (row_max_count == 0)) {
-        error++;
-    }
-
-    uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
-    for (uint8_t row = 0; row < row_max_count; row++) {
-        row_mapping[row] = eeprom_read_byte(mapping++);
-        if (row_mapping[row] != UNCONFIGURED) {
-            if (mux_mapping[PX_TO_MUX(row_mapping[row])] != MUX_FOR_ROW) {
-                row_mapping[row] = UNCONFIGURED;
-                error++;
-            }
+    /* read col mapping*/
+    for (uint8_t i = 0; i < PX_COUNT; i++) {
+        if (i < col_count) {
+            col_mapping[i] = eeprom_read_byte(mapping++);
+            if (col_mapping[i] >= PX_COUNT) error++;
         }
-    }
-    for (uint8_t col = 0; col < col_max_count; col++) {
-        col_mapping[col] = eeprom_read_byte(mapping++);
-        if (col_mapping[col] != UNCONFIGURED) {
-            if (mux_mapping[PX_TO_MUX(col_mapping[col])] != MUX_FOR_COL) {
-                col_mapping[col] = UNCONFIGURED;
-                error++;
-            }
+        else {
+            col_mapping[i] = UNCONFIGURED;
         }
     }
 
@@ -110,66 +95,36 @@ uint8_t read_matrix_mapping(void)
 
 void write_matrix_mapping(void)
 {
-    uint8_t mux_config = 0;
-    row_max_count = 0;
-    col_max_count = 0;
+    /* write number of rows and cols */
+    eeprom_write_byte(EECONFIG_ROW_COUNT, row_count);
+    eeprom_write_byte(EECONFIG_COL_COUNT, col_count);
 
-    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
-        mux_config |= (mux_mapping[mux] << mux);
-        if (mux_mapping[mux] == MUX_FOR_COL) {
-            col_max_count += MUX_PORTS;
-        }
-        else {
-            row_max_count += MUX_PORTS;
-        }
-    }
-    eeprom_write_byte(EECONFIG_MUX_MAPPING, mux_config);
-
+    /* write row mapping */
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
-    for (uint8_t row = 0; row < row_max_count; row++) {
+    for (uint8_t row = 0; row < row_count; row++) {
         eeprom_write_byte(mapping++, row_mapping[row]);
     }
-    for (uint8_t col = 0; col < col_max_count; col++) {
+    /* write col mapping */
+    for (uint8_t col = 0; col < col_count; col++) {
         eeprom_write_byte(mapping++, col_mapping[col]);
-    }
-}
-
-void shift_out_word(uint16_t data)
-{
-    SPDR = ((data>>8) & 0xFF);
-    while (!(SPSR & (1<<SPIF)));
-    SPDR = (data & 0xFF);
-    while (!(SPSR & (1<<SPIF)));
-    RCK_PORT &= ~(1<<RCK_BIT);
-    RCK_PORT |=  (1<<RCK_BIT);
-}
-
-void  init_cols(void)
-{
-    // init mux io pins
-    for (uint8_t mux = 0; mux < MUX_COUNT; mux++) {
-        uint8_t bit = MUX_TO_ZX_BIT(mux);
-        if (mux_mapping[mux] == MUX_FOR_COL) {
-            ZX_DDR  &= ~(1 << bit);
-            ZX_PORT |=  (1 << bit);
-        }
-        else {
-            ZX_DDR  |=  (1 << bit);
-            ZX_PORT |=  (1 << bit);
-        }
     }
 }
 
 matrix_row_t read_cols(void)
 {
+    init_data(0x00);
+
+    /* read all input registers */
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        expander_read_input(exp, data[exp]);
+    }
+
+    /* make cols */
     matrix_row_t cols = 0;
-    for (uint8_t col = 0; col < col_max_count; col++) {
+    for (uint8_t col = 0; col < col_count; col++) {
         uint8_t px = col_mapping[col];
         if (px != UNCONFIGURED) {
-            uint8_t mux = PX_TO_MUX(px);
-            shift_out_word((shift_out_cache | PX_TO_SHIFT_OUT(px)) & ~(MUX_INH_TO_SHIFT_OUT(mux)));
-            _delay_us(10);
-            if (!(ZX_PIN & (1 << MUX_TO_ZX_BIT(mux)))) {
+            if (data[PX_TO_EXP(px)][PX_TO_PORT(px)] & (1 << PX_TO_PIN(px))) {
                 cols |= (1UL << col);
             }
         }
@@ -179,16 +134,109 @@ matrix_row_t read_cols(void)
 
 void unselect_rows(void)
 {
-    shift_out_word(0);
+    /* set all output registers to 0xFF */
+    init_data(0xFF);
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        expander_write_output(exp, data[exp]);
+    }
 }
 
 void select_row(uint8_t row)
 {
+    /* set selected row to low */
+    init_data(0xFF);
     uint8_t px = row_mapping[row];
     if (px != UNCONFIGURED) {
-        uint8_t mux = PX_TO_MUX(px);
-        ZX_PORT &= ~(1 << MUX_TO_ZX_BIT(mux));
-        shift_out_cache = ((MUX_OFF_TO_SHIFT_OUT | PX_TO_SHIFT_OUT(px)) & ~(MUX_INH_TO_SHIFT_OUT(mux)));
-        shift_out_word(shift_out_cache);
+        uint8_t exp = PX_TO_EXP(px);
+        data[exp][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
+        expander_write_output(exp, data[exp]);
+    }
+}
+
+void expander_init(void)
+{
+    init_data(0xFF);
+
+    /* write inversion register */
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        expander_write_inversion(exp, data[exp]);  
+    }                                              
+
+    /* set output bit */
+    for (uint8_t row = 0; row < row_count; row++) {
+        uint8_t px = row_mapping[row];
+        if (px != UNCONFIGURED) {
+            data[PX_TO_EXP(px)][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
+        }
+    }
+
+    /* write config registers */
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        expander_write_config(exp, data[exp]);
+    }
+}
+
+uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data)
+{
+    uint8_t addr = EXP_ADDR(exp);
+    uint8_t ret;
+    ret = i2c_start(addr | I2C_WRITE);
+    if (ret) goto stop;
+    ret = i2c_write(command);
+    if (ret) goto stop;
+    ret = i2c_write(*data++);
+    if (ret) goto stop;
+    ret = i2c_write(*data);
+stop:
+    i2c_stop();
+    return ret;
+}
+
+uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data)
+{
+    uint8_t addr = EXP_ADDR(exp);
+    uint8_t ret;
+    ret = i2c_start(addr | I2C_WRITE);
+    if (ret) goto stop;
+    ret = i2c_write(command);
+    if (ret) goto stop;
+    ret = i2c_start(addr | I2C_READ);
+    if (ret) goto stop;
+    *data++ = i2c_readAck();
+    *data = i2c_readNak();
+stop:
+    i2c_stop();
+    return ret;
+}
+
+inline
+uint8_t expander_write_output(uint8_t exp, uint8_t *data)
+{
+    return expander_write(exp, EXP_COMM_OUTPUT_0, data);
+}
+
+inline
+uint8_t expander_write_inversion(uint8_t exp, uint8_t *data)
+{
+    return expander_write(exp, EXP_COMM_INVERSION_0, data);
+}
+
+inline
+uint8_t expander_write_config(uint8_t exp, uint8_t *data)
+{
+    return expander_write(exp, EXP_COMM_CONFIG_0, data);
+}
+inline
+uint8_t expander_read_input(uint8_t exp, uint8_t *data)
+{
+    return expander_read(exp, EXP_COMM_INPUT_0, data);
+}
+
+void init_data(uint8_t value)
+{
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        for (uint8_t port = 0; port < EXP_PORT_COUNT; port++) {
+            data[exp][port] = value;
+        }
     }
 }

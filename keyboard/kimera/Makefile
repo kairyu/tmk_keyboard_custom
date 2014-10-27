@@ -52,6 +52,7 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
+	twimaster.c \
 	kimera.c
 
 ifdef KEYMAP
@@ -117,7 +118,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 ifdef VER
     OPT_DEFS += -DKIMERA_$(REV)
 else
-    OPT_DEFS += -DKIMERA_V2
+    OPT_DEFS += -DKIMERA_V5
 endif
 
 # Additional definitions from command line

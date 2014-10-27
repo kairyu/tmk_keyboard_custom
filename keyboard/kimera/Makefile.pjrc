@@ -52,12 +52,13 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
+	twimaster.c \
 	kimera.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
 else
-    SRC := keymap_poker.c $(SRC)
+    SRC := keymap_default.c $(SRC)
 endif
 
 CONFIG_H = config.h

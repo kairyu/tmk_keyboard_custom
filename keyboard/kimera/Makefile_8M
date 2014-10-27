@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = kimera_lufa_3300
+TARGET = kimera_8m_lufa
 
 # Directory common source filess exist
 TOP_DIR = ../..
@@ -52,6 +52,7 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
+	twimaster.c \
 	kimera.c
 
 ifdef KEYMAP

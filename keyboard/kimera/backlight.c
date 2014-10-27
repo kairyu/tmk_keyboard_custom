@@ -33,14 +33,14 @@ static const uint8_t backlight_table[] PROGMEM = {
 };
 
 /* Backlight pin configuration
- * BL:  PB5 (D9)
+ * LED4: PB6 (D10) OC1B
  */
 void backlight_enable(void)
 {
     // Turn on PWM
-    BL_DDR |= (1<<BL_BIT);
+    LED4_DDR |= (1<<LED4_BIT);
     cli();
-    TCCR1A |= ((1<<WGM10) | (1<<COM1A1));
+    TCCR1A |= ((1<<WGM10) | (1<<COM1B1));
     TCCR1B |= ((1<<CS11) | (1<<CS10));
     sei();
 }
@@ -48,12 +48,12 @@ void backlight_enable(void)
 void backlight_disable(void)
 {
     // Turn off PWM
-    BL_DDR &= ~(1<<BL_BIT);
+    LED4_DDR &= ~(1<<LED4_BIT);
     cli();
-    TCCR1A &= ~((1<<WGM10) | (1<<COM1A1));
+    TCCR1A &= ~((1<<WGM10) | (1<<COM1B1));
     TCCR1B &= ~((1<<CS11) | (1<<CS10));
     sei();
-    BL_OCR = 0;
+    LED4_OCR = 0;
 }
 
 void backlight_set(uint8_t level)
@@ -100,7 +100,7 @@ void breathing_led_set_raw(uint8_t raw)
 
 inline void backlight_set_raw(uint8_t raw)
 {
-    OCR1A = raw;
+    LED4_OCR = raw;
 }
 
 #endif
