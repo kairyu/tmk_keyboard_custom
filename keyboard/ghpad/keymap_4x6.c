@@ -40,7 +40,7 @@ const uint16_t fn_actions[] PROGMEM = {
 #endif
 };
 
-#ifdef KEYMAP_EX_ENABLE
+#ifdef KEYMAP_IN_EEPROM_ENABLE
 uint16_t keys_count(void) {
     return sizeof(keymaps) / sizeof(keymaps[0]) * MATRIX_ROWS * MATRIX_COLS;
 }

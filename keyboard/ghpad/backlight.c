@@ -19,64 +19,96 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "backlight.h"
+#include "softpwm_led.h"
+#include "action.h"
+
+#ifdef BACKLIGHT_ENABLE
+
+static uint8_t backlight_mode;
 
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
 
-uint8_t softpwm_ocr = 0;
-
 /* Backlight pin configuration
- * PWM:  PB5            (RevRS)
+ * PWM:  PB5 (RevRS)
  * GPIO: PF7  PF6  PF5
  */
 void backlight_set(uint8_t level)
 {
-    if (level > 0) {
-        // Turn on PWM
-        cli();
-        // Hard PWM
-        DDRB |= (1<<PB5);
-        PORTB |= (1<<PB5);
-        TCCR1A |= ((1<<WGM10) | (1<<COM1A1));
-        TCCR1B |= ((1<<CS11) | (1<<CS10));
-        // Soft PWM
-        DDRF |= ((1<<PF7) | (1<<PF6) | (1<<PF5));
-        PORTF |= ((1<<PF7) | (1<<PF6) | (1<<PF5));
-        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
-        TIFR1 |= (1<<TOV1);
-        sei();
-        // Set PWM
-        OCR1A = pgm_read_byte(&backlight_table[level]);
-        softpwm_ocr = pgm_read_byte(&backlight_table[level]);
-    }
-    else {
-        // Turn off PWM
-        cli();
-        // Hard PWM
-        DDRB |= (1<<PB5);
-        PORTB &= ~(1<<PB5);
-        TCCR1A &= ~((1<<WGM10) | (1<<COM1A1));
-        TCCR1B &= ~((1<<CS11) | (1<<CS10));
-        // Soft PWM
-        DDRF |= ((1<<PF7) | (1<<PF6) | (1<<PF5));
-        PORTF |= ((1<<PF7) | (1<<PF6) | (1<<PF5));
-        TIMSK1 |= ((1<<OCIE1A) | (1<<TOIE1));
-        TIFR1 |= (1<<TOV1);
-        sei();
-        // Set PWM
-        OCR1A = 0;
-        softpwm_ocr = 0;
+    backlight_mode = level;
+    switch (level) {
+        case 1:
+        case 2:
+        case 3:
+            softpwm_led_enable();
+            fading_led_disable_all();
+            breathing_led_disable_all();
+            softpwm_led_set_all(pgm_read_byte(&backlight_table[level]));
+            break;
+        case 4:
+        case 5:
+        case 6:
+            softpwm_led_enable();
+            breathing_led_enable_all();
+            fading_led_disable_all();
+            breathing_led_set_duration(6 - level);
+            break;
+        case 7:
+            softpwm_led_enable();
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_IN);
+            fading_led_set_duration(4);
+            break;
+        case 8:
+            softpwm_led_enable();
+            fading_led_enable_all();
+            breathing_led_disable_all();
+            fading_led_set_direction(FADING_LED_FADE_OUT);
+            fading_led_set_duration(2);
+            break;
+        case 0:
+        default:
+            fading_led_disable_all();
+            breathing_led_disable_all();
+            softpwm_led_enable();
+            break;
     }
 }
 
-ISR(TIMER1_COMPA_vect)
+#ifndef LEDMAP_ENABLE
+void softpwm_led_init(void)
 {
-    // LED off
-    PORTF |= ((1<<PF7) | (1<<PF6) | (1<<PF5));
+    DDRB  |=  (1<<PB5);
+    DDRF  |=  (1<<PF7 | 1<<PF6 | 1<<PF5);
 }
-ISR(TIMER1_OVF_vect)
+
+void softpwm_led_on(uint8_t index)
 {
-    // LED on
-    PORTF &= ~((1<<PF7) | (1<<PF6) | (1<<PF5));
+    PORTB |=  (1<<PB5);
+    PORTF &= ~(1<<PF7 | 1<<PF6 | 1<<PF5);
 }
+
+void softpwm_led_off(uint8_t index)
+{
+    PORTB &= ~(1<<PB5);
+    PORTF |=  (1<<PF7 | 1<<PF6 | 1<<PF5);
+}
+#endif
+
+void action_keyevent(keyevent_t event)
+{
+    if (backlight_mode == 7) {
+        if (event.pressed) {
+            softpwm_led_decrease_all(32);
+        }
+    }
+    if (backlight_mode == 8) {
+        if (event.pressed) {
+            softpwm_led_increase_all(32);
+        }
+    }
+}
+
+#endif

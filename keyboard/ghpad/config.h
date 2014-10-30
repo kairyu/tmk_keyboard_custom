@@ -42,7 +42,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE    5
 
 /* number of backlight levels */
-#define BACKLIGHT_LEVELS 3
+#define BACKLIGHT_LEVELS 8
+
+#define LED_COUNT 5
 
 /* number of backlight levels */
 //#define BACKLIGHT_LEVELS 3
