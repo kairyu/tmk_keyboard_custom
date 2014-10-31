@@ -71,10 +71,14 @@ void matrix_init(void)
         matrix_debouncing[i] = 0;
     }
 
+    PORTD &= ~(1<<PD4);
+
 }
 
 uint8_t matrix_scan(void)
 {
+    kimera_scan();
+
     for (uint8_t i = 0; i < matrix_rows(); i++) {
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.

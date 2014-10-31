@@ -120,13 +120,14 @@ const uint16_t PROGMEM dummy[] = {
 /* Functions */
 
 void kimera_init(void);
+void wdt_init(void);
 uint8_t read_matrix_mapping(void);
 void write_matrix_mapping(void);
-void shift_out_word(uint16_t word);
+void kimera_scan(void);
 matrix_row_t read_cols(void);
 void unselect_rows(void);
 void select_row(uint8_t row);
-void expander_init(void);
+void expander_init(uint8_t exp);
 uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data);
 uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data);
 uint8_t expander_write_output(uint8_t exp, uint8_t *data);

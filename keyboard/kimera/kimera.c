@@ -19,10 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdbool.h>
 #include <avr/eeprom.h>
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <util/delay.h>
+#include "action.h"
+#include "suspend.h"
 #include "i2cmaster.h"
 #include "kimera.h"
 #include "debug.h"
+
+#define SCL_CLOCK  400000L
+extern uint8_t i2c_force_stop;
 
 uint8_t row_mapping[PX_COUNT] = {
     0, 1, 2, 3, 4, 5, 6, 7,
@@ -39,6 +46,7 @@ uint8_t col_mapping[PX_COUNT] = {
 uint8_t row_count = 8;
 uint8_t col_count = 24;
 uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
+uint8_t exp_status = 0;
 
 void kimera_init(void)
 {
@@ -51,8 +59,19 @@ void kimera_init(void)
     /* init i2c */
     i2c_init();
     
-    /* init i/o expander */
-    expander_init();
+    /* init i/o expanders */
+    kimera_scan();
+
+    /* init watch dog */
+    wdt_init();
+}
+
+void wdt_init(void)
+{
+    cli();
+    wdt_reset();
+    wdt_intr_enable(WDTO_1S);
+    sei();
 }
 
 uint8_t read_matrix_mapping(void)
@@ -110,9 +129,34 @@ void write_matrix_mapping(void)
     }
 }
 
+void kimera_scan(void)
+{
+    wdt_reset();
+    uint8_t ret;
+    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
+        ret = i2c_start(EXP_ADDR(exp) | I2C_READ);
+        if (exp_status & (1<<exp)) {
+            if (ret) {
+                dprintf("lost: %d\n", exp);
+                exp_status &= ~(1<<exp);
+                clear_keyboard();
+            }
+        }
+        else {
+            if (!ret) {
+                dprintf("found: %d\n", exp);
+                exp_status |= (1<<exp);
+                i2c_stop();
+                expander_init(exp);
+                clear_keyboard();
+            }
+        }
+    }
+}
+
 matrix_row_t read_cols(void)
 {
-    init_data(0x00);
+    init_data(0xFF);
 
     /* read all input registers */
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
@@ -124,7 +168,7 @@ matrix_row_t read_cols(void)
     for (uint8_t col = 0; col < col_count; col++) {
         uint8_t px = col_mapping[col];
         if (px != UNCONFIGURED) {
-            if (data[PX_TO_EXP(px)][PX_TO_PORT(px)] & (1 << PX_TO_PIN(px))) {
+            if (!(data[PX_TO_EXP(px)][PX_TO_PORT(px)] & (1 << PX_TO_PIN(px)))) {
                 cols |= (1UL << col);
             }
         }
@@ -153,14 +197,16 @@ void select_row(uint8_t row)
     }
 }
 
-void expander_init(void)
+void expander_init(uint8_t exp)
 {
     init_data(0xFF);
 
     /* write inversion register */
+    /*
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
         expander_write_inversion(exp, data[exp]);  
     }                                              
+    */
 
     /* set output bit */
     for (uint8_t row = 0; row < row_count; row++) {
@@ -171,13 +217,12 @@ void expander_init(void)
     }
 
     /* write config registers */
-    for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
-        expander_write_config(exp, data[exp]);
-    }
+    expander_write_config(exp, data[exp]);
 }
 
 uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data)
 {
+    wdt_reset();
     uint8_t addr = EXP_ADDR(exp);
     uint8_t ret;
     ret = i2c_start(addr | I2C_WRITE);
@@ -194,6 +239,7 @@ stop:
 
 uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data)
 {
+    wdt_reset();
     uint8_t addr = EXP_ADDR(exp);
     uint8_t ret;
     ret = i2c_start(addr | I2C_WRITE);
@@ -239,4 +285,25 @@ void init_data(uint8_t value)
             data[exp][port] = value;
         }
     }
+}
+
+ISR(WDT_vect)
+{
+    dprintf("i2c timeout\n");
+
+    /* send stop condition */
+    TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
+    TWCR = 0;
+
+    /* let slave to release SDA */
+    DDRD |= (1<<PD0);
+    for (uint8_t i = 0; i < 9; i++) {
+        PORTD &= ~(1<<PD0);
+        _delay_us((F_CPU / SCL_CLOCK - 16) / 2);
+        PORTD |= (1<<PD0);
+        _delay_us((F_CPU / SCL_CLOCK - 16) / 2);
+    }
+
+    /* escape from loop */
+    i2c_force_stop = 1;
 }
