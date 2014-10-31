@@ -181,7 +181,7 @@ void unselect_rows(void)
     /* set all output registers to 0xFF */
     init_data(0xFF);
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
-        expander_write_output(exp, data[exp]);
+        expander_write_config(exp, data[exp]);
     }
 }
 
@@ -193,13 +193,13 @@ void select_row(uint8_t row)
     if (px != UNCONFIGURED) {
         uint8_t exp = PX_TO_EXP(px);
         data[exp][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
-        expander_write_output(exp, data[exp]);
+        expander_write_config(exp, data[exp]);
     }
 }
 
 void expander_init(uint8_t exp)
 {
-    init_data(0xFF);
+    init_data(0x00);
 
     /* write inversion register */
     /*
@@ -209,15 +209,20 @@ void expander_init(uint8_t exp)
     */
 
     /* set output bit */
+    /*
     for (uint8_t row = 0; row < row_count; row++) {
         uint8_t px = row_mapping[row];
         if (px != UNCONFIGURED) {
             data[PX_TO_EXP(px)][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
         }
     }
+    */
 
     /* write config registers */
-    expander_write_config(exp, data[exp]);
+    //expander_write_config(exp, data[exp]);
+
+    /* write output registers */
+    expander_write_output(exp, data[exp]);
 }
 
 uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data)
