@@ -28,7 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "kimera.h"
 #include "debug.h"
 
-#define SCL_CLOCK  400000L
+#define SCL_CLOCK       400000L
+#define SCL_DURATION    (1000000L/SCL_CLOCK)/2
 extern uint8_t i2c_force_stop;
 
 uint8_t row_mapping[PX_COUNT] = {
@@ -296,18 +297,21 @@ ISR(WDT_vect)
 {
     dprintf("i2c timeout\n");
 
+    /* let slave to release SDA */
+    TWCR = 0;
+    DDRD |=  (1<<PD0);
+    DDRD &= ~(1<<PD1);
+    if (!(PIND & (1<<PD1))) {
+        for (uint8_t i = 0; i < 9; i++) {
+            PORTD &= ~(1<<PD0);
+            _delay_us(SCL_DURATION);
+            PORTD |= (1<<PD0);
+            _delay_us(SCL_DURATION);
+        }
+    }
+
     /* send stop condition */
     TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
-    TWCR = 0;
-
-    /* let slave to release SDA */
-    DDRD |= (1<<PD0);
-    for (uint8_t i = 0; i < 9; i++) {
-        PORTD &= ~(1<<PD0);
-        _delay_us((F_CPU / SCL_CLOCK - 16) / 2);
-        PORTD |= (1<<PD0);
-        _delay_us((F_CPU / SCL_CLOCK - 16) / 2);
-    }
 
     /* escape from loop */
     i2c_force_stop = 1;
