@@ -28,14 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DESCRIPTION     t.m.k. keyboard firmware for Kimera
 
 /* key matrix size */
-#define MATRIX_ROWS 24
-#define MATRIX_COLS 24
+#define MATRIX_ROWS 32
+#define MATRIX_COLS 32
 
 /* keymap in eeprom */
 #define MATRIX_SIZE 16 * 16
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 3
-#define EECONFIG_KEYMAP_IN_EEPROM 40
+#define EECONFIG_KEYMAP_IN_EEPROM 41
 
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "matrix.h"
 #include "kimera.h"
+#include "keymap_in_eeprom.h"
 
 
 #ifndef DEBOUNCE
@@ -51,7 +52,11 @@ uint8_t matrix_rows(void)
 inline
 uint8_t matrix_cols(void)
 {
+#ifndef TWO_HEADED_KIMERA
     return col_count;
+#else
+    return col_count / 2;
+#endif
 }
 
 void matrix_init(void)
@@ -82,7 +87,17 @@ uint8_t matrix_scan(void)
     for (uint8_t i = 0; i < matrix_rows(); i++) {
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.
+#ifndef TWO_HEADED_KIMERA
         matrix_row_t cols = read_cols();
+#else
+        matrix_row_t cols = read_cols();
+        if (i < 8) {
+            cols &= 0xFFFFUL;
+        }
+        else {
+            cols >>= 16;
+        }
+#endif
         if (matrix_debouncing[i] != cols) {
             matrix_debouncing[i] = cols;
             if (debouncing) {

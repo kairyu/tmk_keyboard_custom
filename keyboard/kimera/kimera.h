@@ -84,7 +84,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          `----------'                   `----------'
 */
 
+#ifndef TWO_HEADED_KIMERA
 #define EXP_COUNT           2
+#else
+#define EXP_COUNT           4
+#endif
 #define EXP_ADDR(n)         ((0x20+(n))<<1)
 #define EXP_OUTPUT          0
 #define EXP_INPUT           1
