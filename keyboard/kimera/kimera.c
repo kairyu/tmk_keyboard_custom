@@ -79,11 +79,11 @@ void kimera_init(void)
     /* init i2c */
     i2c_init();
 
-    /* init i/o expanders */
-    kimera_scan();
-
     /* init watch dog */
     wdt_init();
+
+    /* init i/o expanders */
+    kimera_scan();
 }
 
 void wdt_init(void)
