@@ -116,9 +116,9 @@ const uint16_t PROGMEM dummy[] = {
 
 /* Matrix Mapping in EEPROM */
 
-#define EECONFIG_ROW_COUNT          (uint8_t *)7
-#define EECONFIG_COL_COUNT          (uint8_t *)8
-#define EECONFIG_ROW_COL_MAPPING    (uint8_t *)9
+#define EECONFIG_ROW_COUNT          (uint8_t *)11
+#define EECONFIG_COL_COUNT          (uint8_t *)12
+#define EECONFIG_ROW_COL_MAPPING    (uint8_t *)13
 #define UNCONFIGURED                0xFF
 
 /* Functions */

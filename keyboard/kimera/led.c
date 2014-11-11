@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "led.h"
 #include "kimera.h"
 
+#ifndef LEDMAP_ENABLE
+
 void led_set(uint8_t usb_led)
 {
-    if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
+    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
         // output low
         LED1_DDR  |=  (1<<LED1_BIT);
         LED1_PORT &= ~(1<<LED1_BIT);
@@ -31,7 +33,7 @@ void led_set(uint8_t usb_led)
         LED1_DDR  &= ~(1<<LED1_BIT);
         LED1_PORT &= ~(1<<LED1_BIT);
     }
-    if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
+    if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
         // output low
         LED2_DDR  |=  (1<<LED2_BIT);
         LED2_PORT &= ~(1<<LED2_BIT);
@@ -40,7 +42,7 @@ void led_set(uint8_t usb_led)
         LED2_DDR  &= ~(1<<LED2_BIT);
         LED2_PORT &= ~(1<<LED2_BIT);
     }
-    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
+    if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
         // output low
         LED3_DDR  |=  (1<<LED3_BIT);
         LED3_PORT &= ~(1<<LED3_BIT);
@@ -50,3 +52,5 @@ void led_set(uint8_t usb_led)
         LED3_PORT &= ~(1<<LED3_BIT);
     }
 }
+
+#endif

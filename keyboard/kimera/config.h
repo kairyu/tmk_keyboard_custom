@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_SIZE 16 * 16
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 3
-#define EECONFIG_KEYMAP_IN_EEPROM 41
+#define EECONFIG_KEYMAP_IN_EEPROM 45
 
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST
@@ -45,10 +45,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #ifdef BREATHING_LED_ENABLE
+#ifdef FADING_LED_ENABLE
+#define BACKLIGHT_LEVELS 8
+#else
 #define BACKLIGHT_LEVELS 6
+#endif
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
+
+/* enable customized backlight logic */
+#define BACKLIGHT_CUSTOM
+
+/* number of leds */
+#define LED_COUNT 4
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
@@ -78,5 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define NO_ACTION_ONESHOT
 //#define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
+
+#define NO_SUSPEND_POWER_DOWN
 
 #endif
