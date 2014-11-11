@@ -78,7 +78,7 @@ void kimera_init(void)
 
     /* init i2c */
     i2c_init();
-    
+
     /* init i/o expanders */
     kimera_scan();
 
@@ -99,13 +99,16 @@ uint8_t read_matrix_mapping(void)
     uint8_t error = 0;
 
     /* read number of rows and cols */
-    row_count = eeprom_read_byte(EECONFIG_ROW_COUNT);
-    col_count = eeprom_read_byte(EECONFIG_COL_COUNT);
-    if (row_count == 0) error++;
-    if (row_count == UNCONFIGURED) error++;
-    if (col_count == 0) error++;
-    if (col_count == UNCONFIGURED) error++;
-    if (row_count + col_count > PX_COUNT) error++;
+    uint8_t rows = eeprom_read_byte(EECONFIG_ROW_COUNT);
+    uint8_t cols = eeprom_read_byte(EECONFIG_COL_COUNT);
+    if (rows == 0) error++;
+    if (rows == UNCONFIGURED) error++;
+    if (cols == 0) error++;
+    if (cols == UNCONFIGURED) error++;
+    if (rows + cols > PX_COUNT) error++;
+    if (error) return error;
+    row_count = rows;
+    col_count = cols;
 
     /* read row mapping */
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
@@ -224,8 +227,8 @@ void expander_init(uint8_t exp)
     /* write inversion register */
     /*
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
-        expander_write_inversion(exp, data[exp]);  
-    }                                              
+        expander_write_inversion(exp, data[exp]);
+    }
     */
 
     /* set output bit */
