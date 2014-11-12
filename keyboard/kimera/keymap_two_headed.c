@@ -39,41 +39,6 @@ const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
         NO,  SPC, NO,  RALT,RGUI,FN0, RCTL,NO,  LEFT,DOWN,RGHT,NO,  NO,  NO,  NO,  NO, \
         NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
         NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO  ),
-
-    /* Keymap 1: Fn Layer
-     * ,----------------------------------------.    ,------------------------------------------------.
-     * |               ||   |   |   |   |   |   |    | |   |   |   |   | |   |   |   |   ||Fn2|Fn1|Fn3|
-     * |---------------||-----------------------|    |-----------------------------------||-----------|
-     * |   |   |   |   ||   |   |   |   |   |   |    |   |   |   |   |   |   |   |       ||   |   |   |
-     * |---------------||-------------------------.  `-----------------------------------||-----------|
-     * |   |   |   |   ||     |   |   |   |   |   |    |   |   |   |   |   |   |   |     ||   |   |   |
-     * |-----------|   ||--------------------------.   `---------------------------------||-----------|
-     * |   |   |   |   ||      |   |   |   |   |   |    |   |   |   |   |   |   |        ||           |
-     * |---------------||----------------------------.   `-------------------------------||   ,---.   |
-     * |   |   |   |   ||        |   |   |   |   |   |    |   |   |   |   |   |          ||   |   |   |
-     * |-----------|   ||----------------------------|    |------------------------------||-----------|
-     * |       |   |   ||    |    |    |             |    |          |    |    |    |    ||   |   |   |
-     * `---------------------------------------------'    `-------------------------------------------'
-     */
-    KEYMAP_16x16(
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  FN2, FN1, FN3, NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO  ),
-
 };
 
 /*
@@ -84,11 +49,6 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    /* Poker2 Layout */
-    [0] = ACTION_LAYER_MOMENTARY(1),
-    [1] = ACTION_BACKLIGHT_TOGGLE(),
-    [2] = ACTION_BACKLIGHT_DECREASE(),
-    [3] = ACTION_BACKLIGHT_INCREASE(),
 };
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE

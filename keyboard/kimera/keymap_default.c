@@ -28,28 +28,6 @@ const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,     ENT,                    P4,  P5,  P6,        \
         LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,          RSFT,       UP,         P1,  P2,  P3,  PENT, \
         LCTL,LGUI,LALT,               SPC,                RALT,RGUI,FN0, RCTL,  LEFT,DOWN,RGHT,  P0,       PDOT       ),
-    /* Keymap 1: Fn Layer
-     * ,---------------------------------------------------------------------------------------.
-     * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |               |
-     * |---------------------------------------------------------------------------------------|
-     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |   |   |   |   |   |   |   |
-     * |---------------------------------------------------------------------------------------|
-     * |     |Fn1|Fn2|Fn3|   |   |   |   |   |   |   |   |   |     |   |   |   |   |   |   |   |
-     * |-----------------------------------------------------------------------------------|   |
-     * |      |   |   |   |   |   |   |   |   |   |   |   |        |           |   |   |   |   |
-     * |-----------------------------------------------------------|   ,---.   |----------------
-     * |        |   |   |   |   |   |   |   |   |   |   |          |   |   |   |   |   |   |   |
-     * |-----------------------------------------------------------------------------------|   |
-     * |    |    |    |                        |    |    |    |    |   |   |   |   |   |   |   |
-     * `---------------------------------------------------------------------------------------'
-     */
-    KEYMAP_ANSI_104(
-        TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,  TRNS,TRNS,TRNS,                       \
-        TRNS,FN1, FN2, FN3, TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,  TRNS,TRNS,TRNS,  NLCK,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,  TRNS,TRNS,TRNS,  TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,                   TRNS,TRNS,TRNS,      \
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,          TRNS,       TRNS,       TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,               TRNS,               TRNS,TRNS,TRNS,TRNS,  TRNS,TRNS,TRNS,  TRNS,     TRNS       ),
 };
 
 /*
@@ -60,11 +38,6 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    /* Poker2 Layout */
-    [0] = ACTION_LAYER_MOMENTARY(1),
-    [1] = ACTION_BACKLIGHT_TOGGLE(),
-    [2] = ACTION_BACKLIGHT_DECREASE(),
-    [3] = ACTION_BACKLIGHT_INCREASE(),
 };
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
