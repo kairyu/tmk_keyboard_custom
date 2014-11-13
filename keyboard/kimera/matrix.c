@@ -123,10 +123,10 @@ matrix_row_t matrix_get_row(uint8_t row)
 
 void matrix_print(void)
 {
-    print("\nr/c 0123456789ABCDEF\n");
+    print("\nr/c 0123456789ABCDEF0123456789ABCDEF\n");
     for (uint8_t row = 0; row < matrix_rows(); row++) {
         phex(row); print(": ");
-        pbin_reverse16(matrix_get_row(row));
+        pbin_reverse32(matrix_get_row(row));
         print("\n");
     }
 }
@@ -135,7 +135,7 @@ uint8_t matrix_key_count(void)
 {
     uint8_t count = 0;
     for (uint8_t i = 0; i < matrix_rows(); i++) {
-        count += bitpop16(matrix[i]);
+        count += bitpop32(matrix[i]);
     }
     return count;
 }
