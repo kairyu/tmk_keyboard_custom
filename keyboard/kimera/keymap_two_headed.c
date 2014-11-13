@@ -8,7 +8,7 @@ const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
 #endif
     /* Keymap 0: Default Layer
      * ,----------------------------------------.    ,------------------------------------------------.
-     * |               ||Esc|   | F1| F2| F3| F4|    | | F5| F6| F7| F8| | F9|F10|F11|F12||Psc|Slk|Pus|
+     * |   |   |   |   ||Esc|   | F1| F2| F3| F4|    | | F5| F6| F7| F8| | F9|F10|F11|F12||Psc|Slk|Pus|
      * |---------------||-----------------------|    |-----------------------------------||-----------|
      * |Num|  /|  *|  -||  `|  1|  2|  3|  4|  5|    |  6|  7|  8|  9|  0|  -|  =|Backsp ||Ins|Hom|PgU|
      * |---------------||-------------------------.  `-----------------------------------||-----------|
@@ -18,7 +18,7 @@ const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
      * |---------------||----------------------------.   `-------------------------------||   ,---.   |
      * |  1|  2|  3|   ||Shift   |  Z|  X|  C|  V|  B|    |  N|  M|  ,|  .|  /|Shift     ||   |Up |   |
      * |-----------|Ent||----------------------------|    |------------------------------||-----------|
-     * |      0|  .|   ||Ctrl|Gui |Alt |    Space    |    |   Space  |Alt |Gui |Fn0 |Ctrl||Lef|Dow|Rig|
+     * |      0|  .|   ||Ctrl|Gui |Alt |    Space    |    |   Space  |Alt |Gui |App |Ctrl||Lef|Dow|Rig|
      * `---------------------------------------------'    `-------------------------------------------'
      */
     KEYMAP_16x16(
@@ -36,7 +36,7 @@ const uint8_t keymaps[][MATRIX_SIZE] PROGMEM = {
         Y,   U,   I,   O,   P,   LBRC,RBRC,BSLS,DEL, END, PGDN,NO,  NO,  NO,  NO,  NO, \
         H,   J,   K,   L,   SCLN,QUOT,NO,  ENT, NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
         N,   M,   COMM,DOT, SLSH,NO,  NO,  RSFT,NO,  UP,  NO,  NO,  NO,  NO,  NO,  NO, \
-        NO,  SPC, NO,  RALT,RGUI,FN0, RCTL,NO,  LEFT,DOWN,RGHT,NO,  NO,  NO,  NO,  NO, \
+        NO,  SPC, NO,  RALT,RGUI,APP, RCTL,NO,  LEFT,DOWN,RGHT,NO,  NO,  NO,  NO,  NO, \
         NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO, \
         NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO,  NO  ),
 };

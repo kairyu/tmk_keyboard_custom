@@ -39,24 +39,16 @@ static uint8_t debouncing = DEBOUNCE;
 static matrix_row_t matrix[MATRIX_ROWS];
 static matrix_row_t matrix_debouncing[MATRIX_ROWS];
 
-extern uint8_t row_count;
-extern uint8_t col_count;
-extern uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
-
 inline
 uint8_t matrix_rows(void)
 {
-    return row_count;
+    return kimera_matrix_rows();
 }
 
 inline
 uint8_t matrix_cols(void)
 {
-#ifndef TWO_HEADED_KIMERA
-    return col_count;
-#else
-    return col_count / 2;
-#endif
+    return kimera_matrix_cols();
 }
 
 void matrix_init(void)
@@ -68,7 +60,7 @@ void matrix_init(void)
     kimera_init();
 
     // initialize row and col
-    unselect_rows();
+    kimera_unselect_rows();
 
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < matrix_rows(); i++) {
@@ -85,19 +77,9 @@ uint8_t matrix_scan(void)
     kimera_scan();
 
     for (uint8_t i = 0; i < matrix_rows(); i++) {
-        select_row(i);
+        kimera_select_row(i);
         _delay_us(30);  // without this wait read unstable value.
-#ifndef TWO_HEADED_KIMERA
-        matrix_row_t cols = read_cols();
-#else
-        matrix_row_t cols = read_cols();
-        if (i < 8) {
-            cols &= 0xFFFFUL;
-        }
-        else {
-            cols >>= 16;
-        }
-#endif
+        matrix_row_t cols = kimera_read_cols(i);
         if (matrix_debouncing[i] != cols) {
             matrix_debouncing[i] = cols;
             if (debouncing) {
@@ -105,7 +87,7 @@ uint8_t matrix_scan(void)
             }
             debouncing = DEBOUNCE;
         }
-        unselect_rows();
+        kimera_unselect_rows();
     }
 
     if (debouncing) {

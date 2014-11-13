@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SCL_DURATION    (1000000L/SCL_CLOCK)/2
 extern uint8_t i2c_force_stop;
 
-uint8_t row_mapping[PX_COUNT] = {
+static uint8_t row_mapping[PX_COUNT] = {
 #ifndef TWO_HEADED_KIMERA
     0, 1, 2, 3, 4, 5, 6, 7,
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
@@ -45,7 +45,7 @@ uint8_t row_mapping[PX_COUNT] = {
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
 #endif
 };
-uint8_t col_mapping[PX_COUNT] = {
+static uint8_t col_mapping[PX_COUNT] = {
 #ifndef TWO_HEADED_KIMERA
     8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23,
@@ -59,14 +59,17 @@ uint8_t col_mapping[PX_COUNT] = {
 #endif
 };
 #ifndef TWO_HEADED_KIMERA
-uint8_t row_count = 8;
-uint8_t col_count = 24;
+static uint8_t row_count = 8;
+static uint8_t col_count = 24;
 #else
-uint8_t row_count = 16;
-uint8_t col_count = 32;
+static uint8_t row_count = 16;
+static uint8_t col_count = 32;
+static uint8_t row_left_count = 8;
+static uint8_t col_left_count = 16;
+static matrix_row_t col_left_mask;
 #endif
-uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
-uint8_t exp_status = 0;
+static uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
+static uint8_t exp_status = 0;
 
 void kimera_init(void)
 {
@@ -109,6 +112,11 @@ uint8_t read_matrix_mapping(void)
     if (error) return error;
     row_count = rows;
     col_count = cols;
+#ifdef TWO_HEADED_KIMERA
+    row_left_count = (rows + 1) / 2;
+    col_left_count = (cols + 1) / 2;
+    col_left_mask = (1 << row_left_count) - 1;
+#endif
 
     /* read row mapping */
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
@@ -177,7 +185,23 @@ void kimera_scan(void)
     }
 }
 
-matrix_row_t read_cols(void)
+inline
+uint8_t kimera_matrix_rows(void)
+{
+    return row_count;
+}
+
+inline
+uint8_t kimera_matrix_cols(void)
+{
+#ifndef TWO_HEADED_KIMERA
+    return col_count;
+#else
+    return col_left_count;
+#endif
+}
+
+matrix_row_t kimera_read_cols(uint8_t row)
 {
     init_data(0xFF);
 
@@ -196,10 +220,20 @@ matrix_row_t read_cols(void)
             }
         }
     }
+
+#ifdef TWO_HEADED_KIMERA
+    if (row < row_left_count) {
+        cols &= col_left_mask;
+    }
+    else {
+        cols >>= col_left_count;
+    }
+#endif
+
     return cols;
 }
 
-void unselect_rows(void)
+void kimera_unselect_rows(void)
 {
     /* set all output registers to 0xFF */
     init_data(0xFF);
@@ -208,7 +242,7 @@ void unselect_rows(void)
     }
 }
 
-void select_row(uint8_t row)
+void kimera_select_row(uint8_t row)
 {
     /* set selected row to low */
     init_data(0xFF);
