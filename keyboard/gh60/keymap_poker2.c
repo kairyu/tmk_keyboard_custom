@@ -70,3 +70,31 @@ uint16_t fn_actions_count(void) {
     return sizeof(fn_actions) / sizeof(fn_actions[0]);
 }
 #endif
+
+enum {
+    TRICKY_ESC = 0,
+};
+
+#define MODS_SHIFT_MASK (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT))
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    static uint8_t tricky_esc_registered;
+    switch (id) {
+        case TRICKY_ESC:
+            if (record->event.pressed) {
+                if (get_mods() & MODS_SHIFT_MASK) {
+                    tricky_esc_registered = KC_GRV;
+                }
+                else {
+                    tricky_esc_registered = KC_ESC;
+                }
+                register_code(tricky_esc_registered);
+                send_keyboard_report();
+            }
+            else {
+                unregister_code(tricky_esc_registered);
+                send_keyboard_report();
+            }
+            break;
+    }
+}
