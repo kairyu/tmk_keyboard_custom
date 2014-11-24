@@ -15,21 +15,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMAND_H
-#define COMMAND
+#ifndef TIMER_AVR_H
+#define TIMER_AVR_H 1
 
-/* TODO: Refactoring */
-typedef enum { ONESHOT, CONSOLE, MOUSEKEY } command_state_t;
-extern command_state_t command_state;
+#include <stdint.h>
 
-/* This allows to extend commands. Return false when command is not processed. */
-bool command_extra(uint8_t code);
-bool command_console_extra(uint8_t code);
+#ifndef TIMER_PRESCALER
+#   if F_CPU > 16000000
+#       define TIMER_PRESCALER      256
+#   elif F_CPU > 2000000
+#       define TIMER_PRESCALER      64
+#   elif F_CPU > 250000
+#       define TIMER_PRESCALER      8
+#   else
+#       define TIMER_PRESCALER      1
+#   endif
+#endif
+#define TIMER_RAW_FREQ      (F_CPU/TIMER_PRESCALER)
+#define TIMER_RAW           TCNT0
+#define TIMER_RAW_TOP       (TIMER_RAW_FREQ/1000)
 
-#ifdef COMMAND_ENABLE
-bool command_proc(uint8_t code);
-#else
-#define command_proc(code)      false
+#if (TIMER_RAW_TOP > 255)
+#   error "Timer0 can't count 1ms at this clock freq. Use larger prescaler."
 #endif
 
 #endif
