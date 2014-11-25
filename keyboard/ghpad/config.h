@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0xFEED
-#define PRODUCT_ID      0x6060
+#define PRODUCT_ID      0x1010
 #define DEVICE_VER      0x0002
 #define MANUFACTURER    geekhack
 #define PRODUCT         GHPad
@@ -43,7 +43,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* number of backlight levels */
 #define BACKLIGHT_LEVELS 8
+#define BACKLIGHT_CUSTOM
 
+/* number of leds */
 #define LED_COUNT 5
 
 /* number of backlight levels */
