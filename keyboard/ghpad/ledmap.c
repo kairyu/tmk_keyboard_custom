@@ -5,7 +5,7 @@
 
 #ifdef LEDMAP_ENABLE
 
-static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
+static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
     [0] = LEDMAP_NUM_LOCK | LEDMAP_BACKLIGHT,   // LEDS1  - PB2
     [1] = LEDMAP_BACKLIGHT,                     // LEDS6  - PF7
     [2] = LEDMAP_BACKLIGHT,                     // LEDS11 - PF6
@@ -13,9 +13,9 @@ static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
     [4] = LEDMAP_BACKLIGHT,                     // PWM    - PB5
 };
 
-uint8_t ledmap_get_code(uint8_t index)
+ledmap_t ledmap_get_code(uint8_t index)
 {
-    return pgm_read_byte(&ledmaps[index]);
+    return (ledmap_t) { .code = pgm_read_word(&ledmaps[index]) };
 }
 
 void ledmap_led_init(void)
