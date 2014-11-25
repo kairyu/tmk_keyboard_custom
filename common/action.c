@@ -239,6 +239,16 @@ void process_action(keyrecord_t *record)
         case ACT_LAYER_TAP:
         case ACT_LAYER_TAP_EXT:
             switch (action.layer_tap.code) {
+                case 0xe0 ... 0xef:
+                    /* layer On/Off with modifiers(left only) */
+                    if (event.pressed) {
+                        layer_on(action.layer_tap.val);
+                        register_mods(action.layer_tap.code & 0x0f);
+                    } else {
+                        layer_off(action.layer_tap.val);
+                        unregister_mods(action.layer_tap.code & 0x0f);
+                    }
+                    break;
                 case OP_TAP_TOGGLE:
                     /* tap toggle */
                     if (event.pressed) {
@@ -505,7 +515,7 @@ void clear_keyboard_but_mods(void)
 #endif
 }
 
-bool is_tap_key(key_t key)
+bool is_tap_key(keypos_t key)
 {
     action_t action = layer_switch_get_action(key);
 
