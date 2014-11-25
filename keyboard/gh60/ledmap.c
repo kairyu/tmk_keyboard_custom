@@ -5,7 +5,7 @@
 
 #ifdef LEDMAP_ENABLE
 
-static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
+static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
 #if defined(GH60_REV_CHN)
     [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,  // CapsLock - PB2
     [1] = LEDMAP_BACKLIGHT,                     // PWM      - PB6
@@ -18,9 +18,9 @@ static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
 #endif
 };
 
-uint8_t ledmap_get_code(uint8_t index)
+ledmap_t ledmap_get_code(uint8_t index)
 {
-    return pgm_read_byte(&ledmaps[index]);
+    return (ledmap_t) { .code = pgm_read_word(&ledmaps[index]) };
 }
 
 void ledmap_led_init(void)
