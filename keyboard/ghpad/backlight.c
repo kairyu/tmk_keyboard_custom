@@ -72,7 +72,7 @@ void backlight_set(uint8_t level)
         default:
             fading_led_disable_all();
             breathing_led_disable_all();
-            softpwm_led_enable();
+            softpwm_led_disable();
             break;
     }
 }
