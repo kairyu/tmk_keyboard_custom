@@ -71,7 +71,22 @@ uint16_t fn_actions_count(void) {
 }
 #endif
 
-enum {
+enum macro_id {
+    KEYPAD_00 = 0,
+};
+
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    switch (id) {
+        case KEYPAD_00:
+            return (record->event.pressed ?
+                    MACRO( T(P0), T(P0), END ) :
+                    MACRO_NONE );
+    }
+    return MACRO_NONE;
+}
+
+enum function_id {
     TRICKY_ESC = 0,
 };
 
