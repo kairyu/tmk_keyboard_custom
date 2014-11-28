@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 3
 #ifndef TWO_HEADED_KIMERA
-#define EECONFIG_KEYMAP_IN_EEPROM 45
+#define EECONFIG_KEYMAP_IN_EEPROM 49
 #else
-#define EECONFIG_KEYMAP_IN_EEPROM 77
+#define EECONFIG_KEYMAP_IN_EEPROM 81
 #endif
 
 /* define if matrix has ghost */
@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
-//#define NO_ACTION_MACRO
+#define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
 
 #define NO_SUSPEND_POWER_DOWN

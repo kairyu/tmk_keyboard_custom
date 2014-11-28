@@ -115,14 +115,14 @@ void backlight_set(uint8_t level)
             softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
-            fading_led_set_direction(FADING_LED_FADE_IN);
+            fading_led_set_direction_all(FADING_LED_FADE_IN);
             fading_led_set_duration(3);
             break;
         case 8:
             softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
-            fading_led_set_direction(FADING_LED_FADE_OUT);
+            fading_led_set_direction_all(FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
             break;
 #endif
