@@ -225,6 +225,7 @@ void softpwm_led_off(uint8_t index)
 #endif
 #endif
 
+#ifdef SOFTPWM_LED_ENABLE
 void action_keyevent(keyevent_t event)
 {
     if (backlight_mode == 7) {
@@ -238,6 +239,7 @@ void action_keyevent(keyevent_t event)
         }
     }
 }
+#endif
 
 
 #ifndef SOFTPWM_LED_ENABLE

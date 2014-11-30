@@ -113,10 +113,8 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
-# PCB Revision
-ifdef REV
-    OPT_DEFS += -DGH60_REV_$(REV)
-endif
+# PCB Revision (patch CHN)
+OPT_DEFS += -DGH60_REV_CHN
 
 # Additional definitions from command line
 ifdef DEFS
@@ -127,13 +125,13 @@ endif
 #   comment out to disable the options.
 #
 BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
+#MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-NKRO_ENABLE = yes	# USB Nkey Rollover
-USB_6KRO_ENABLE = yes	# USB 6key Rollover
+#NKRO_ENABLE = yes	# USB Nkey Rollover
+#USB_6KRO_ENABLE = yes	# USB 6key Rollover
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 #PS2_USE_BUSYWAIT = yes
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
