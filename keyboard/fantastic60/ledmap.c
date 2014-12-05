@@ -17,31 +17,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <avr/pgmspace.h>
 #include "ledmap.h"
+#include "fantastic.h"
 
 #ifdef LEDMAP_ENABLE
 
-static const uint8_t ledmaps[LED_COUNT] PROGMEM = {
+static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
     [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,      // CapsLock
     [1] = LEDMAP_BACKLIGHT,                         // Backlight
+    [2] = LEDMAP_BACKLIGHT,                         // RGB Light
 };
 
-uint8_t ledmap_get_code(uint8_t index)
+ledmap_t ledmap_get_code(uint8_t index)
 {
-    return pgm_read_byte(&ledmaps[index]);
+    return (ledmap_t) { .code = pgm_read_word(&ledmaps[index]) };
 }
 
 /* LED pin configration
- *   CapsLock:  PC7
- *   NumLock:   PE6
- *   Logo:      PC6
- *   Backlight: PB7
+ *   CapsLock:  PE6
+ *   Backlight: PF7
+ *   RGB R:     PE2
+ *   RGB G:     PC6
+ *   RGB B:     PC7
  */
 void ledmap_led_init(void)
 {
-    DDRE  |=  (1<<PE6);
-    PORTE |=  (1<<PE6);
+    DDRE  |=  (1<<PE6 | 1<<PE2);
+    PORTE |=  (1<<PE6 | 1<<PE2);
     DDRF  |=  (1<<PF7);
-    PORTF &= ~(1<<PF7);
+    PORTF |=  (1<<PF7);
+    DDRC  |=  (1<<PC7 | 1<<PC6);
+    PORTF |=  (1<<PC7 | 1<<PC6);
+    shift_register_init();
+    shift_register_write_word(0x0000);
 }
 
 void ledmap_led_on(uint8_t index)
@@ -51,7 +58,12 @@ void ledmap_led_on(uint8_t index)
             PORTE &= ~(1<<PE6);
             break;
         case 1:
-            PORTF |=  (1<<PF7);
+            PORTF &= ~(1<<PF7);
+            break;
+        case 2:
+            PORTE &= ~(1<<PE2);
+            PORTC &= ~(1<<PC7 | 1<<PC6);
+            break;
     }
 }
 
@@ -62,7 +74,11 @@ void ledmap_led_off(uint8_t index)
             PORTE |=  (1<<PE6);
             break;
         case 1:
-            PORTF &= ~(1<<PF7);
+            PORTF |=  (1<<PF7);
+            break;
+        case 2:
+            PORTE |=  (1<<PE2);
+            PORTC |=  (1<<PC7 | 1<<PC6);
             break;
     }
 }

@@ -52,7 +52,8 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-	ledmap.c
+	ledmap.c \
+	fantastic.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -135,7 +136,7 @@ BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
 #KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 SOFTPWM_LED_ENABLE = yes # Enable SoftPWM to drive backlight
-FADING_LED_ENABLE = yes # Enable fading backlight
+#FADING_LED_ENABLE = yes # Enable fading backlight
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
 LEDMAP_ENABLE = yes		# Enable LED mapping
 LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
