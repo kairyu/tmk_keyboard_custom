@@ -297,8 +297,29 @@ static bool command_common(uint8_t code)
 #ifdef NKRO_ENABLE
             " NKRO"
 #endif
+#ifdef USB_6KRO_ENABLE
+            " 6KRO"
+#endif
 #ifdef KEYMAP_SECTION_ENABLE
             " KEYMAP_SECTION"
+#endif
+#ifdef KEYMAP_IN_EEPROM_ENABLE
+            " KEYMAP_IN_EEPROM"
+#endif
+#ifdef LEDMAP_ENABLE
+            " LEDMAP"
+#endif
+#ifdef LEDMAP_IN_EEPROM_ENABLE
+            " LEDMAP_IN_EEPROM"
+#endif
+#ifdef BACKLIGHT_ENABLE
+            " BACKLIGHT"
+#endif 
+#ifdef SOFTPWM_LED_ENABLE
+            " SOFTPWM_LED"
+#endif
+#ifdef BREATHING_LED_ENABLE
+            " BREATHING_LED"
 #endif
             " " STR(BOOTLOADER_SIZE) "\n");
 
