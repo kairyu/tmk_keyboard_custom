@@ -1,5 +1,5 @@
 /*
-Copyright 2013,2014 Kai Ryu <kai1103@gmail.com>
+Copyright 2014 Kai Ryu <kai1103@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,64 +28,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef BACKLIGHT_ENABLE
 
-static uint8_t backlight_mode;
-
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
 
-void backlight_enable(void);
-void backlight_disable(void);
 inline void backlight_set_raw(uint8_t raw);
+
+#ifdef SOFTPWM_LED_ENABLE
+#ifdef FADING_LED_ENABLE
+static uint8_t backlight_mode;
+#endif 
+#endif
 
 /* Backlight pin configuration
  * PWM: PB7(OC1C)
  */
+#ifndef SOFTPWM_LED_ENABLE
 void backlight_enable(void)
 {
-#ifdef SOFTPWM_LED_ENABLE
-    DDRB |= (1<<PB7);
-    softpwm_led_enable();
-#else
     // Turn on PWM
-    DDRB |= (1<<PB7);
     cli();
-    TCCR1A |= ((1<<WGM10) | (1<<COM1C1));
-    TCCR1B |= ((1<<CS11) | (1<<CS10));
+    DDRB |= (1<<PB7);
+    TCCR1A |= ( (1<<WGM10) | (1<<COM1C1) );
+    TCCR1B |= ( (1<<CS11) | (1<<CS10) );
     sei();
-#endif
 }
-
 void backlight_disable(void)
 {
-#ifdef SOFTPWM_LED_ENABLE
-    DDRB &= ~(1<<PB7);
-    softpwm_led_disable();
-#else
     // Turn off PWM
     cli();
     DDRB &= ~(1<<PB7);
     TCCR1A &= ~( (1<<WGM10) | (1<<COM1C1) );
     TCCR1B &= ~( (1<<CS11) | (1<<CS10) );
     sei();
-    OCR1C = 0;
-#endif
 }
+#endif
 
 void backlight_set(uint8_t level)
 {
+#ifdef FADING_LED_ENABLE
+    backlight_mode = level;
+#endif
+
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
         case 1:
         case 2:
         case 3:
-            backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
+            softpwm_led_enable();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
             breathing_led_disable_all();
 #else
+            backlight_enable();
             breathing_led_disable();
 #endif
             backlight_set_raw(pgm_read_byte(&backlight_table[level]));
@@ -93,30 +90,35 @@ void backlight_set(uint8_t level)
         case 4:
         case 5:
         case 6:
-            backlight_enable();
 #ifdef SOFTPWM_LED_ENABLE
+            softpwm_led_enable();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
             breathing_led_enable_all();
 #else
+            backlight_enable();
             breathing_led_enable();
 #endif
             breathing_led_set_duration(6 - level);
             break;
+#ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
         case 7:
-            backlight_enable();
+            softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction(FADING_LED_FADE_IN);
             fading_led_set_duration(3);
+            break;
         case 8:
-            backlight_enable();
+            softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction(FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
+            break;
+#endif
 #endif
         case 0:
         default:
@@ -125,10 +127,11 @@ void backlight_set(uint8_t level)
             fading_led_disable_all();
 #endif
             breathing_led_disable_all();
+            softpwm_led_disable();
 #else
             breathing_led_disable();
-#endif
             backlight_disable();
+#endif
             break;
     }
 #else
@@ -140,6 +143,7 @@ void backlight_set(uint8_t level)
         backlight_disable();
     }
 #endif
+
 }
 
 #ifndef SOFTPWM_LED_ENABLE
@@ -162,9 +166,14 @@ inline void backlight_set_raw(uint8_t raw)
 
 #ifndef LEDMAP_ENABLE
 #ifdef SOFTPWM_LED_ENABLE
+void softpwm_led_init(void)
+{
+    DDRB  |=  (1<<PB7);
+}
+
 void softpwm_led_on(uint8_t index)
 {
-    PORTB |= (1<<PB7);
+    PORTB |=  (1<<PB7);
 }
 
 void softpwm_led_off(uint8_t index)
