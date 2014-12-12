@@ -38,7 +38,7 @@ static matrix_row_t matrix_debouncing[MATRIX_ROWS];
 
 static matrix_row_t read_cols(void);
 static void init_cols(void);
-static void unselect_rows(void);
+static void init_rows(void);
 static void select_row(uint8_t row);
 
 inline
@@ -60,7 +60,7 @@ void matrix_init(void)
     MCUCR = (1<<JTD);
 
     // initialize row and col
-    unselect_rows();
+    init_rows();
     init_cols();
 
     // initialize matrix state: all keys off
@@ -83,7 +83,8 @@ uint8_t matrix_scan(void)
             }
             debouncing = DEBOUNCE;
         }
-        unselect_rows();
+        // select next row
+        select_row((i + 1) % MATRIX_ROWS);
     }
 
     if (debouncing) {
@@ -179,11 +180,9 @@ static matrix_row_t read_cols(void)
  *      B1  0   0   1   1   0   0   1
  *      B0  0   0   0   0   1   1   1
  */
-static void unselect_rows(void)
+static void init_rows(void)
 {
-    // Select Y7
     DDRB  |= (1<<PB2 | 1<<PB1 | 1<<PB0);
-    PORTB |= (1<<PB2 | 1<<PB1 | 1<<PB0);
 }
 
 static void select_row(uint8_t row)
