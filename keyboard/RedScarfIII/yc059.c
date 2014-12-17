@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <util/delay.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "yc059.h"
 #include "debug.h"
 
@@ -40,11 +41,13 @@ void yc059_init(void)
 
 void yc059_send(uint8_t data)
 {
+    cli();
     yc059_send_header();
     yc059_send_address();
     yc059_send_byte(data);
     yc059_send_byte(~data);
     yc059_send_stop();
+    sei();
 }
 
 inline
