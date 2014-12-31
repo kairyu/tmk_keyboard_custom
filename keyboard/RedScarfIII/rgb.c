@@ -23,6 +23,7 @@ static rgb_config_t rgb_config;
 
 void rgb_init(void)
 {
+    DDRE |= (1<<PE2);
     yc059_init();
     rgb_read_config();
     if (rgb_config.raw == RGB_UNCONFIGURED) {
@@ -33,6 +34,7 @@ void rgb_init(void)
     }
     yc059_send(rgb_config.enable ? YC059_ON : YC059_OFF);
     rgb_resume();
+    PORTE |= (1<<PE2);
 }
 
 void rgb_resume(void)
@@ -53,8 +55,10 @@ void rgb_write_config(void)
 void rgb_on(void)
 {
     rgb_config.enable = 1;
+    PORTE &= ~(1<<PE2);
     yc059_send(YC059_ON);
     rgb_resume();
+    PORTE |= (1<<PE2);
     rgb_write_config();
 }
 
@@ -67,10 +71,12 @@ void rgb_off(void)
 
 void rgb_toggle(void)
 {
-    rgb_config.enable ^= 1;
-    yc059_send(rgb_config.enable ? YC059_ON : YC059_OFF);
-    rgb_resume();
-    rgb_write_config();
+    if (rgb_config.enable) {
+        rgb_off();
+    }
+    else {
+        rgb_on();
+    }
 }
 
 void rgb_increase(void)
