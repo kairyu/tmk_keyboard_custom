@@ -22,6 +22,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 
 inline
+void yc059_ir_enable(void)
+{
+    YC059_IR_DDR  |=  (1<<YC059_IR_BIT);
+}
+
+inline
+void yc059_ir_disable(void)
+{
+    YC059_IR_DDR  &= ~(1<<YC059_IR_BIT);
+}
+
+inline
 void yc059_ir_high(void)
 {
     YC059_IR_PORT &= ~(1<<YC059_IR_BIT);
@@ -35,18 +47,20 @@ void yc059_ir_low(void)
 
 void yc059_init(void)
 {
-    YC059_IR_DDR  |=  (1<<YC059_IR_BIT);
+    YC059_IR_DDR  &= ~(1<<YC059_IR_BIT);
     YC059_IR_PORT &= ~(1<<YC059_IR_BIT);
 }
 
 void yc059_send(uint8_t data)
 {
     cli();
+    yc059_ir_enable();
     yc059_send_header();
     yc059_send_address();
     yc059_send_byte(data);
     yc059_send_byte(~data);
     yc059_send_stop();
+    yc059_ir_disable();
     sei();
 }
 
