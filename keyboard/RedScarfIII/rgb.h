@@ -22,34 +22,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 
 enum rgb_mode_id {
-    RGB_STATIC,
-    RGB_ANIMATE
+    RGB_FIXED,
+    RGB_VARIABLE
 };
 
 enum rgb_static_id {
-    RGB_STATIC_RED,
-    RGB_STATIC_GREEN,
-    RGB_STATIC_BLUE,
-    RGB_STATIC_RED_1,
-    RGB_STATIC_GREEN_1,
-    RGB_STATIC_BLUE_1,
-    RGB_STATIC_RED_2,
-    RGB_STATIC_GREEN_2,
-    RGB_STATIC_BLUE_2,
-    RGB_STATIC_RED_3,
-    RGB_STATIC_GREEN_3,
-    RGB_STATIC_BLUE_3,
-    RGB_STATIC_RED_4,
-    RGB_STATIC_GREEN_4,
-    RGB_STATIC_BLUE_4,
-    RGB_STATIC_WHITE
+    RGB_FIXED_WHITE,
+    RGB_FIXED_RED,
+    RGB_FIXED_GREEN,
+    RGB_FIXED_BLUE,
+    RGB_FIXED_RED_1,
+    RGB_FIXED_GREEN_1,
+    RGB_FIXED_BLUE_1,
+    RGB_FIXED_RED_2,
+    RGB_FIXED_GREEN_2,
+    RGB_FIXED_BLUE_2,
+    RGB_FIXED_RED_3,
+    RGB_FIXED_GREEN_3,
+    RGB_FIXED_BLUE_3,
+    RGB_FIXED_RED_4,
+    RGB_FIXED_GREEN_4,
+    RGB_FIXED_BLUE_4,
+    RGB_FIXED_COUNT
 };
 
 enum rgb_animate_id {
-    RGB_ANIMATE_FLASH,
-    RGB_ANIMATE_STROBE,
-    RGB_ANIMATE_FADE,
-    RGB_ANIMATE_SMOOTH
+    RGB_VARIABLE_FLASH,
+    RGB_VARIABLE_STROBE,
+    RGB_VARIABLE_FADE,
+    RGB_VARIABLE_SMOOTH,
+    RGB_VARIABLE_COUNT
 };
 
 typedef union {
@@ -74,6 +76,7 @@ void rgb_toggle(void);
 void rgb_increase(void);
 void rgb_decrease(void);
 void rgb_set(uint8_t mode, uint8_t id);
+void rgb_step(uint8_t mode);
 uint8_t rgb_to_yc059(uint8_t mode, uint8_t id);
 
 #endif

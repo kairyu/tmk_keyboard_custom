@@ -28,8 +28,8 @@ void rgb_init(void)
     rgb_read_config();
     if (rgb_config.raw == RGB_UNCONFIGURED) {
         rgb_config.enable = 0;
-        rgb_config.mode = RGB_STATIC;
-        rgb_config.id = RGB_STATIC_WHITE;
+        rgb_config.mode = RGB_FIXED;
+        rgb_config.id = RGB_FIXED_WHITE;
         rgb_write_config();
     }
     yc059_send(rgb_config.enable ? YC059_ON : YC059_OFF);
@@ -99,18 +99,46 @@ void rgb_set(uint8_t mode, uint8_t id)
     }
 }
 
+void rgb_step(uint8_t mode)
+{
+    if (rgb_config.enable) {
+        if (rgb_config.mode != mode) {
+            rgb_config.mode = mode;
+            rgb_config.id = 0;
+        }
+        else {
+            uint8_t count;
+            switch (mode) {
+                case RGB_FIXED:
+                    count = RGB_FIXED_COUNT;
+                    break;
+                case RGB_VARIABLE:
+                    count = RGB_VARIABLE_COUNT;
+                    break;
+                default:
+                    count = 1;
+                    break;
+            }
+            rgb_config.id = (rgb_config.id + 1) % count;
+        }
+        rgb_resume();
+        rgb_write_config();
+    }
+}
+
 uint8_t rgb_to_yc059(uint8_t mode, uint8_t id)
 {
     switch (mode) {
-        case RGB_STATIC:
-            if (id == RGB_STATIC_WHITE) {
-                return YC059_STATIC_WHITE;
+        case RGB_FIXED:
+            if (id == RGB_FIXED_WHITE) {
+                return YC059_FIXED_WHITE;
             }
             else {
-                return YC059_STATIC_RED + (id / 3) * 4 + id % 3;
+                id--;
+                return YC059_FIXED_RED + (id / 3) * 4 + id % 3;
             }
             break;
-        case RGB_ANIMATE:
+        case RGB_VARIABLE:
             return YC059_FLASH + id * 4;
             break;
         default:
