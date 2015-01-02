@@ -130,19 +130,52 @@ uint8_t rgb_to_yc059(uint8_t mode, uint8_t id)
 {
     switch (mode) {
         case RGB_FIXED:
-            if (id == RGB_FIXED_WHITE) {
-                return YC059_FIXED_WHITE;
+            switch (id) {
+                case RGB_FIXED_WHITE:
+                    return YC059_FIXED_WHITE;
+                case RGB_FIXED_RED:
+                    return YC059_FIXED_RED;
+                case RGB_FIXED_GREEN:
+                    return YC059_FIXED_GREEN;
+                case RGB_FIXED_BLUE:
+                    return YC059_FIXED_BLUE;
+                case RGB_FIXED_RED_1:
+                    return YC059_FIXED_RED_1;
+                case RGB_FIXED_GREEN_1:
+                    return YC059_FIXED_GREEN_1;
+                case RGB_FIXED_BLUE_1:
+                    return YC059_FIXED_BLUE_1;
+                case RGB_FIXED_RED_2:
+                    return YC059_FIXED_RED_2;
+                case RGB_FIXED_GREEN_2:
+                    return YC059_FIXED_GREEN_2;
+                case RGB_FIXED_BLUE_2:
+                    return YC059_FIXED_BLUE_2;
+                case RGB_FIXED_RED_3:
+                    return YC059_FIXED_RED_3;
+                case RGB_FIXED_GREEN_3:
+                    return YC059_FIXED_GREEN_3;
+                case RGB_FIXED_BLUE_3:
+                    return YC059_FIXED_BLUE_3;
+                case RGB_FIXED_RED_4:
+                    return YC059_FIXED_RED_4;
+                case RGB_FIXED_GREEN_4:
+                    return YC059_FIXED_GREEN_4;
+                case RGB_FIXED_BLUE_4:
+                    return YC059_FIXED_BLUE_4;
             }
-            else {
-                id--;
-                return YC059_FIXED_RED + (id / 3) * 4 + id % 3;
-            }
-            break;
         case RGB_VARIABLE:
-            return YC059_FLASH + id * 4;
-            break;
+            switch (id) {
+                case RGB_VARIABLE_FLASH:
+                    return YC059_FLASH;
+                case RGB_VARIABLE_STROBE:
+                    return YC059_STROBE;
+                case RGB_VARIABLE_FADE:
+                    return YC059_FADE;
+                case RGB_VARIABLE_SMOOTH:
+                    return YC059_SMOOTH;
+            }
         default:
             return YC059_OFF;
-            break;
     }
 }
