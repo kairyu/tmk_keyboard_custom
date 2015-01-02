@@ -31,26 +31,26 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         LCTL,LGUI,LALT,               SPC,                RALT,FN0, RGUI,     RCTL,P0,  P0,  PDOT,PENT  ),
     /* Keymap 1: Fn Layer
      * ,---------------------------------------------------------------------------.
-     * | *4| *5| *6| *7| *8|*21|*22|*23|*24|*25|*26|   |   |   |   |   |   |   |   |
+     * |Fn5|Fn6|Fn7|Fn8|Fn9|   |   |   |   |   |   |   |   |   |   |   |   |Hom|End|
      * |-----------------------------------------------------------+---+---+---+---|
-     * |   | *9|*10|*11|   |   |   |   |   |   |   |*25|*26|       |   |   |   |   |
+     * |F10|F11|F12|F13|F14|F15|F16|F17|F18|   |   |   |   |       |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
-     * |     |*12|*13|*14|   |   |Cal|   |Ins|   |Psc|Slk|Pau|     |   |   |   |   |
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |   |   |   |   |
      * |-----------------------------------------------------------|---+---+---|   |
-     * |      |*15|*16|*17|   |   |   |   |   |   |Hom|PgU|        |   |   |   |   |
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |   |
      * |-----------------------------------------------------------|---+---+---+---|
-     * |        |*18|*19|*20|Fn1|Fn2|VoD|VoU|Mut|End|PgD|      |   |   |   |   |   |
+     * |        |   |   |Fn2|Fn1|Fn3|VoD|VoU|Mut|   |   |      |   |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---|   |
-     * |    |    |    |           Fn3          |    |    |    |    |   |   |   |   |
+     * |    |    |    |           Fn4          |    |    |    |    |   |   |   |   |
      * `---------------------------------------------------------------------------'
      */
     KEYMAP(
-        FN4 ,FN5 ,FN6 ,FN7 ,FN8 ,FN21,FN22,FN23,FN24,FN25,FN26,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,FN9 ,FN10,FN11,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,FN27,FN28,     TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,FN12,FN13,FN14,TRNS,TRNS,CALC,TRNS,INS, TRNS,PSCR,SLCK,PAUS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,FN15,FN16,FN17,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,HOME,PGUP,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,FN18,FN19,FN20,FN1, FN2, VOLD,VOLU,MUTE,END, PGDN,     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,               FN3,                TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS  ),
+        FN5 ,FN6 ,FN7 ,FN8 ,FN9 ,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,HOME,END,  \
+        FN10,FN11,FN12,FN13,FN14,FN15,FN16,FN17,FN18,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,FN2 ,FN1, FN3, VOLD,VOLU,MUTE,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,               FN4,                TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS  ),
     /* Keymap 2: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
@@ -96,33 +96,23 @@ const uint16_t fn_actions[] PROGMEM = {
 #endif
     [0] = ACTION_LAYER_MOMENTARY(1),
     [1] = ACTION_BACKLIGHT_TOGGLE(),
-    [2] = ACTION_BACKLIGHT_STEP(),
-    [3] = ACTION_LAYER_TOGGLE(2),
-    [4] = ACTION_FUNCTION(AF_RGB_TOGGLE),
-    [5] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED),
-    [6] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN),
-    [7] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE),
-    [8] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_WHITE),
-    [9] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_1),
-    [10] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_1),
-    [11] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_1),
-    [12] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_2),
-    [13] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_2),
-    [14] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_2),
-    [15] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_3),
-    [16] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_3),
-    [17] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_3),
-    [18] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_4),
-    [19] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_4),
-    [20] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_4),
-    [21] = ACTION_FUNCTION_OPT(AF_RGB_VARIABLE, RGB_VARIABLE_FLASH),
-    [22] = ACTION_FUNCTION_OPT(AF_RGB_VARIABLE, RGB_VARIABLE_STROBE),
-    [23] = ACTION_FUNCTION_OPT(AF_RGB_VARIABLE, RGB_VARIABLE_FADE),
-    [24] = ACTION_FUNCTION_OPT(AF_RGB_VARIABLE, RGB_VARIABLE_SMOOTH),
-    [25] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_FIXED),
-    [26] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_VARIABLE),
-    [27] = ACTION_FUNCTION(AF_RGB_DECREASE),
-    [28] = ACTION_FUNCTION(AF_RGB_INCREASE)
+    [2] = ACTION_BACKLIGHT_DECREASE(),
+    [3] = ACTION_BACKLIGHT_INCREASE(),
+    [4] = ACTION_LAYER_TOGGLE(2),
+    [5] = ACTION_FUNCTION(AF_RGB_TOGGLE),
+    [6] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_FIXED),
+    [7] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_VARIABLE),
+    [8] = ACTION_FUNCTION(AF_RGB_DECREASE),
+    [9] = ACTION_FUNCTION(AF_RGB_INCREASE),
+    [10] = ACTION_FUNCTION_OPT(AF_RGB_VARIABLE, RGB_VARIABLE_FADE),
+    [11] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED),
+    [12] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_1),
+    [13] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_RED_4),
+    [14] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_1),
+    [15] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_GREEN_3),
+    [16] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_1),
+    [17] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_BLUE_4),
+    [18] = ACTION_FUNCTION_OPT(AF_RGB_FIXED, RGB_FIXED_WHITE),
 };
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
