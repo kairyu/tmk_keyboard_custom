@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include "action.h"
 #include "backlight.h"
+#include "softpwm_led.h"
 #include "suspend_avr.h"
 #include "suspend.h"
 #ifdef PROTOCOL_LUFA
@@ -27,7 +28,6 @@ __asm__ __volatile__ (  \
         _BV(WDIE) | (value & 0x07)) ) \
     : "r0"  \
 )
-
 
 void suspend_idle(uint8_t time)
 {
@@ -68,6 +68,14 @@ void suspend_power_down(uint8_t wdto)
     // - BOD disable
     // - Power Reduction Register PRR
 
+#ifdef SUSPEND_ACTION
+    suspend_power_down_action();
+#endif
+
+#ifdef SOFTPWM_LED_ENABLE
+    softpwm_led_disable();
+#endif
+
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
     sei();
@@ -94,6 +102,9 @@ void suspend_wakeup_init(void)
 {
     // clear keyboard state
     clear_keyboard();
+#ifdef SUSPEND_ACTION
+    suspend_wakeup_init_action();
+#endif
 #ifdef BACKLIGHT_ENABLE
     backlight_init();
 #endif
@@ -113,5 +124,17 @@ ISR(WDT_vect)
         led_set((led_state ^= (1<<USB_LED_CAPS_LOCK)));
     }
 */
+}
+#endif
+
+#ifdef SUSPEND_ACTION
+__attribute__ ((weak))
+void suspend_power_down_action(void)
+{
+}
+
+__attribute__ ((weak))
+void suspend_wakeup_init_action(void)
+{
 }
 #endif
