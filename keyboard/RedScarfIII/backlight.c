@@ -37,7 +37,7 @@ inline void backlight_set_raw(uint8_t raw);
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
 static uint8_t backlight_mode;
-#endif 
+#endif
 #endif
 
 /* Backlight pin configuration
