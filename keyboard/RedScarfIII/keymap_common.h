@@ -39,7 +39,7 @@ extern const uint16_t fn_actions[];
  * K3B and K2M are extra keys for ISO
  */
 #define KEYMAP( \
-    K5A, K5B, K5C, K5D, K5E, K5F, K5G, K5H, K5I, K5J, K5K, K5L, K5M, K5N, K5P, K5Q, K5R, K5S, K4I, \
+    K5A, K5B, K5C, K5D, K5E, K5F, K5G, K5H, K5I, K5J, K5K, K5L, K5M, K5N, K4I, K5P, K5Q, K5R, K5S, \
     K0A, K0B, K0C, K0D, K0E, K0F, K0G, K0H, K0I, K0J, K0K, K0L, K0M,      K0N, K0P, K0Q, K0R, K0S, \
     K1A, K1B, K1C, K1D, K1E, K1F, K1G, K1H, K1I, K1J, K1K, K1L, K1M,      K1N, K1P, K1Q, K1R, K1S, \
     K2A, K2B, K2C, K2D, K2E, K2F, K2G, K2H, K2I, K2J, K2K, K2L, K2M,      K2N, K2P, K2Q, K2R, K2S, \
