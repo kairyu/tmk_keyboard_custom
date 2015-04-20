@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 #include "softpwm_led.h"
-#include "keymap_common.h"
+#include "action.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -124,5 +124,19 @@ void softpwm_led_off(uint8_t index)
     }
 }
 #endif
+
+void action_keyevent(keyevent_t event)
+{
+    if (backlight_mode == 7) {
+        if (event.pressed) {
+            softpwm_led_decrease_all(32);
+        }
+    }
+    if (backlight_mode == 8) {
+        if (event.pressed) {
+            softpwm_led_increase_all(32);
+        }
+    }
+}
 
 #endif
