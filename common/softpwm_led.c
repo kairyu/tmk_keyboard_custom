@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include "led.h"
 #include "softpwm_led.h"
 #include "debug.h"
