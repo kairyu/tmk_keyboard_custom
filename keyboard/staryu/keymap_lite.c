@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keycode.h"
 #include "action.h"
 #include "keymap_common.h"
+#include "rgb.h"
 
 // Default
 #ifdef KEYMAP_SECTION_ENABLE
@@ -60,6 +61,13 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
     KEYMAP( FN5, FN3, FN6, FN4, FN7  ),
 };
 
+enum function_id {
+    AF_RGB_TOGGLE = 0,
+    AF_RGB_DECREASE,
+    AF_RGB_INCREASE,
+    AF_RGB_STEP
+};
+
 /*
  * Fn action definition
  */
@@ -71,10 +79,10 @@ const uint16_t fn_actions[] PROGMEM = {
     [1] = ACTION_DEFAULT_LAYER_SET(2),
     [2] = ACTION_DEFAULT_LAYER_SET(3),
     [3] = ACTION_DEFAULT_LAYER_SET(0),
-    [4] = ACTION_BACKLIGHT_TOGGLE(),
-    [5] = ACTION_BACKLIGHT_STEP(),
-    [6] = ACTION_BACKLIGHT_DECREASE(),
-    [7] = ACTION_BACKLIGHT_INCREASE()
+    [4] = ACTION_BACKLIGHT_DECREASE(),
+    [5] = ACTION_BACKLIGHT_INCREASE(),
+    [6] = ACTION_FUNCTION(AF_RGB_DECREASE),
+    [7] = ACTION_FUNCTION(AF_RGB_INCREASE)
 #endif
 };
 
@@ -87,3 +95,23 @@ uint16_t fn_actions_count(void) {
     return sizeof(fn_actions) / sizeof(fn_actions[0]);
 }
 #endif
+
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    if (record->event.pressed) {
+        switch (id) {
+            case AF_RGB_TOGGLE:
+                rgb_toggle();
+                break;
+            case AF_RGB_DECREASE:
+                rgb_decrease();
+                break;
+            case AF_RGB_INCREASE:
+                rgb_increase();
+                break;
+            case AF_RGB_STEP:
+                rgb_step();
+                break;
+        }
+    }
+}

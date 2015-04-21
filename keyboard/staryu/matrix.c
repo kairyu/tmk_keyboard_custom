@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "matrix.h"
 #include "keymap_common.h"
+#include "rgb.h"
 
 
 #ifndef DEBOUNCE
@@ -56,6 +57,8 @@ uint8_t matrix_cols(void)
 
 void matrix_init(void)
 {
+    rgb_init();
+
     // initialize cols
     init_cols();
 }
