@@ -28,11 +28,10 @@ static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
 
-static uint8_t backlight_mode;
+extern backlight_config_t backlight_config;
 
 void backlight_set(uint8_t level)
 {
-    backlight_mode = level;
     switch (level) {
         case 1:
         case 2:
@@ -127,14 +126,16 @@ void softpwm_led_off(uint8_t index)
 
 void action_keyevent(keyevent_t event)
 {
-    if (backlight_mode == 7) {
-        if (event.pressed) {
-            softpwm_led_decrease_all(32);
+    if (backlight_config.enable) {
+        if (backlight_config.level == 7) {
+            if (event.pressed) {
+                softpwm_led_decrease_all(32);
+            }
         }
-    }
-    if (backlight_mode == 8) {
-        if (event.pressed) {
-            softpwm_led_increase_all(32);
+        if (backlight_config.level == 8) {
+            if (event.pressed) {
+                softpwm_led_increase_all(32);
+            }
         }
     }
 }
