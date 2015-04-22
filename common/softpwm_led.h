@@ -69,6 +69,12 @@ void breathing_led_set_duration(uint8_t dur);
 #define breathing_led_set_duration_all()
 #endif
 
+#ifdef CUSTOM_LED_ENABLE
+void custom_led_proc(void);
+#else
+#define custom_led_proc()
+#endif
+
 #else
 
 #define softpwm_init()
