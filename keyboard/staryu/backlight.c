@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #include "softpwm_led.h"
 #include "action.h"
+#include "rgb.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -29,6 +30,7 @@ static const uint8_t backlight_table[] PROGMEM = {
 };
 
 extern backlight_config_t backlight_config;
+uint8_t backlight_brightness;
 
 void backlight_set(uint8_t level)
 {
@@ -39,7 +41,9 @@ void backlight_set(uint8_t level)
         case 3:
             fading_led_disable_all();
             breathing_led_disable_all();
-            softpwm_led_set_all(pgm_read_byte(&backlight_table[level]));
+            backlight_brightness = pgm_read_byte(&backlight_table[level]);
+            softpwm_led_set_all(backlight_brightness);
+            rgb_set_brightness(backlight_brightness);
             break;
         case 4:
         case 5:
@@ -64,6 +68,8 @@ void backlight_set(uint8_t level)
         default:
             fading_led_disable_all();
             breathing_led_disable_all();
+            backlight_brightness = 0;
+            softpwm_led_set_all(backlight_brightness);
             break;
     }
 }
@@ -135,5 +141,17 @@ void action_keyevent(keyevent_t event)
         }
     }
 }
+
+#ifdef CUSTOM_LED_ENABLE
+void fading_led_custom(uint8_t *value)
+{
+    rgb_set_brightness(*value);
+}
+
+void breathing_led_custom(uint8_t *value)
+{
+    rgb_set_brightness(*value);
+}
+#endif
 
 #endif

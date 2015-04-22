@@ -32,14 +32,16 @@ typedef union {
 enum {
     RGB_OFF = 0,
     RGB_RED,
-    RGB_ORANGE,
     RGB_YELLOW,
     RGB_GREEN,
     RGB_CYAN,
     RGB_BLUE,
-    RGB_VIOLET,
+    RGB_MAGENTA,
     RGB_WHITE,
-    RGB_LEVELS
+    RGB_FADE_SLOW,
+    RGB_FADE_MID,
+    RGB_FADE_FAST,
+    RGB_LEVELS = RGB_FADE_FAST
 };
 
 #define EECONFIG_RGB (uint8_t *)7
@@ -52,5 +54,6 @@ void rgb_off(void);
 void rgb_decrease(void);
 void rgb_increase(void);
 void rgb_step(void);
+void rgb_set_brightness(uint8_t brightness);
 
 #endif
