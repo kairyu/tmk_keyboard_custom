@@ -12,6 +12,18 @@ static uint8_t softpwm_led_state = 0;
 static uint8_t softpwm_led_ocr[LED_COUNT] = {0};
 static uint8_t softpwm_led_ocr_buff[LED_COUNT] = {0};
 
+#ifdef FADING_LED_ENABLE
+static void fading_led_proc(void);
+#else
+#define fading_led_proc()
+#endif
+
+#ifdef BREATHING_LED_ENABLE
+static void breathing_led_proc(void);
+#else
+#define fading_led_proc()
+#endif
+
 void softpwm_init(void)
 {
 #ifdef SOFTPWM_LED_TIMER3
@@ -266,63 +278,71 @@ ISR(TIMER1_COMPA_vect)
         }
     }
 
-#ifdef FADING_LED_ENABLE
-    static uint8_t fading_led_counter = 0;
-    static uint8_t fading_led_step = 0;
-    if (fading_led_state) {
-        if (++fading_led_counter > SOFTPWM_LED_FREQ) {
-            fading_led_counter = 0;
-            if (++fading_led_step > fading_led_duration) {
-                fading_led_step = 0;
-                for (uint8_t i = 0; i < LED_COUNT; i++) {
-                    if (fading_led_state & LED_BIT(i)) {
-                        if (fading_led_direction) {
-                            softpwm_led_decrease(i, 1);
-                        }
-                        else {
-                            softpwm_led_increase(i, 1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-#endif
-
-#ifdef BREATHING_LED_ENABLE
-    static uint8_t breathing_led_counter = 0;
-    static uint8_t breathing_led_step = 0;
-    static uint8_t breathing_led_index = 0;
-    static uint8_t breathing_led_direction = 0;
-    if (breathing_led_state) {
-        if (++breathing_led_counter > SOFTPWM_LED_FREQ) {
-            breathing_led_counter = 0;
-            if (++breathing_led_step > breathing_led_duration) {
-                breathing_led_step = 0;
-                uint8_t value = pgm_read_byte(&breathing_table[breathing_led_index]);
-                for (uint8_t i = 0; i < LED_COUNT; i++) {
-                    if (breathing_led_state & LED_BIT(i)) {
-                        softpwm_led_ocr_buff[i] = value;
-                    }
-                }
-                if (breathing_led_direction) {
-                    if (breathing_led_index == 0) {
-                        breathing_led_direction = 0;
-                    }
-                    else {
-                        breathing_led_index--;
-                    }
-                }
-                else {
-                    if (breathing_led_index == 0x7F) {
-                        breathing_led_direction = 1;
-                    }
-                    else {
-                        breathing_led_index++;
-                    }
-                }
-            }
-        }
+#if defined(FADING_LED_ENABLE) || defined(BREATHING_LED_ENABLE) || defined(CUSTOM_LED_ENABLE)
+    static uint8_t counter = 0;
+    if (++counter >= SOFTPWM_LED_FREQ) {
+        counter = 0;
+        fading_led_proc();
+        breathing_led_proc();
+        custom_led_proc();
     }
 #endif
 }
+
+#ifdef FADING_LED_ENABLE
+void fading_led_proc(void)
+{
+    static uint8_t step = 0;
+    if (fading_led_state) {
+        if (++step > fading_led_duration) {
+            step = 0;
+            for (uint8_t i = 0; i < LED_COUNT; i++) {
+                if (fading_led_state & LED_BIT(i)) {
+                    if (fading_led_direction) {
+                        softpwm_led_decrease(i, 1);
+                    }
+                    else {
+                        softpwm_led_increase(i, 1);
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
+
+#ifdef BREATHING_LED_ENABLE
+void breathing_led_proc(void)
+{
+    static uint8_t step = 0;
+    static uint8_t index = 0;
+    static uint8_t direction = 0;
+    if (breathing_led_state) {
+        if (++step > breathing_led_duration) {
+            step = 0;
+            uint8_t value = pgm_read_byte(&breathing_table[index]);
+            for (uint8_t i = 0; i < LED_COUNT; i++) {
+                if (breathing_led_state & LED_BIT(i)) {
+                    softpwm_led_ocr_buff[i] = value;
+                }
+            }
+            if (direction) {
+                if (index == 0) {
+                    direction = 0;
+                }
+                else {
+                    index--;
+                }
+            }
+            else {
+                if (index == 0x7F) {
+                    direction = 1;
+                }
+                else {
+                    index++;
+                }
+            }
+        }
+    }
+}
+#endif
