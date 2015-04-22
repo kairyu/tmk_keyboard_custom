@@ -269,7 +269,7 @@ ISR(TIMER1_COMPA_vect)
     for (uint8_t i = 0; i < LED_COUNT; i++) {
         // LED on
         if (pwm == 0) {
-            softpwm_led_on(i);
+            if (softpwm_led_ocr[i]) softpwm_led_on(i);
             softpwm_led_ocr[i] = softpwm_led_ocr_buff[i];
         }
         // LED off
@@ -284,7 +284,7 @@ ISR(TIMER1_COMPA_vect)
         counter = 0;
         fading_led_proc();
         breathing_led_proc();
-        custom_led_proc();
+        softpwm_led_custom();
     }
 #endif
 }
@@ -306,6 +306,9 @@ void fading_led_proc(void)
                     }
                 }
             }
+#ifdef CUSTOM_LED_ENABLE
+            fading_led_custom(softpwm_led_ocr);
+#endif
         }
     }
 }
@@ -326,6 +329,9 @@ void breathing_led_proc(void)
                     softpwm_led_ocr_buff[i] = value;
                 }
             }
+#ifdef CUSTOM_LED_ENABLE
+            breathing_led_custom(softpwm_led_ocr);
+#endif
             if (direction) {
                 if (index == 0) {
                     direction = 0;

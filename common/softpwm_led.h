@@ -70,7 +70,9 @@ void breathing_led_set_duration(uint8_t dur);
 #endif
 
 #ifdef CUSTOM_LED_ENABLE
-void custom_led_proc(void);
+void softpwm_led_custom(void);
+void fading_led_custom(uint8_t *value);
+void breathing_led_custom(uint8_t *value);
 #else
 #define custom_led_proc()
 #endif
