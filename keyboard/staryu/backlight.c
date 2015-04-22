@@ -32,11 +32,11 @@ extern backlight_config_t backlight_config;
 
 void backlight_set(uint8_t level)
 {
+    softpwm_led_enable();
     switch (level) {
         case 1:
         case 2:
         case 3:
-            softpwm_led_enable();
             fading_led_disable_all();
             breathing_led_disable_all();
             softpwm_led_set_all(pgm_read_byte(&backlight_table[level]));
@@ -44,20 +44,17 @@ void backlight_set(uint8_t level)
         case 4:
         case 5:
         case 6:
-            softpwm_led_enable();
             breathing_led_enable_all();
             fading_led_disable_all();
             breathing_led_set_duration(6 - level);
             break;
         case 7:
-            softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction(FADING_LED_FADE_IN);
             fading_led_set_duration(3);
             break;
         case 8:
-            softpwm_led_enable();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction(FADING_LED_FADE_OUT);
@@ -67,7 +64,6 @@ void backlight_set(uint8_t level)
         default:
             fading_led_disable_all();
             breathing_led_disable_all();
-            softpwm_led_enable();
             break;
     }
 }
@@ -85,27 +81,6 @@ void softpwm_led_on(uint8_t index)
 {
     switch (index) {
         case 0:
-            PORTC |= (1<<PC2);
-            break;
-        case 1:
-            PORTC |= (1<<PC7);
-            break;
-        case 2:
-            PORTD |= (1<<PD5);
-            break;
-        case 3:
-            PORTD |= (1<<PD6);
-            break;
-        case 4:
-            PORTB |= (1<<PB0);
-            break;
-    }
-}
-
-void softpwm_led_off(uint8_t index)
-{
-    switch (index) {
-        case 0:
             PORTC &= ~(1<<PC2);
             break;
         case 1:
@@ -119,6 +94,27 @@ void softpwm_led_off(uint8_t index)
             break;
         case 4:
             PORTB &= ~(1<<PB0);
+            break;
+    }
+}
+
+void softpwm_led_off(uint8_t index)
+{
+    switch (index) {
+        case 0:
+            PORTC |= (1<<PC2);
+            break;
+        case 1:
+            PORTC |= (1<<PC7);
+            break;
+        case 2:
+            PORTD |= (1<<PD5);
+            break;
+        case 3:
+            PORTD |= (1<<PD6);
+            break;
+        case 4:
+            PORTB |= (1<<PB0);
             break;
     }
 }
