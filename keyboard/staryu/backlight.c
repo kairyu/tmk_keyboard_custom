@@ -131,12 +131,12 @@ void action_keyevent(keyevent_t event)
     if (backlight_config.enable) {
         if (backlight_config.level == 7) {
             if (event.pressed) {
-                softpwm_led_decrease_all(32);
+                softpwm_led_decrease(event.key.col, 32);
             }
         }
         if (backlight_config.level == 8) {
             if (event.pressed) {
-                softpwm_led_increase_all(32);
+                softpwm_led_increase(event.key.col, 32);
             }
         }
     }
@@ -145,7 +145,11 @@ void action_keyevent(keyevent_t event)
 #ifdef CUSTOM_LED_ENABLE
 void fading_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(*value);
+    uint8_t max = 0;
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        if (value[i] > max) max = value[i];
+    }
+    rgb_set_brightness(max);
 }
 
 void breathing_led_custom(uint8_t *value)
