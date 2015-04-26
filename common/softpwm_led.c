@@ -155,6 +155,7 @@ inline uint8_t softpwm_led_get_state(void)
 static led_pack_t fading_led_state = 0;
 static led_pack_t fading_led_direction = 0;
 static uint8_t fading_led_duration = 0;
+static uint8_t fading_led_delay[LED_COUNT] = {0};
 
 void fading_led_enable(uint8_t index)
 {
@@ -190,14 +191,38 @@ void fading_led_toggle_all(void)
     }
 }
 
-void fading_led_set_direction(uint8_t dir)
+void fading_led_set_direction(uint8_t index, uint8_t dir)
 {
-    fading_led_direction = dir;
+    if (dir) {
+        LED_BIT_SET(fading_led_direction, index);
+    }
+    else {
+        LED_BIT_CLEAR(fading_led_direction, index);
+    }
+}
+
+void fading_led_set_direction_all(uint8_t dir)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        fading_led_set_direction(i, dir);
+    }
 }
 
 void fading_led_set_duration(uint8_t dur)
 {
     fading_led_duration = dur;
+}
+
+void fading_led_set_delay(uint8_t index, uint8_t delay)
+{
+    fading_led_delay[index] = delay;
+}
+
+void fading_led_set_delay_all(uint8_t delay)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        fading_led_delay[i] = delay;
+    }
 }
 
 #endif
@@ -298,11 +323,16 @@ void fading_led_proc(void)
             step = 0;
             for (uint8_t i = 0; i < LED_COUNT; i++) {
                 if (fading_led_state & LED_BIT(i)) {
-                    if (fading_led_direction) {
-                        softpwm_led_decrease(i, 1);
+                    if (fading_led_delay[i]) {
+                        fading_led_delay[i]--;
                     }
                     else {
-                        softpwm_led_increase(i, 1);
+                        if (fading_led_direction & LED_BIT(i)) {
+                            softpwm_led_decrease(i, 1);
+                        }
+                        else {
+                            softpwm_led_increase(i, 1);
+                        }
                     }
                 }
             }

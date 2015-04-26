@@ -34,8 +34,11 @@ void fading_led_disable(uint8_t index);
 void fading_led_disable_all(void);
 void fading_led_toggle(uint8_t index);
 void fading_led_toggle_all(void);
-void fading_led_set_direction(uint8_t dir);
+void fading_led_set_direction(uint8_t index, uint8_t dir);
+void fading_led_set_direction_all(uint8_t dir);
 void fading_led_set_duration(uint8_t dur);
+void fading_led_set_delay(uint8_t index, uint8_t delay);
+void fading_led_set_delay_all(uint8_t delay);
 #else
 #define fading_led_enable()
 #define fading_led_enable_all()
@@ -46,6 +49,8 @@ void fading_led_set_duration(uint8_t dur);
 #define fading_led_set_direction()
 #define fading_led_set_direction_all()
 #define fading_led_set_duration()
+#define fading_led_set_delay()
+#define fading_led_set_delay_all()
 #endif
 
 #ifdef BREATHING_LED_ENABLE
