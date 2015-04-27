@@ -165,6 +165,11 @@ void action_keyevent(keyevent_t event)
 }
 
 #ifdef CUSTOM_LED_ENABLE
+void softpwm_led_custom(void)
+{
+    rgb_fading();
+}
+
 void fading_led_custom(uint8_t *value)
 {
     uint8_t tmp = value[0];

@@ -55,5 +55,6 @@ void rgb_decrease(void);
 void rgb_increase(void);
 void rgb_step(void);
 void rgb_set_brightness(uint8_t brightness);
+void rgb_fading(void);
 
 #endif

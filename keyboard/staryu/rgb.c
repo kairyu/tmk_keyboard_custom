@@ -34,6 +34,7 @@ extern uint8_t backlight_brightness;
 static void rgb_write_config(void);
 static void rgb_read_config(void);
 static void rgb_set_level(uint8_t level);
+static void rgb_refresh(void);
 static void hue_to_rgb(uint16_t hue, struct cRGB *rgb);
 static void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, struct cRGB *rgb);
 
@@ -192,8 +193,7 @@ void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, struct cRG
     rgb->b = temp[n];
 }
 
-#ifdef CUSTOM_LED_ENABLE
-void softpwm_led_custom(void)
+void rgb_fading(void)
 {
     static uint8_t step = 0;
     static uint16_t hue = 0;
@@ -208,4 +208,3 @@ void softpwm_led_custom(void)
         }
     }
 }
-#endif
