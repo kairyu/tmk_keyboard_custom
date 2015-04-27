@@ -56,12 +56,17 @@ void fading_led_set_delay_all(uint8_t delay);
 #ifdef BREATHING_LED_ENABLE
 #define breathing_led_init()
 void breathing_led_enable(uint8_t index);
+void breathing_led_enable_once(uint8_t index);
 void breathing_led_enable_all(void);
 void breathing_led_disable(uint8_t index);
 void breathing_led_disable_all(void);
 void breathing_led_toggle(uint8_t index);
 void breathing_led_toggle_all(void);
 void breathing_led_set_duration(uint8_t dur);
+void breathing_led_set_index(uint8_t index, uint8_t value);
+void breathing_led_set_index_all(uint8_t value);
+void breathing_led_set_delay(uint8_t index, uint8_t delay);
+void breathing_led_set_delay_all(uint8_t delay);
 #else
 #define breathing_led_init()
 #define breathing_led_enable()
@@ -71,7 +76,10 @@ void breathing_led_set_duration(uint8_t dur);
 #define breathing_led_toggle()
 #define breathing_led_toggle_all()
 #define breathing_led_set_duration()
-#define breathing_led_set_duration_all()
+#define breathing_led_set_index()
+#define breathing_led_set_index_all()
+#define breathing_led_set_delay()
+#define breathing_led_set_delay_all()
 #endif
 
 #ifdef CUSTOM_LED_ENABLE
