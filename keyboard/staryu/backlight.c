@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #include "softpwm_led.h"
 #include "action.h"
+#include "timer.h"
 #include "rgb.h"
 
 #ifdef BACKLIGHT_ENABLE
@@ -48,23 +49,22 @@ void backlight_set(uint8_t level)
         case 4:
         case 5:
         case 6:
-            breathing_led_enable_all();
             fading_led_disable_all();
             breathing_led_set_duration(6 - level);
+            breathing_led_set_index_all(0);
+            breathing_led_enable_all();
             break;
         case 7:
-        case 8:
-            fading_led_enable_all();
+            fading_led_disable_all();
             breathing_led_disable_all();
-            fading_led_set_direction_all(FADING_LED_FADE_IN);
-            fading_led_set_duration(level == 7 ? 3 : 0);
+            breathing_led_set_duration(1);
+            breathing_led_set_index_all(0);
             break;
-        case 9:
-        case 10:
-            fading_led_enable_all();
+        case 8:
             breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_OUT);
-            fading_led_set_duration(level == 9 ? 3 : 0);
+            fading_led_set_duration(3);
+            fading_led_enable_all();
             break;
         case 0:
         default:
@@ -88,19 +88,19 @@ void softpwm_led_init(void)
 void softpwm_led_on(uint8_t index)
 {
     switch (index) {
-        case 0:
+        case 1:
             PORTC &= ~(1<<PC2);
             break;
-        case 1:
+        case 2:
             PORTC &= ~(1<<PC7);
             break;
-        case 2:
+        case 3:
             PORTD &= ~(1<<PD5);
             break;
-        case 3:
+        case 4:
             PORTD &= ~(1<<PD6);
             break;
-        case 4:
+        case 5:
             PORTB &= ~(1<<PB0);
             break;
     }
@@ -109,19 +109,19 @@ void softpwm_led_on(uint8_t index)
 void softpwm_led_off(uint8_t index)
 {
     switch (index) {
-        case 0:
+        case 1:
             PORTC |= (1<<PC2);
             break;
-        case 1:
+        case 2:
             PORTC |= (1<<PC7);
             break;
-        case 2:
+        case 3:
             PORTD |= (1<<PD5);
             break;
-        case 3:
+        case 4:
             PORTD |= (1<<PD6);
             break;
-        case 4:
+        case 5:
             PORTB |= (1<<PB0);
             break;
     }
@@ -131,35 +131,12 @@ void softpwm_led_off(uint8_t index)
 void action_keyevent(keyevent_t event)
 {
     if (backlight_config.enable) {
-        switch (backlight_config.level) {
-            case 7:
-                if (event.pressed) {
-                    fading_led_set_delay(event.key.col, 64);
-                    softpwm_led_decrease(event.key.col, 32);
-                }
-                break;
-            case 8:
-                if (event.pressed) {
-                    fading_led_set_direction(event.key.col, FADING_LED_FADE_OUT);
-                }
-                else {
-                    fading_led_set_direction(event.key.col, FADING_LED_FADE_IN);
-                }
-                break;
-            case 9:
-                if (event.pressed) {
-                    fading_led_set_delay(event.key.col, 64);
-                    softpwm_led_increase(event.key.col, 32);
-                }
-                break;
-            case 10:
-                if (event.pressed) {
-                    fading_led_set_direction(event.key.col, FADING_LED_FADE_IN);
-                }
-                else {
-                    fading_led_set_direction(event.key.col, FADING_LED_FADE_OUT);
-                }
-                break;
+        if (backlight_config.level == 8) {
+            if (event.pressed) {
+                uint8_t key = event.key.col + 1;
+                fading_led_set_delay(key, 64);
+                softpwm_led_increase(key, 32);
+            }
         }
     }
 }
@@ -168,31 +145,31 @@ void action_keyevent(keyevent_t event)
 void softpwm_led_custom(void)
 {
     rgb_fading();
+    if (backlight_config.level == 7) {
+        static uint8_t index = 0;
+        static uint16_t last = 0;
+        if (timer_elapsed(last) > 250) {
+            last = timer_read();
+            breathing_led_enable_once(index);
+            index = (index + 1) % 6;
+        }
+    }
 }
 
 void fading_led_custom(uint8_t *value)
 {
-    uint8_t tmp = value[0];
-    switch (backlight_config.level) {
-        case 7:
-        case 8:
-            for (uint8_t i = 0; i < LED_COUNT; i++) {
-                if (value[i] < tmp) tmp = value[i];
-            }
-            break;
-        case 9:
-        case 10:
-            for (uint8_t i = 0; i < LED_COUNT; i++) {
-                if (value[i] > tmp) tmp = value[i];
-            }
-            break;
+    if (backlight_config.level == 8) {
+        uint8_t max = value[0];
+        for (uint8_t i = 1; i < LED_COUNT; i++) {
+            if (value[i] > max) max = value[i];
+        }
+        rgb_set_brightness(max);
     }
-    rgb_set_brightness(tmp);
 }
 
 void breathing_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(*value);
+    rgb_set_brightness(value[0]);
 }
 #endif
 
