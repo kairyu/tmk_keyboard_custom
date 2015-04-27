@@ -240,11 +240,20 @@ static const uint8_t breathing_table[128] PROGMEM = {
 };
 
 static led_pack_t breathing_led_state = 0;
+static led_pack_t breathing_led_once = 0;
 static uint8_t breathing_led_duration = 0;
+static uint8_t breathing_led_index[LED_COUNT] = {0};
+static led_pack_t breathing_led_direction = 0;
 
 void breathing_led_enable(uint8_t index)
 {
     LED_BIT_SET(breathing_led_state, index);
+}
+
+void breathing_led_enable_once(uint8_t index)
+{
+    LED_BIT_SET(breathing_led_state, index);
+    LED_BIT_SET(breathing_led_once, index);
 }
 
 void breathing_led_enable_all(void)
@@ -279,6 +288,24 @@ void breathing_led_toggle_all(void)
 void breathing_led_set_duration(uint8_t dur)
 {
     breathing_led_duration = dur;
+}
+
+void breathing_led_set_index(uint8_t index, uint8_t value)
+{
+    if (value & 0x80) {
+        LED_BIT_SET(breathing_led_direction, index);
+    }
+    else {
+        LED_BIT_CLEAR(breathing_led_direction, index);
+    }
+    breathing_led_index[index] = value & 0x7F;
+}
+
+void breathing_led_set_index_all(uint8_t value)
+{
+    for (uint8_t i = 0; i < LED_COUNT; i++) {
+        breathing_led_set_index(i, value);
+    }
 }
 
 #endif
@@ -348,36 +375,38 @@ void fading_led_proc(void)
 void breathing_led_proc(void)
 {
     static uint8_t step = 0;
-    static uint8_t index = 0;
-    static uint8_t direction = 0;
     if (breathing_led_state) {
         if (++step > breathing_led_duration) {
             step = 0;
-            uint8_t value = pgm_read_byte(&breathing_table[index]);
             for (uint8_t i = 0; i < LED_COUNT; i++) {
                 if (breathing_led_state & LED_BIT(i)) {
-                    softpwm_led_ocr_buff[i] = value;
+                    softpwm_led_ocr_buff[i] = pgm_read_byte(&breathing_table[breathing_led_index[i]]);
+                    if (breathing_led_direction & LED_BIT(i)) {
+                        if (breathing_led_index[i] == 0) {
+                            LED_BIT_CLEAR(breathing_led_direction, i);
+                            if (breathing_led_once & LED_BIT(i)) {
+                                LED_BIT_CLEAR(breathing_led_state, i);
+                                LED_BIT_CLEAR(breathing_led_once, i);
+                            }
+                        }
+                        else {
+                            breathing_led_index[i]--;
+                        }
+
+                    }
+                    else {
+                        if (breathing_led_index[i] == 127) {
+                            LED_BIT_SET(breathing_led_direction, i);
+                        }
+                        else {
+                            breathing_led_index[i]++;
+                        }
+                    }
                 }
             }
 #ifdef CUSTOM_LED_ENABLE
             breathing_led_custom(softpwm_led_ocr);
 #endif
-            if (direction) {
-                if (index == 0) {
-                    direction = 0;
-                }
-                else {
-                    index--;
-                }
-            }
-            else {
-                if (index == 0x7F) {
-                    direction = 1;
-                }
-                else {
-                    index++;
-                }
-            }
         }
     }
 }
