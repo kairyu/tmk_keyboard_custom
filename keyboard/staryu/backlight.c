@@ -55,13 +55,8 @@ void backlight_set(uint8_t level)
             breathing_led_enable_all();
             break;
         case 7:
-            fading_led_disable_all();
             breathing_led_disable_all();
             breathing_led_set_duration(1);
-            breathing_led_set_index_all(0);
-            break;
-        case 8:
-            breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
             fading_led_enable_all();
@@ -128,11 +123,18 @@ void softpwm_led_off(uint8_t index)
 }
 #endif
 
+static uint8_t idle_state = 0;
+static uint16_t idle_last = 0;
+
 void action_keyevent(keyevent_t event)
 {
     if (backlight_config.enable) {
-        if (backlight_config.level == 8) {
+        if (backlight_config.level == 7) {
             if (event.pressed) {
+                if (idle_state > 1) {
+                    breathing_led_disable_all();
+                }
+                idle_state = 0;
                 uint8_t key = event.key.col + 1;
                 fading_led_set_delay(key, 64);
                 softpwm_led_increase(key, 32);
@@ -145,25 +147,38 @@ void action_keyevent(keyevent_t event)
 void softpwm_led_custom(void)
 {
     rgb_fading();
-    if (backlight_config.level == 7) {
-        static uint8_t index = 0;
-        static uint16_t last = 0;
-        if (timer_elapsed(last) > 250) {
-            last = timer_read();
-            breathing_led_enable_once(index);
-            index = (index + 1) % 6;
-        }
-    }
 }
 
 void fading_led_custom(uint8_t *value)
 {
-    if (backlight_config.level == 8) {
-        uint8_t max = value[0];
-        for (uint8_t i = 1; i < LED_COUNT; i++) {
-            if (value[i] > max) max = value[i];
+    static uint8_t index = 0;
+    static uint16_t last = 0;
+    if (backlight_config.level == 7) {
+        if (idle_state == 0) {
+            uint8_t max = value[0];
+            for (uint8_t i = 1; i < LED_COUNT; i++) {
+                if (value[i] > max) max = value[i];
+            }
+            rgb_set_brightness(max);
+            if (max == 0) {
+                idle_last = timer_read();
+                idle_state = 1;
+            }
         }
-        rgb_set_brightness(max);
+        if (idle_state == 1) {
+            if (timer_elapsed(idle_last) > 3000) {
+                breathing_led_set_index_all(0);
+                index = 0;
+                idle_state = 2;
+            }
+        }
+        if (idle_state == 2) {
+            if (timer_elapsed(last) > 500) {
+                last = timer_read();
+                breathing_led_enable_once(index);
+                index = (index + 1) % 6;
+            }
+        }
     }
 }
 
