@@ -52,7 +52,9 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-	ledmap.c
+	ledmap.c \
+    light_ws2812.c \
+    rgb.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -138,8 +140,8 @@ KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
 SOFTPWM_LED_ENABLE = yes # Enable SoftPWM to drive backlight
 FADING_LED_ENABLE = yes # Enable fading backlight
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
-LEDMAP_ENABLE = yes		# Enable LED mapping
-LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
+#LEDMAP_ENABLE = yes		# Enable LED mapping
+#LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 
 # Optimize size but this may cause error "relocation truncated to fit"
