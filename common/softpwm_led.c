@@ -334,9 +334,15 @@ ISR(TIMER1_COMPA_vect)
     static uint8_t counter = 0;
     if (++counter >= SOFTPWM_LED_FREQ) {
         counter = 0;
+#ifdef FADING_LED_ENABLE
         fading_led_proc();
+#endif
+#ifdef BREATHING_LED_ENABLE
         breathing_led_proc();
+#endif
+#if CUSTOM_LED_ENABLE
         softpwm_led_custom();
+#endif
     }
 #endif
 }
