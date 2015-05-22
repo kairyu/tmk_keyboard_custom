@@ -1,0 +1,3 @@
+[submodule "tmk_core_custom"]
+	path = tmk_core_custom
+	url = https://github.com/kairyu/tmk_core_custom.git
