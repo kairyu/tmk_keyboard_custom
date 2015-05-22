@@ -34,7 +34,7 @@ void backlight_set(uint8_t level)
     backlight_mode = level;
     softpwm_led_set_all(0);
     fading_led_set_duration(2);
-    fading_led_set_direction(FADING_LED_FADE_OUT);
+    fading_led_set_direction_all(FADING_LED_FADE_OUT);
     breathing_led_set_duration(3);
     switch (level) {
         case 0:
