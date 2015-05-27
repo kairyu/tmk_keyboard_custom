@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FANTASTIC_H
-#define FANTASTIC_H
+#ifndef SHIFT_REGISTER_H
+#define SHIFT_REGISTER_H
 
 #include <avr/io.h>
 #include <stdint.h>

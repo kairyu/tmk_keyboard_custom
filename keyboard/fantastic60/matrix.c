@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ps2.h"
 #endif
 #include "matrix.h"
+#include "rgb.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE 5
@@ -65,6 +66,9 @@ void matrix_init(void)
     // disable JTAG
     MCUCR = (1<<JTD);
     MCUCR = (1<<JTD);
+
+    // initialize RGB LED
+    rgb_init();
 
     // initialize row and col
     unselect_rows();

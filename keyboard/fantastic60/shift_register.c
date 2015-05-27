@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fantastic.h"
+#include "shift_register.h"
 
 void shift_register_init(void)
 {

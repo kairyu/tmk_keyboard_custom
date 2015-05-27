@@ -52,10 +52,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
+
 #define BACKLIGHT_CUSTOM
+#define CUSTOM_LED_ENABLE
 
 /* number of leds */
-#define LED_COUNT 3
+#define LED_COUNT 5
 
 /* ledmap in eeprom */
 #define EECONFIG_LEDMAP_IN_EEPROM 8
@@ -98,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* disable action features */
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
-#define NO_ACTION_ONESHOT
+//#define NO_ACTION_ONESHOT
 #define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
 
