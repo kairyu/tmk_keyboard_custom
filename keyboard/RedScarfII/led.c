@@ -47,6 +47,7 @@ void led_set(uint8_t usb_led)
         DDRE &= ~(1<<PE6);
         PORTE &= ~(1<<PE6);
     }
+#ifndef REDSCARFII_PLUS
     if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
         // output high
         DDRC |= (1<<PC6);
@@ -57,6 +58,7 @@ void led_set(uint8_t usb_led)
         DDRC &= ~(1<<PC6);
         PORTC &= ~(1<<PC6);
     }
+#endif
 }
 
 #endif

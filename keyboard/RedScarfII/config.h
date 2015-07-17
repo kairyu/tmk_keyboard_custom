@@ -22,10 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0x5253
 #define PRODUCT_ID      0x0002
+#ifdef REDSCARFII_PLUS
+#define DEVICE_VER      0x0002
+#define MANUFACTURER    Young Pioneers
+#define PRODUCT         Red Scarf II+
+#define DESCRIPTION     t.m.k. keyboard firmware for Red Scarf II+
+#else
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Young Pioneers
 #define PRODUCT         Red Scarf II
 #define DESCRIPTION     t.m.k. keyboard firmware for Red Scarf II
+#endif
 
 /* key matrix size */
 #define MATRIX_ROWS 6
@@ -51,8 +58,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
+#define BACKLIGHT_CUSTOM
 
+/* number of leds */
+#ifdef REDSCARFII_PLUS
+#define LED_COUNT 3
+#else
 #define LED_COUNT 4
+#endif
+#define EECONFIG_LEDMAP_IN_EEPROM 8
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
@@ -64,6 +78,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define IS_COMMAND() ( \
     keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
 )
+
+#define SUSPEND_ACTION
 
 /*
  * Feature disable options

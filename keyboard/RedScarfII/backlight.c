@@ -36,7 +36,7 @@ inline void backlight_set_raw(uint8_t raw);
 
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
-static uint8_t backlight_mode;
+extern backlight_config_t backlight_config;
 #endif 
 #endif
 
@@ -66,10 +66,6 @@ void backlight_disable(void)
 
 void backlight_set(uint8_t level)
 {
-#ifdef FADING_LED_ENABLE
-    backlight_mode = level;
-#endif
-
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
         case 1:
@@ -187,14 +183,20 @@ void softpwm_led_off(uint8_t index)
 #ifdef FADING_LED_ENABLE
 void action_keyevent(keyevent_t event)
 {
-    if (backlight_mode == 7) {
-        if (event.pressed) {
-            softpwm_led_decrease_all(32);
-        }
-    }
-    if (backlight_mode == 8) {
-        if (event.pressed) {
-            softpwm_led_increase_all(32);
+    if (backlight_config.enable) {
+        switch (backlight_config.level) {
+            case 7:
+                if (event.pressed) {
+                    fading_led_set_delay_all(64);
+                    softpwm_led_decrease_all(32);
+                }
+                break;;
+            case 8:
+                if (event.pressed) {
+                    fading_led_set_delay_all(64);
+                    softpwm_led_increase_all(32);
+                }
+                break;
         }
     }
 }
