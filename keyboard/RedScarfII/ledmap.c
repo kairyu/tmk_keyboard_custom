@@ -21,10 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef LEDMAP_ENABLE
 
 static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
-    [0] = LEDMAP_CAPS_LOCK,     // CapsLock
-    [1] = LEDMAP_NUM_LOCK,      // NumLock
-    [2] = LEDMAP_SCROLL_LOCK,   // Logo
-    [3] = LEDMAP_BACKLIGHT,     // Backlight
+    [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,      // CapsLock
+    [1] = LEDMAP_NUM_LOCK | LEDMAP_BACKLIGHT,       // NumLock
+#ifdef REDSCARFII_PLUS
+    [2] = LEDMAP_BACKLIGHT,                         // Backlight
+#else
+    [2] = LEDMAP_SCROLL_LOCK | LEDMAP_BACKLIGHT,    // Logo
+    [3] = LEDMAP_BACKLIGHT,                         // Backlight
+#endif
 };
 
 ledmap_t ledmap_get_code(uint8_t index)
@@ -44,8 +48,10 @@ void ledmap_led_init(void)
     PORTC |=  (1<<PC7);
     DDRE  |=  (1<<PE6);
     PORTE |=  (1<<PE6);
+#ifndef REDSCARFII_PLUS
     DDRC  |=  (1<<PC6);
     PORTC &= ~(1<<PC6);
+#endif
     DDRB  |=  (1<<PB7);
     PORTB &= ~(1<<PB7);
 }
@@ -59,12 +65,18 @@ void ledmap_led_on(uint8_t index)
         case 1:
             PORTE &= ~(1<<PE6);
             break;
+#ifdef REDSCARFII_PLUS
+        case 2:
+            PORTB |=  (1<<PB7);
+            break;
+#else
         case 2:
             PORTC |=  (1<<PC6);
             break;
         case 3:
             PORTB |=  (1<<PB7);
             break;
+#endif
     }
 }
 
@@ -77,12 +89,18 @@ void ledmap_led_off(uint8_t index)
         case 1:
             PORTE |=  (1<<PE6);
             break;
+#ifdef REDSCARFII_PLUS
         case 2:
-            PORTC &= ~(1<<PB6);
+            PORTB &= ~(1<<PB7);
+            break;
+#else
+        case 2:
+            PORTC &= ~(1<<PC6);
             break;
         case 3:
             PORTB &= ~(1<<PB7);
             break;
+#endif
     }
 }
 

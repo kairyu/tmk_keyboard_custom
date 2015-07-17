@@ -42,7 +42,7 @@
 TARGET = RedScarfII_lufa
 
 # Directory common source filess exist
-TOP_DIR = ../..
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
@@ -52,7 +52,10 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-	ledmap.c
+	ledmap.c \
+	yc059.c \
+	rgb.c \
+	suspend.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -102,7 +105,7 @@ ARCH = AVR8
 F_USB = $(F_CPU)
 
 # Interrupt driven control endpoint task(+60)
-OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
+OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT -DREDSCARFII_PLUS
 
 
 # Boot Section Size in *bytes*
@@ -122,7 +125,7 @@ endif
 #   comment out to disable the options.
 #
 BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
+#MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
@@ -146,9 +149,8 @@ LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Search Path
 VPATH += $(TARGET_DIR)
-VPATH += $(TOP_DIR)
+VPATH += $(TMK_DIR)
 
-include $(TOP_DIR)/protocol/lufa.mk
-include $(TOP_DIR)/protocol.mk
-include $(TOP_DIR)/common.mk
-include $(TOP_DIR)/rules.mk
+include $(TMK_DIR)/protocol/lufa.mk
+include $(TMK_DIR)/common.mk
+include $(TMK_DIR)/rules.mk

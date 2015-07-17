@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "print.h"
 #include "debug.h"
 #include "util.h"
+#ifdef REDSCARFII_PLUS
+#include "rgb.h"
+#endif
 #include "matrix.h"
 
 #ifndef DEBOUNCE
@@ -59,6 +62,11 @@ void matrix_init(void)
     // disable JTAG
     MCUCR = (1<<JTD);
     MCUCR = (1<<JTD);
+
+#ifdef REDSCARFII_PLUS
+    // initialize rgb led
+    rgb_init();
+#endif
 
     // initialize row and col
     init_rows();
