@@ -119,7 +119,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 ifdef VER
     OPT_DEFS += -DKIMERA_$(REV)
 else
-    OPT_DEFS += -DKIMERA_V5
+    OPT_DEFS += -DKIMERA_CORE
 endif
 
 # Additional definitions from command line
@@ -131,7 +131,7 @@ endif
 #   comment out to disable the options.
 #
 BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
+#MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
@@ -144,7 +144,7 @@ BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
 #KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
 SOFTPWM_LED_ENABLE = yes # Enable SoftPWM to drive backlight
-#FADING_LED_ENABLE = yes # Enable fading backlight
+FADING_LED_ENABLE = yes # Enable fading backlight
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
 LEDMAP_ENABLE = yes	# Enable LED mapping
 LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom

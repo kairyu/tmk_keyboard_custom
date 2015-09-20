@@ -40,6 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           `----------------'
 */
 
+#ifndef KIMERA_CORE
+
 #define LED1_PORT   PORTB
 #define LED1_PIN    PINB
 #define LED1_DDR    DDRB
@@ -60,6 +62,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LED4_DDR    DDRB
 #define LED4_BIT    PB6
 #define LED4_OCR    OCR1B
+
+#else
+
+#define LED1_PORT   PORTB
+#define LED1_PIN    PINB
+#define LED1_DDR    DDRB
+#define LED1_BIT    PB5
+
+#define LED2_PORT   PORTB
+#define LED2_PIN    PINB
+#define LED2_DDR    DDRB
+#define LED2_BIT    PB6
+
+#define LED3_PORT   PORTC
+#define LED3_PIN    PINC
+#define LED3_DDR    DDRC
+#define LED3_BIT    PC6
+
+#define LED4_PORT   PORTC
+#define LED4_PIN    PINC
+#define LED4_DDR    DDRC
+#define LED4_BIT    PC7
+#define LED4_OCR    OCR4D
+
+#endif
 
 /*
          IC1 (PCA9555)                  IC2 (PCA9555)
@@ -104,8 +131,13 @@ enum {
     EXP_COMM_CONFIG_0,
     EXP_COMM_CONFIG_1
 };
+#ifndef KIMERA_CORE
 #define PX_TO_EXP(x)        (((x)>>5<<1)+((((x)>>3)&1)^(((x)>>4)&1)))
 #define PX_TO_PORT(x)       (((x)>>4)&1)
+#else
+#define PX_TO_EXP(x)        ((x)>>4)
+#define PX_TO_PORT(x)       (((x)>>3)&1)
+#endif
 #define PX_TO_PIN(x)        ((x)&7)
 #define PX_COUNT            (EXP_PIN_PER_PORT * EXP_PORT_COUNT * EXP_COUNT)
 
