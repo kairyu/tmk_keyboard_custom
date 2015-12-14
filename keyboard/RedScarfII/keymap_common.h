@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "keycode.h"
 #include "action.h"
+#include "action_util.h"
 #include "action_macro.h"
 #include "report.h"
 #include "host.h"
