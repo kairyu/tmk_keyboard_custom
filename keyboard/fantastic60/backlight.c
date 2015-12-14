@@ -21,12 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #include "softpwm_led.h"
 #include "action.h"
+#include "rgb.h"
 
 #ifdef BACKLIGHT_ENABLE
 
 #define BACKLIGHT 0
 
 extern backlight_config_t backlight_config;
+uint8_t backlight_brightness;
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };
@@ -43,7 +45,8 @@ void backlight_set(uint8_t level)
             fading_led_disable(BACKLIGHT);
 #endif
             breathing_led_disable(BACKLIGHT);
-            softpwm_led_set(BACKLIGHT, pgm_read_byte(&backlight_table[level]));
+            backlight_brightness = pgm_read_byte(&backlight_table[level]);
+            softpwm_led_set(BACKLIGHT, backlight_brightness);
             break;
         case 4:
         case 5:
@@ -72,7 +75,8 @@ void backlight_set(uint8_t level)
             fading_led_disable(BACKLIGHT);
 #endif
             breathing_led_disable(BACKLIGHT);
-            softpwm_led_set(BACKLIGHT, 0);
+            backlight_brightness = 0;
+            softpwm_led_set(BACKLIGHT, backlight_brightness);
             break;
     }
 #else
@@ -89,22 +93,20 @@ void backlight_set(uint8_t level)
 #ifdef SOFTPWM_LED_ENABLE
 /* Backlight pin configuration
  *   Backlight: PF7
- *   RGB R:     PE2
- *   RGB G:     PC6
- *   RGB B:     PC7
+ *   RGB R:     PF6
+ *   RGB G:     PF5
+ *   RGB B:     PF4
  */
 void softpwm_led_init()
 {
-    DDRF  |=  (1<<PF7);
-    PORTF |=  (1<<PF7);
-    DDRE  |=  (1<<PE2);
-    PORTE |=  (1<<PE2);
-    DDRC  |=  (1<<PC7 | 1<<PC6);
-    PORTC |=  (1<<PC7 | 1<<PC6);
+    DDRF  |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
+    PORTF |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
 }
 
 void softpwm_led_on(uint8_t index)
 {
+    PORTF &= ~((1<<PF7) >> index);
+    /*
     switch (index) {
         case 0:
             PORTF &= ~(1<<PF7);
@@ -119,10 +121,13 @@ void softpwm_led_on(uint8_t index)
             PORTC &= ~(1<<PC7);
             break;
     }
+    */
 }
 
 void softpwm_led_off(uint8_t index)
 {
+    PORTF |=  ((1<<PF7) >> index);
+    /*
     switch (index) {
         case 0:
             PORTF |=  (1<<PF7);
@@ -137,6 +142,7 @@ void softpwm_led_off(uint8_t index)
             PORTC |=  (1<<PC7);
             break;
     }
+    */
 }
 #endif
 #endif
@@ -168,13 +174,13 @@ void softpwm_led_custom(void)
 #ifdef FADING_LED_ENABLE
 void fading_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(value[0]);
+    rgb_set_brightness(value[BACKLIGHT]);
 }
 #endif
 
 void breathing_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(value[0]);
+    rgb_set_brightness(value[BACKLIGHT]);
 }
 #endif
 

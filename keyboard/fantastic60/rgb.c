@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/eeprom.h>
 #include "softpwm_led.h"
 #include "backlight.h"
-#include "shift_register.h"
 #include "rgb.h"
 
 volatile static uint8_t rgb_fading_enable = 0;
@@ -43,9 +42,10 @@ static void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, rgb
 
 void rgb_init(void)
 {
-    shift_register_init();
-    shift_register_write_word(0xFFFF);
+    /* shift_register_init(); */
+    /* shift_register_write_word(0xFFFF); */
     rgb_read_config();
+    rgb_read_color();
     if (rgb_config.raw == RGB_UNCONFIGURED) {
         rgb_config.enable = 0;
         rgb_config.level = RGB_OFF;
@@ -166,21 +166,31 @@ void rgb_color_decrease(uint8_t color)
 
 void rgb_set_level(uint8_t level)
 {
+    rgb_color_t rgb_color_off = { .raw = {0} };
     switch (level) {
         case RGB_OFF:
             rgb_fading_enable = 0;
             rgb_brightness = 0;
-            shift_register_write_word(0xFFFF);
+            rgb_refresh(&rgb_color_off);
+            /* shift_register_write_word(0xFFFF); */
             break;
         case RGB_FIXED:
             rgb_refresh(&rgb_color);
-            shift_register_write_word(0x0000);
+            /* shift_register_write_word(0x0000); */
             break;
         case RGB_FADE_SLOW:
         case RGB_FADE_MID:
         case RGB_FADE_FAST:
+            if (backlight_config.enable) {
+                if (backlight_config.level >= 1 && backlight_config.level <= 3) {
+                    rgb_brightness = backlight_brightness;
+                }
+            }
+            else {
+                rgb_brightness = 16;
+            }
             rgb_fading_enable = 3 - (level - RGB_FADE_SLOW);
-            shift_register_write_word(0x0000);
+            /* shift_register_write_word(0x0000); */
             break;
     }
 }
