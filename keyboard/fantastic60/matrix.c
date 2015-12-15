@@ -74,6 +74,20 @@ void matrix_init(void)
     unselect_rows();
     init_cols();
 
+#ifdef PS2_MOUSE_ENABLE
+    // ps2 mouse detecting
+    DDRC  &= ~(1<<PC7);
+    PORTC |=  (1<<PC7);
+    _delay_us(30);  // without this wait read unstable value.
+    if ((PINC & (1<<PC7)) == 0) {
+        ps2_mouse_enabled = 1;
+    }
+    else {
+        ps2_mouse_enabled = 0;
+    }
+    PORTC &= ~(1<<PC7);
+#endif
+
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < MATRIX_ROWS; i++) {
         matrix[i] = 0;
