@@ -137,31 +137,35 @@ void rgb_step(void)
 
 void rgb_color_increase(uint8_t color)
 {
-    uint8_t *c = &rgb_color.raw[color];
-    if (*c >= 240) {
-        *c = 255;
+    if (rgb_config.level == RGB_FIXED) {
+        uint8_t *c = &rgb_color.raw[color];
+        if (*c >= 240) {
+            *c = 255;
+        }
+        else {
+            *c += 16;
+        }
+        rgb_refresh(&rgb_color);
+        rgb_write_color();
     }
-    else {
-        *c += 16;
-    }
-    rgb_refresh(&rgb_color);
-    rgb_write_color();
 }
 
 void rgb_color_decrease(uint8_t color)
 {
-    uint8_t *c = &rgb_color.raw[color];
-    if (*c > 240) {
-        *c = 240;
+    if (rgb_config.level == RGB_FIXED) {
+        uint8_t *c = &rgb_color.raw[color];
+        if (*c > 240) {
+            *c = 240;
+        }
+        else if (*c < 16) {
+            *c = 0;
+        }
+        else {
+            *c -= 16;
+        }
+        rgb_refresh(&rgb_color);
+        rgb_write_color();
     }
-    else if (*c < 16) {
-        *c = 0;
-    }
-    else {
-        *c -= 16;
-    }
-    rgb_refresh(&rgb_color);
-    rgb_write_color();
 }
 
 void rgb_set_level(uint8_t level)

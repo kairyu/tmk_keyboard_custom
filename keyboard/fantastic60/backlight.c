@@ -47,6 +47,7 @@ void backlight_set(uint8_t level)
             breathing_led_disable(BACKLIGHT);
             backlight_brightness = pgm_read_byte(&backlight_table[level]);
             softpwm_led_set(BACKLIGHT, backlight_brightness);
+            rgb_set_brightness(backlight_brightness);
             break;
         case 4:
         case 5:
@@ -63,11 +64,13 @@ void backlight_set(uint8_t level)
             breathing_led_disable(BACKLIGHT);
             fading_led_set_direction(BACKLIGHT, FADING_LED_FADE_IN);
             fading_led_set_duration(3);
+            break;
         case 8:
             fading_led_enable(BACKLIGHT);
             breathing_led_disable(BACKLIGHT);
             fading_led_set_direction(BACKLIGHT, FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
+            break;
 #endif
         case 0:
         default:
@@ -105,7 +108,12 @@ void softpwm_led_init()
 
 void softpwm_led_on(uint8_t index)
 {
-    PORTF &= ~((1<<PF7) >> index);
+    if (index) {
+        PORTF &= ~((1<<PF7) >> index);
+    }
+    else {
+        PORTF |=  (1<<PF7);
+    }
     /*
     switch (index) {
         case 0:
@@ -126,7 +134,12 @@ void softpwm_led_on(uint8_t index)
 
 void softpwm_led_off(uint8_t index)
 {
-    PORTF |=  ((1<<PF7) >> index);
+    if (index) {
+        PORTF |=  ((1<<PF7) >> index);
+    }
+    else {
+        PORTF &= ~(1<<PF7);
+    }
     /*
     switch (index) {
         case 0:
@@ -150,16 +163,18 @@ void softpwm_led_off(uint8_t index)
 #ifdef FADING_LED_ENABLE
 void action_keyevent(keyevent_t event)
 {
-    if (backlight_config.level == 7) {
-        if (event.pressed) {
-            fading_led_set_delay(BACKLIGHT, 64);
-            softpwm_led_decrease(BACKLIGHT, 32);
+    if (backlight_config.enable) {
+        if (backlight_config.level == 7) {
+            if (event.pressed) {
+                fading_led_set_delay(BACKLIGHT, 64);
+                softpwm_led_decrease(BACKLIGHT, 32);
+            }
         }
-    }
-    if (backlight_config.level == 8) {
-        if (event.pressed) {
-            fading_led_set_delay(BACKLIGHT, 64);
-            softpwm_led_increase(BACKLIGHT, 32);
+        if (backlight_config.level == 8) {
+            if (event.pressed) {
+                fading_led_set_delay(BACKLIGHT, 64);
+                softpwm_led_increase(BACKLIGHT, 32);
+            }
         }
     }
 }
