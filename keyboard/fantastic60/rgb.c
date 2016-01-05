@@ -182,9 +182,7 @@ void rgb_set_level(uint8_t level)
             rgb_refresh(&rgb_color);
             /* shift_register_write_word(0x0000); */
             break;
-        case RGB_FADE_SLOW:
-        case RGB_FADE_MID:
-        case RGB_FADE_FAST:
+        case RGB_FADE:
             if (backlight_config.enable) {
                 if (backlight_config.level >= 1 && backlight_config.level <= 3) {
                     rgb_brightness = backlight_brightness;
@@ -193,7 +191,7 @@ void rgb_set_level(uint8_t level)
             else {
                 rgb_brightness = 16;
             }
-            rgb_fading_enable = 3 - (level - RGB_FADE_SLOW);
+            rgb_fading_enable = 1;
             /* shift_register_write_word(0x0000); */
             break;
     }

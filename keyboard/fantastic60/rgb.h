@@ -41,10 +41,8 @@ typedef union {
 enum {
     RGB_OFF = 0,
     RGB_FIXED,
-    RGB_FADE_SLOW,
-    RGB_FADE_MID,
-    RGB_FADE_FAST,
-    RGB_LEVELS = RGB_FADE_FAST
+    RGB_FADE,
+    RGB_LEVELS = RGB_FADE
 };
 
 enum {
