@@ -1,6 +1,6 @@
 #include "keymap_common.h"
 
-// Poker2
+/* Default layout */
 #ifdef KEYMAP_SECTION_ENABLE
 const uint8_t keymaps[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] __attribute__ ((section (".keymap.keymaps"))) = {
 #else
@@ -48,7 +48,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,UP,  TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PSCR,SLCK,PAUS,INS, TRNS, \
         TRNS,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     FN1, HOME, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,VOLU,END,  \
-        TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,FN3, VOLD,FN3,  \
+        TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,FN2, VOLD,FN3,  \
                                  TRNS                                               ),
 };
 
@@ -60,10 +60,10 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    /* Poker2 Layout */
+    /* Default layout */
     [0] = ACTION_LAYER_MOMENTARY(1),
-    [1] = ACTION_BACKLIGHT_DECREASE(),
-    [2] = ACTION_BACKLIGHT_TOGGLE(),
+    [1] = ACTION_BACKLIGHT_TOGGLE(),
+    [2] = ACTION_BACKLIGHT_DECREASE(),
     [3] = ACTION_BACKLIGHT_INCREASE()
 };
 
