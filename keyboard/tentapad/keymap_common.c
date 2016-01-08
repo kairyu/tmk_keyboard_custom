@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_in_eeprom.h"
 #include "keymap_common.h"
 
-static uint8_t keymaps_cache[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] = {0};
+static uint8_t keymaps_cache[KEYMAPS_COUNT][MATRIX_ROWS][MATRIX_COLS] = {{{0}}};
 static uint8_t last_layer_number = 1;
 
 void keymaps_cache_init(void)
@@ -52,7 +52,7 @@ uint8_t last_layer(void)
 }
 
 /* translates key to keycode */
-uint8_t keymap_key_to_keycode(uint8_t layer, key_t key)
+uint8_t keymap_key_to_keycode(uint8_t layer, keypos_t key)
 {
     return keymaps_cache[layer][key.row][key.col];
 }

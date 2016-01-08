@@ -42,7 +42,7 @@
 TARGET = smart68_lufa
 
 # Directory common source filess exist
-TOP_DIR = ../..
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
@@ -52,7 +52,7 @@ SRC =	keymap_common.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-    ledmap.c
+	ledmap.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -145,8 +145,8 @@ LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Search Path
 VPATH += $(TARGET_DIR)
-VPATH += $(TOP_DIR)
+VPATH += $(TMK_DIR)
 
-include $(TOP_DIR)/protocol/lufa.mk
-include $(TOP_DIR)/common.mk
-include $(TOP_DIR)/rules.mk
+include $(TMK_DIR)/protocol/lufa.mk
+include $(TMK_DIR)/common.mk
+include $(TMK_DIR)/rules.mk

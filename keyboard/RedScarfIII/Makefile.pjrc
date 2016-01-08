@@ -42,7 +42,7 @@
 TARGET = RedScarfIII_pjrc
 
 # Directory common source filess exist
-TOP_DIR = ../..
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
@@ -54,8 +54,8 @@ SRC =	keymap_common.c \
 	backlight.c \
 	ledmap.c \
 	yc059.c \
-    rgb.c \
-    suspend.c
+	rgb.c \
+	suspend.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -100,7 +100,8 @@ EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes	# Breathing sleep LED during USB suspend
-#NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+USB_6KRO_ENABLE = yes	# USB 6key Rollover
 #PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
@@ -114,8 +115,8 @@ LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Search Path
 VPATH += $(TARGET_DIR)
-VPATH += $(TOP_DIR)
+VPATH += $(TMK_DIR)
 
-include $(TOP_DIR)/protocol/pjrc.mk
-include $(TOP_DIR)/common.mk
-include $(TOP_DIR)/rules.mk
+include $(TMK_DIR)/protocol/pjrc.mk
+include $(TMK_DIR)/common.mk
+include $(TMK_DIR)/rules.mk

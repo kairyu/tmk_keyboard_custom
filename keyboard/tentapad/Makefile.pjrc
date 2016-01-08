@@ -42,17 +42,20 @@
 TARGET = tentapad_pjrc
 
 # Directory common source filess exist
-TOP_DIR = ../..
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
 
 # project specific files
 SRC =	keymap_common.c \
+	tentapad.c \
 	matrix.c \
 	led.c \
 	backlight.c \
-	ledmap.c
+	ledmap.c \
+	vibration.c \
+	buzzer.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -100,7 +103,8 @@ COMMAND_ENABLE = yes	# Commands for debug and configuration
 #NKRO_ENABLE = yes	# USB Nkey Rollover
 #USB_6KRO_ENABLE = yes	# USB 6key Rollover
 PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
-PS2_USE_BUSYWAIT = yes
+PS2_USE_USART= yes
+#PS2_USE_BUSYWAIT = yes
 BACKLIGHT_ENABLE = yes	# Enable keyboard backlight functionality
 KEYMAP_IN_EEPROM_ENABLE = yes # Read keymap from eeprom
 #KEYMAP_SECTION_ENABLE = yes	# Fixed address keymap for keymap editor
@@ -113,8 +117,9 @@ BREATHING_LED_ENABLE = yes # Enable breathing backlight
 
 # Search Path
 VPATH += $(TARGET_DIR)
-VPATH += $(TOP_DIR)
+VPATH += $(TMK_DIR)
 
-include $(TOP_DIR)/protocol/pjrc.mk
-include $(TOP_DIR)/common.mk
-include $(TOP_DIR)/rules.mk
+include $(TMK_DIR)/protocol/pjrc.mk
+include $(TMK_DIR)/protocol.mk
+include $(TMK_DIR)/common.mk
+include $(TMK_DIR)/rules.mk
