@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 3
 #ifndef TWO_HEADED_KIMERA
-#define EECONFIG_KEYMAP_IN_EEPROM 49
+#define EECONFIG_KEYMAP_IN_EEPROM 50
 #else
-#define EECONFIG_KEYMAP_IN_EEPROM 81
+#define EECONFIG_KEYMAP_IN_EEPROM 82
 #endif
 
 /* define if matrix has ghost */
@@ -60,6 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* enable customized backlight logic */
 #define BACKLIGHT_CUSTOM
+#define CUSTOM_LED_ENABLE
+#define RGB_LED_ENABLE
 
 /* number of leds */
 #define LED_COUNT 4

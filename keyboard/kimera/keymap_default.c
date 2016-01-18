@@ -1,4 +1,5 @@
 #include "keymap_common.h"
+#include "rgb.h"
 
 // Default
 #ifdef KEYMAP_SECTION_ENABLE
@@ -47,5 +48,34 @@ uint16_t keys_count(void) {
 
 uint16_t fn_actions_count(void) {
     return sizeof(fn_actions) / sizeof(fn_actions[0]);
+}
+#endif
+
+#ifndef NO_ACTION_FUNCTION
+enum function_id {
+    AF_RGB_TOGGLE = 0,
+    AF_RGB_DECREASE,
+    AF_RGB_INCREASE,
+    AF_RGB_STEP
+};
+
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    if (record->event.pressed) {
+        switch (id) {
+            case AF_RGB_TOGGLE:
+                rgb_toggle();
+                break;
+            case AF_RGB_DECREASE:
+                rgb_decrease();
+                break;
+            case AF_RGB_INCREASE:
+                rgb_increase();
+                break;
+            case AF_RGB_STEP:
+                rgb_step();
+                break;
+        }
+    }
 }
 #endif

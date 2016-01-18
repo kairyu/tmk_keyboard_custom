@@ -55,7 +55,9 @@ void ledmap_led_on(uint8_t index)
             LED2_PORT &= ~(1<<LED2_BIT);
             break;
         case 2:
+#if 0
             LED3_PORT &= ~(1<<LED3_BIT);
+#endif
             break;
         case 3:
             LED4_PORT |=  (1<<LED4_BIT);
@@ -73,7 +75,9 @@ void ledmap_led_off(uint8_t index)
             LED2_PORT |=  (1<<LED2_BIT);
             break;
         case 2:
+#if 0
             LED3_PORT |=  (1<<LED3_BIT);
+#endif
             break;
         case 3:
             LED4_PORT &= ~(1<<LED4_BIT);

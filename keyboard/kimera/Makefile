@@ -54,7 +54,9 @@ SRC =	keymap_common.c \
 	backlight.c \
 	ledmap.c \
 	twimaster.c \
-	kimera.c
+	kimera.c \
+	light_ws2812.c \
+	rgb.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
