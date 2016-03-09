@@ -44,8 +44,6 @@ void ledmap_led_init(void)
     PORTE |=  (1<<PE6);
     DDRF  |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
     PORTF |=  (1<<PF7 | 1<<PF6 | 1<<PF5 | 1<<PF4);
-    /* shift_register_init(); */
-    /* shift_register_write_word(0x0000); */
 }
 
 void ledmap_led_on(uint8_t index)

@@ -42,8 +42,6 @@ static void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, rgb
 
 void rgb_init(void)
 {
-    /* shift_register_init(); */
-    /* shift_register_write_word(0xFFFF); */
     rgb_read_config();
     rgb_read_color();
     if (rgb_config.raw == RGB_UNCONFIGURED) {
@@ -176,11 +174,9 @@ void rgb_set_level(uint8_t level)
             rgb_fading_enable = 0;
             rgb_brightness = 0;
             rgb_refresh(&rgb_color_off);
-            /* shift_register_write_word(0xFFFF); */
             break;
         case RGB_FIXED:
             rgb_refresh(&rgb_color);
-            /* shift_register_write_word(0x0000); */
             break;
         case RGB_FADE:
             if (backlight_config.enable) {
@@ -192,7 +188,6 @@ void rgb_set_level(uint8_t level)
                 rgb_brightness = 16;
             }
             rgb_fading_enable = 1;
-            /* shift_register_write_word(0x0000); */
             break;
     }
 }

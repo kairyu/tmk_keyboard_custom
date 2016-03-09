@@ -132,15 +132,12 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
                 break;
             case AF_RGB_STEP:
                 rgb_step();
-                dprintf("RGB Step\n");
                 break;
             case AF_RGB_COLOR_INCREASE:
                 rgb_color_increase(opt);
-                dprintf("RGB Increase %d\n", opt);
                 break;
             case AF_RGB_COLOR_DECREASE:
                 rgb_color_decrease(opt);
-                dprintf("RGB Decrease %d\n", opt);
                 break;
         }
     }

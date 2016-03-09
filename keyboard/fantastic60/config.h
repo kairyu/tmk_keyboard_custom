@@ -55,9 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define BACKLIGHT_CUSTOM
 #define CUSTOM_LED_ENABLE
+#define SOFTPWM_LED_FREQ 80
 
 /* number of leds */
-#define LED_COUNT 5
+#define LED_COUNT 4
 
 /* ledmap in eeprom */
 #define EECONFIG_LEDMAP_IN_EEPROM 8
@@ -75,15 +76,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* PS2 mouse support */
 #ifdef PS2_MOUSE_ENABLE
-#define PS2_CLOCK_PORT	PORTF
-#define PS2_CLOCK_PIN	PINF
-#define PS2_CLOCK_DDR	DDRF
-#define PS2_CLOCK_BIT	PF0
+#define PS2_CLOCK_PORT  PORTF
+#define PS2_CLOCK_PIN   PINF
+#define PS2_CLOCK_DDR   DDRF
+#define PS2_CLOCK_BIT   PF0
 
-#define PS2_DATA_PORT	PORTF
-#define PS2_DATA_PIN	PINF
-#define PS2_DATA_DDR	DDRF
-#define PS2_DATA_BIT	PF1
+#define PS2_DATA_PORT   PORTF
+#define PS2_DATA_PIN    PINF
+#define PS2_DATA_DDR    DDRF
+#define PS2_DATA_BIT    PF1
 #endif
 
 /*
