@@ -35,7 +35,6 @@ static const uint8_t backlight_table[] PROGMEM = {
 
 void backlight_set(uint8_t level)
 {
-    softpwm_led_enable();
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
         case 1:

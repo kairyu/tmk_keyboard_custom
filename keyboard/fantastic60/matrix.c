@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include "matrix.h"
 #include "rgb.h"
+#include "softpwm_led.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE 5
@@ -81,9 +82,15 @@ void matrix_init(void)
     _delay_us(30);  // without this wait read unstable value.
     if ((PINC & (1<<PC7)) == 0) {
         ps2_mouse_enabled = 1;
+#ifdef SOFTPWM_LED_ENABLE
+        softpwm_led_disable();
+#endif
     }
     else {
         ps2_mouse_enabled = 0;
+#ifdef SOFTPWM_LED_ENABLE
+        softpwm_led_enable();
+#endif
     }
     PORTC &= ~(1<<PC7);
 #endif
