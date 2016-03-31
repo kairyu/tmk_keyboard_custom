@@ -86,6 +86,17 @@ static matrix_row_t col_left_mask;
 static uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
 static uint8_t exp_status = 0;
 
+static uint8_t read_matrix_mapping(void);
+static void write_matrix_mapping(void);
+static void expander_init(uint8_t exp);
+static uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data);
+static uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data);
+static uint8_t expander_write_output(uint8_t exp, uint8_t *data);
+static uint8_t expander_write_inversion(uint8_t exp, uint8_t *data);
+static uint8_t expander_write_config(uint8_t exp, uint8_t *data);
+static uint8_t expander_read_input(uint8_t exp, uint8_t *data);
+static void init_data(uint8_t value);
+
 void kimera_init(void)
 {
     /* read config */
@@ -130,7 +141,7 @@ uint8_t read_matrix_mapping(void)
 #ifdef TWO_HEADED_KIMERA
     row_left_count = (rows + 1) / 2;
     col_left_count = (cols + 1) / 2;
-    col_left_mask = (1 << row_left_count) - 1;
+    col_left_mask = (1 << col_left_count) - 1;
 #endif
 
     /* read row mapping */
@@ -200,30 +211,68 @@ void kimera_scan(void)
     }
 }
 
+#define CHANGE_COMBINING 1
+
 inline
 uint8_t kimera_matrix_rows(void)
 {
+#if CHANGE_COMBINING
+#ifndef TWO_HEADED_KIMERA
     return row_count;
+#else
+    return row_left_count;
+#endif
+#else
+    return row_count;
+#endif
 }
 
 inline
 uint8_t kimera_matrix_cols(void)
 {
+#if CHANGE_COMBINING
+    return col_count;
+#else
 #ifndef TWO_HEADED_KIMERA
     return col_count;
 #else
     return col_left_count;
 #endif
+#endif
 }
 
-matrix_row_t kimera_read_cols(uint8_t row)
+void kimera_read_cols(void)
 {
-    init_data(0xFF);
-
     /* read all input registers */
+    init_data(0xFF);
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
         expander_read_input(exp, data[exp]);
     }
+}
+
+uint8_t kimera_get_col(uint8_t row, uint8_t col)
+{
+#if CHANGE_COMBINING
+#else
+#ifdef TWO_HEADED_KIMERA
+    if (row >= row_left_count) {
+        col += col_left_count;
+    }
+#endif
+#endif
+
+    uint8_t px = col_mapping[col];
+    if (px != UNCONFIGURED) {
+        if (!(data[PX_TO_EXP(px)][PX_TO_PORT(px)] & (1 << PX_TO_PIN(px)))) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+matrix_row_t kimera_read_row(uint8_t row)
+{
+    kimera_read_cols();
 
     /* make cols */
     matrix_row_t cols = 0;
@@ -236,6 +285,8 @@ matrix_row_t kimera_read_cols(uint8_t row)
         }
     }
 
+#if CHANGE_COMBINING
+#else
 #ifdef TWO_HEADED_KIMERA
     if (row < row_left_count) {
         cols &= col_left_mask;
@@ -243,6 +294,7 @@ matrix_row_t kimera_read_cols(uint8_t row)
     else {
         cols >>= col_left_count;
     }
+#endif
 #endif
 
     return cols;
@@ -267,6 +319,13 @@ void kimera_select_row(uint8_t row)
         data[exp][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
         expander_write_config(exp, data[exp]);
     }
+#if CHANGE_COMBINING
+#ifdef TWO_HEADED_KIMERA
+    if (row < row_left_count) {
+        kimera_select_row(row + row_left_count);
+    }
+#endif
+#endif
 }
 
 void expander_init(uint8_t exp)
@@ -349,6 +408,7 @@ uint8_t expander_write_config(uint8_t exp, uint8_t *data)
 {
     return expander_write(exp, EXP_COMM_CONFIG_0, data);
 }
+
 inline
 uint8_t expander_read_input(uint8_t exp, uint8_t *data)
 {
