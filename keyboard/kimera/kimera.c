@@ -84,7 +84,8 @@ static uint8_t col_left_count = 16;
 static matrix_row_t col_left_mask;
 #endif
 static uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
-static uint8_t exp_status = 0;
+static uint8_t exp_in_use = 0;
+static uint8_t exp_online = 0;
 
 static uint8_t read_matrix_mapping(void);
 static void write_matrix_mapping(void);
@@ -146,10 +147,17 @@ uint8_t read_matrix_mapping(void)
 
     /* read row mapping */
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
+    uint8_t exp;
     for (uint8_t i = 0; i < PX_COUNT; i++) {
         if (i < row_count) {
             row_mapping[i] = eeprom_read_byte(mapping++);
-            if (row_mapping[i] >= PX_COUNT) error++;
+            if (row_mapping[i] >= PX_COUNT) {
+                error++;
+            }
+            else {
+                exp = PX_TO_EXP(row_mapping[i]);
+                exp_in_use |= (1<<exp);
+            }
         }
         else {
             row_mapping[i] = UNCONFIGURED;
@@ -159,7 +167,13 @@ uint8_t read_matrix_mapping(void)
     for (uint8_t i = 0; i < PX_COUNT; i++) {
         if (i < col_count) {
             col_mapping[i] = eeprom_read_byte(mapping++);
-            if (col_mapping[i] >= PX_COUNT) error++;
+            if (col_mapping[i] >= PX_COUNT) {
+                error++;
+            }
+            else {
+                exp = PX_TO_EXP(col_mapping[i]);
+                exp_in_use |= (1<<exp);
+            }
         }
         else {
             col_mapping[i] = UNCONFIGURED;
@@ -188,25 +202,49 @@ void write_matrix_mapping(void)
 
 void kimera_scan(void)
 {
-    wdt_reset();
     uint8_t ret;
+    xprintf("exp in use: %d\n", exp_in_use);
+    xprintf("exp online: %d\n", exp_online);
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
-        ret = i2c_start(EXP_ADDR(exp) | I2C_READ);
-        if (exp_status & (1<<exp)) {
-            if (ret) {
-                dprintf("lost: %d\n", exp);
-                exp_status &= ~(1<<exp);
-                clear_keyboard();
-            }
-        }
-        else {
-            if (!ret) {
-                dprintf("found: %d\n", exp);
-                exp_status |= (1<<exp);
+        if (exp_in_use & (1<<exp)) {
+            ret = i2c_start(EXP_ADDR(exp) | I2C_WRITE);
+            if (ret == 0) {
                 i2c_stop();
-                expander_init(exp);
-                clear_keyboard();
+                if ((exp_online & (1<<exp)) == 0) {
+                    xprintf("found: %d\n", exp);
+                    exp_online |= (1<<exp);
+                    expander_init(exp);
+                    clear_keyboard();
+                }
             }
+            else {
+                if ((exp_online & (1<<exp)) != 0) {
+                    xprintf("lost: %d\n", exp);
+                    exp_online &= ~(1<<exp);
+                    clear_keyboard();
+                }
+            }
+#if 0
+            if (exp_online & (1<<exp)) {
+                if (ret) {
+                    xprintf("lost: %d\n", exp);
+                    exp_online &= ~(1<<exp);
+                    clear_keyboard();
+                }
+            }
+            else {
+                if (!ret) {
+                    xprintf("found: %d\n", exp);
+                    exp_online |= (1<<exp);
+                    i2c_stop();
+                    expander_init(exp);
+                    clear_keyboard();
+                }
+                else {
+                    i2c_stop();
+                }
+            }
+#endif
         }
     }
 }
@@ -359,6 +397,9 @@ void expander_init(uint8_t exp)
 uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data)
 {
     wdt_reset();
+    if ((exp_online & (1<<exp)) == 0) {
+        return 0;
+    }
     uint8_t addr = EXP_ADDR(exp);
     uint8_t ret;
     ret = i2c_start(addr | I2C_WRITE);
@@ -376,6 +417,9 @@ stop:
 uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data)
 {
     wdt_reset();
+    if ((exp_online & (1<<exp)) == 0) {
+        return 0;
+    }
     uint8_t addr = EXP_ADDR(exp);
     uint8_t ret;
     ret = i2c_start(addr | I2C_WRITE);
