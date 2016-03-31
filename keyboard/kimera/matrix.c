@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
+#include "i2c_wrapper.h"
 #include "kimera.h"
 #include "keymap_in_eeprom.h"
 #include "timer.h"
@@ -70,6 +71,9 @@ void matrix_init(void)
     MCUCR = (1<<JTD);
     MCUCR = (1<<JTD);
 
+    i2c_wrapper_init();
+    _delay_ms(1);
+
     kimera_init();
     kimera_scan_timestamp = timer_read();
 
@@ -99,6 +103,7 @@ void matrix_init(void)
 
 uint8_t matrix_scan(void)
 {
+    i2c_wrapper_task();
 
     /* xprintf("Row: %d, %u\n", matrix_current_row, timer_read()); */
 

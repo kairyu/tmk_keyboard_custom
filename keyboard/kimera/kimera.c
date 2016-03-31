@@ -19,33 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdbool.h>
 #include <avr/eeprom.h>
-#include <avr/interrupt.h>
-#include <avr/wdt.h>
-#include <util/delay.h>
 #include "action.h"
 #include "i2cmaster.h"
 #include "kimera.h"
 #include "debug.h"
-
-#define wdt_intr_enable(value)   \
-__asm__ __volatile__ (  \
-    "in __tmp_reg__,__SREG__" "\n\t"    \
-    "cli" "\n\t"    \
-    "wdr" "\n\t"    \
-    "sts %0,%1" "\n\t"  \
-    "out __SREG__,__tmp_reg__" "\n\t"   \
-    "sts %0,%2" "\n\t" \
-    : /* no outputs */  \
-    : "M" (_SFR_MEM_ADDR(_WD_CONTROL_REG)), \
-    "r" (_BV(_WD_CHANGE_BIT) | _BV(WDE)), \
-    "r" ((uint8_t) ((value & 0x08 ? _WD_PS3_MASK : 0x00) | \
-        _BV(WDIE) | (value & 0x07)) ) \
-    : "r0"  \
-)
-
-#define SCL_CLOCK       400000L
-#define SCL_DURATION    (1000000L/SCL_CLOCK)/2
-extern uint8_t i2c_force_stop;
 
 static uint8_t row_mapping[PX_COUNT] = {
 #ifndef TWO_HEADED_KIMERA
@@ -106,22 +83,8 @@ void kimera_init(void)
         write_matrix_mapping();
     }
 
-    /* init i2c */
-    i2c_init();
-
-    /* init watch dog */
-    wdt_init();
-
     /* init i/o expanders */
     kimera_scan();
-}
-
-void wdt_init(void)
-{
-    cli();
-    wdt_reset();
-    wdt_intr_enable(WDTO_1S);
-    sei();
 }
 
 uint8_t read_matrix_mapping(void)
@@ -396,7 +359,6 @@ void expander_init(uint8_t exp)
 
 uint8_t expander_write(uint8_t exp, uint8_t command, uint8_t *data)
 {
-    wdt_reset();
     if ((exp_online & (1<<exp)) == 0) {
         return 0;
     }
@@ -416,7 +378,6 @@ stop:
 
 uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data)
 {
-    wdt_reset();
     if ((exp_online & (1<<exp)) == 0) {
         return 0;
     }
@@ -466,28 +427,4 @@ void init_data(uint8_t value)
             data[exp][port] = value;
         }
     }
-}
-
-ISR(WDT_vect)
-{
-    dprintf("i2c timeout\n");
-
-    /* let slave to release SDA */
-    TWCR = 0;
-    DDRD |=  (1<<PD0);
-    DDRD &= ~(1<<PD1);
-    if (!(PIND & (1<<PD1))) {
-        for (uint8_t i = 0; i < 9; i++) {
-            PORTD &= ~(1<<PD0);
-            _delay_us(SCL_DURATION);
-            PORTD |= (1<<PD0);
-            _delay_us(SCL_DURATION);
-        }
-    }
-
-    /* send stop condition */
-    TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
-
-    /* escape from loop */
-    i2c_force_stop = 1;
 }

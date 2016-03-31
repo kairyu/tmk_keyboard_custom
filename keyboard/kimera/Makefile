@@ -54,6 +54,7 @@ SRC =	keymap_common.c \
 	backlight.c \
 	ledmap.c \
 	twimaster.c \
+	i2c_wrapper.c \
 	kimera.c \
 	light_ws2812.c \
 	rgb.c
