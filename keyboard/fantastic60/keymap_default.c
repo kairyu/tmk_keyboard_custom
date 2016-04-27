@@ -31,42 +31,42 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
 #endif
     /* Keymap 0: Default Layer
      * ,-----------------------------------------------------------.
-     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |
+     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  `|Bs |
      * |-----------------------------------------------------------|
      * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|    \|
      * |-----------------------------------------------------------|
      * |Caps  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return  |
      * |-----------------------------------------------------------|
-     * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
+     * |Shif|  \|  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |  `|
      * |-----------------------------------------------------------|
      * |Ctrl|Gui |Alt |      Space             |Fn0 |Gui |App |Ctrl|
      * `-----------------------------------------------------------'
      */
-    KEYMAP_ANSI(
-        ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSPC, \
-        TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSLS, \
-        CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,     ENT,  \
-        LSFT,     Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,     RSFT, \
-        LCTL,LGUI,LALT,          SPC,                     FN0, RGUI,APP, RCTL),
+    KEYMAP(
+        ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, GRV, BSPC, \
+        TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,     BSLS, \
+        CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,          ENT,  \
+        LSFT,NUBS,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,     RSFT,GRV,  \
+        LCTL,LGUI,LALT,               SPC,                     FN0, RGUI,APP, RCTL),
     /* Keymap 1: Fn Layer
      * ,-----------------------------------------------------------.
      * |  `| F1| F2| F3| F4| F5| F6| F7| F8| F9|F10|F11|F12|Delete |
      * |-----------------------------------------------------------|
-     * |     |   |Up |Fn4|Fn5|Fn6|Cal|   |Ins|   |Psc|Slk|Pau|     |
+     * |     |   |Up |Fn4|Fn5|Fn7|Fn9|   |   |   |Psc|Slk|Pau| Ins |
      * |-----------------------------------------------------------|
-     * |      |Lef|Dow|Rig|Fn7|Fn8|   |   |   |   |Hom|PgU|        |
+     * |      |Lef|Dow|Rig|Fn6|Fn8|F10|   |   |   |Hom|PgU|        |
      * |-----------------------------------------------------------|
-     * |        |Fn2|Fn1|Fn3|Fn9|F10|VoD|VoU|Mut|End|PgD|          |
+     * |    |   |Fn2|Fn1|Fn3|   |   |VoD|VoU|Mut|End|PgD|      |   |
      * |-----------------------------------------------------------|
      * |    |    |    |                        |    |    |    |    |
      * `-----------------------------------------------------------'
      */
-    KEYMAP_ANSI(
-        GRV, F1,  F2,  F3,  F4,  F5,  F6,  F7,  F8,  F9,  F10, F11, F12, DEL,  \
-        TRNS,TRNS,UP,  FN4, FN5, FN6, CALC,TRNS,INS, TRNS,PSCR,SLCK,PAUS,TRNS, \
-        TRNS,LEFT,DOWN,RGHT,FN7, FN8, TRNS,TRNS,TRNS,TRNS,HOME,PGUP,     TRNS, \
-        TRNS,     FN2, FN1, FN3, FN9, FN10,VOLD,VOLU,MUTE,END, PGDN,     TRNS, \
-        TRNS,TRNS,TRNS,          TRNS,                    TRNS,TRNS,TRNS,TRNS),
+    KEYMAP(
+        GRV, F1,  F2,  F3,  F4,  F5,  F6,  F7,  F8,  F9,  F10, F11, F12, TRNS,DEL,  \
+        TRNS,TRNS,UP,  FN4, FN5, FN7, FN9, TRNS,TRNS,TRNS,PSCR,SLCK,PAUS,     INS,  \
+        TRNS,LEFT,DOWN,RGHT,FN6, FN8, FN10,TRNS,TRNS,TRNS,HOME,PGUP,          TRNS, \
+        TRNS,TRNS,FN2, FN1, FN3, TRNS,TRNS,VOLD,VOLU,MUTE,END, PGDN,     TRNS,TRNS, \
+        TRNS,TRNS,TRNS,               TRNS,                    TRNS,TRNS,TRNS,TRNS),
 };
 
 enum function_id {
@@ -93,12 +93,12 @@ const uint16_t fn_actions[] PROGMEM = {
     [2] = ACTION_BACKLIGHT_DECREASE(),
     [3] = ACTION_BACKLIGHT_INCREASE(),
     [4] = ACTION_FUNCTION(AF_RGB_STEP),
-    [5] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_R),
-    [6] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_R),
-    [7] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_G),
-    [8] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_G),
-    [9] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_B),
-    [10] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_B),
+    [5] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_R),
+    [6] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_R),
+    [7] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_G),
+    [8] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_G),
+    [9] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_INCREASE, RGB_B),
+    [10] = ACTION_FUNCTION_OPT(AF_RGB_COLOR_DECREASE, RGB_B),
 };
 
 #ifdef KEYMAP_IN_EEPROM_ENABLE
