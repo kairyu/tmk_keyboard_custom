@@ -35,11 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_SIZE 16 * 16
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 3
-#ifndef TWO_HEADED_KIMERA
-#define EECONFIG_KEYMAP_IN_EEPROM 50
-#else
 #define EECONFIG_KEYMAP_IN_EEPROM 82
-#endif
 
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST

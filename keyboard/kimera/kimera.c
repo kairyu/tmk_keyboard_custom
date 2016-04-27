@@ -25,41 +25,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 
 static uint8_t row_mapping[PX_COUNT] = {
-#ifndef TWO_HEADED_KIMERA
-    0, 1, 2, 3, 4, 5, 6, 7,
-    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
-    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
-    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
-#else
     0, 1, 2, 3, 4, 5, 6, 7,
     32, 33, 34, 35, 36, 37, 38, 39,
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED,
     UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
-#endif
 };
 static uint8_t col_mapping[PX_COUNT] = {
-#ifndef TWO_HEADED_KIMERA
-    8, 9, 10, 11, 12, 13, 14, 15,
-    16, 17, 18, 19, 20, 21, 22, 23,
-    24, 25, 26, 27, 28, 29, 30, 31,
-    UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED, UNCONFIGURED
-#else
     8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23,
     40, 41, 42, 43, 44, 45, 46, 47,
     48, 49, 50, 51, 52, 53, 54, 55
-#endif
 };
-#ifndef TWO_HEADED_KIMERA
-static uint8_t row_count = 8;
-static uint8_t col_count = 24;
-#else
 static uint8_t row_count = 16;
 static uint8_t col_count = 32;
 static uint8_t row_left_count = 8;
 static uint8_t col_left_count = 16;
 static matrix_row_t col_left_mask;
-#endif
+static uint8_t combining = COMBINING_NONE;
 static uint8_t data[EXP_COUNT][EXP_PORT_COUNT];
 static uint8_t exp_in_use = 0;
 static uint8_t exp_online = 0;
@@ -95,18 +77,28 @@ uint8_t read_matrix_mapping(void)
     uint8_t rows = eeprom_read_byte(EECONFIG_ROW_COUNT);
     uint8_t cols = eeprom_read_byte(EECONFIG_COL_COUNT);
     if (rows == 0) error++;
-    if (rows == UNCONFIGURED) error++;
+    else if (rows == UNCONFIGURED) error++;
+    else if (rows & COMBINING_BIT) {
+        if (combining != COMBINING_NONE) error++;
+        combining = COMBINING_ROW;
+        rows -= COMBINING_BIT;
+    }
     if (cols == 0) error++;
-    if (cols == UNCONFIGURED) error++;
+    else if (cols == UNCONFIGURED) error++;
+    else if (cols & COMBINING_BIT) {
+        if (combining != COMBINING_NONE) error++;
+        combining = COMBINING_COL;
+        cols -= COMBINING_BIT;
+    }
     if (rows + cols > PX_COUNT) error++;
     if (error) return error;
     row_count = rows;
     col_count = cols;
-#ifdef TWO_HEADED_KIMERA
-    row_left_count = (rows + 1) / 2;
-    col_left_count = (cols + 1) / 2;
-    col_left_mask = (1 << col_left_count) - 1;
-#endif
+    if (combining != COMBINING_NONE) {
+        row_left_count = (rows + 1) / 2;
+        col_left_count = (cols + 1) / 2;
+        col_left_mask = (1 << col_left_count) - 1;
+    }
 
     /* read row mapping */
     uint8_t *mapping = EECONFIG_ROW_COL_MAPPING;
@@ -166,8 +158,8 @@ void write_matrix_mapping(void)
 void kimera_scan(void)
 {
     uint8_t ret;
-    xprintf("exp in use: %d\n", exp_in_use);
-    xprintf("exp online: %d\n", exp_online);
+    dprintf("exp in use: %d\n", exp_in_use);
+    dprintf("exp online: %d\n", exp_online);
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
         if (exp_in_use & (1<<exp)) {
             ret = i2c_start(EXP_ADDR(exp) | I2C_WRITE);
@@ -187,59 +179,30 @@ void kimera_scan(void)
                     clear_keyboard();
                 }
             }
-#if 0
-            if (exp_online & (1<<exp)) {
-                if (ret) {
-                    xprintf("lost: %d\n", exp);
-                    exp_online &= ~(1<<exp);
-                    clear_keyboard();
-                }
-            }
-            else {
-                if (!ret) {
-                    xprintf("found: %d\n", exp);
-                    exp_online |= (1<<exp);
-                    i2c_stop();
-                    expander_init(exp);
-                    clear_keyboard();
-                }
-                else {
-                    i2c_stop();
-                }
-            }
-#endif
         }
     }
 }
 
-#define CHANGE_COMBINING 1
-
 inline
 uint8_t kimera_matrix_rows(void)
 {
-#if CHANGE_COMBINING
-#ifndef TWO_HEADED_KIMERA
-    return row_count;
-#else
-    return row_left_count;
-#endif
-#else
-    return row_count;
-#endif
+    if (combining == COMBINING_ROW) {
+        return row_left_count;
+    }
+    else {
+        return row_count;
+    }
 }
 
 inline
 uint8_t kimera_matrix_cols(void)
 {
-#if CHANGE_COMBINING
-    return col_count;
-#else
-#ifndef TWO_HEADED_KIMERA
-    return col_count;
-#else
-    return col_left_count;
-#endif
-#endif
+    if (combining == COMBINING_COL) {
+        return col_left_count;
+    }
+    else {
+        return col_count;
+    }
 }
 
 void kimera_read_cols(void)
@@ -253,14 +216,11 @@ void kimera_read_cols(void)
 
 uint8_t kimera_get_col(uint8_t row, uint8_t col)
 {
-#if CHANGE_COMBINING
-#else
-#ifdef TWO_HEADED_KIMERA
-    if (row >= row_left_count) {
-        col += col_left_count;
+    if (combining == COMBINING_ROW) {
+        if (row >= row_left_count) {
+            col += col_left_count;
+        }
     }
-#endif
-#endif
 
     uint8_t px = col_mapping[col];
     if (px != UNCONFIGURED) {
@@ -286,17 +246,14 @@ matrix_row_t kimera_read_row(uint8_t row)
         }
     }
 
-#if CHANGE_COMBINING
-#else
-#ifdef TWO_HEADED_KIMERA
-    if (row < row_left_count) {
-        cols &= col_left_mask;
+    if (combining == COMBINING_COL) {
+        if (row < row_left_count) {
+            cols &= col_left_mask;
+        }
+        else {
+            cols >>= col_left_count;
+        }
     }
-    else {
-        cols >>= col_left_count;
-    }
-#endif
-#endif
 
     return cols;
 }
@@ -320,13 +277,12 @@ void kimera_select_row(uint8_t row)
         data[exp][PX_TO_PORT(px)] &= ~(1 << PX_TO_PIN(px));
         expander_write_config(exp, data[exp]);
     }
-#if CHANGE_COMBINING
-#ifdef TWO_HEADED_KIMERA
-    if (row < row_left_count) {
-        kimera_select_row(row + row_left_count);
+
+    if (combining == COMBINING_ROW) {
+        if (row < row_left_count) {
+            kimera_select_row(row + row_left_count);
+        }
     }
-#endif
-#endif
 }
 
 void expander_init(uint8_t exp)
@@ -387,7 +343,7 @@ uint8_t expander_read(uint8_t exp, uint8_t command, uint8_t *data)
     if (ret) goto stop;
     ret = i2c_write(command);
     if (ret) goto stop;
-    ret = i2c_start(addr | I2C_READ);
+    ret = i2c_rep_start(addr | I2C_READ);
     if (ret) goto stop;
     *data++ = i2c_readAck();
     *data = i2c_readNak();

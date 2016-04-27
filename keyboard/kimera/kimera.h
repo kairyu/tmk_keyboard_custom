@@ -111,11 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          `----------'                   `----------'
 */
 
-#ifndef TWO_HEADED_KIMERA
-#define EXP_COUNT           2
-#else
 #define EXP_COUNT           4
-#endif
 #define EXP_ADDR(n)         ((0x20+(n))<<1)
 #define EXP_OUTPUT          0
 #define EXP_INPUT           1
@@ -152,6 +148,13 @@ const uint16_t PROGMEM dummy[] = {
 #define EECONFIG_COL_COUNT          (uint8_t *)17
 #define EECONFIG_ROW_COL_MAPPING    (uint8_t *)18
 #define UNCONFIGURED                0xFF
+
+enum {
+    COMBINING_NONE = 0,
+    COMBINING_COL,
+    COMBINING_ROW
+};
+#define COMBINING_BIT       (0x80)
 
 /* Functions */
 
