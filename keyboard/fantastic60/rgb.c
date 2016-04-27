@@ -37,7 +37,9 @@ static void rgb_read_config(void);
 static void rgb_write_color(void);
 static void rgb_read_color(void);
 static void rgb_set_level(uint8_t level);
-static void rgb_refresh(rgb_color_t *rgb);
+static void rgb_led_enable(void);
+static void rgb_led_disable(void);
+static void rgb_led_refresh(rgb_color_t *rgb);
 static void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, rgb_color_t *rgb);
 
 void rgb_init(void)
@@ -143,7 +145,7 @@ void rgb_color_increase(uint8_t color)
         else {
             *c += 16;
         }
-        rgb_refresh(&rgb_color);
+        rgb_led_refresh(&rgb_color);
         rgb_write_color();
     }
 }
@@ -161,7 +163,7 @@ void rgb_color_decrease(uint8_t color)
         else {
             *c -= 16;
         }
-        rgb_refresh(&rgb_color);
+        rgb_led_refresh(&rgb_color);
         rgb_write_color();
     }
 }
@@ -173,10 +175,12 @@ void rgb_set_level(uint8_t level)
         case RGB_OFF:
             rgb_fading_enable = 0;
             rgb_brightness = 0;
-            rgb_refresh(&rgb_color_off);
+            rgb_led_refresh(&rgb_color_off);
+            rgb_led_disable();
             break;
         case RGB_FIXED:
-            rgb_refresh(&rgb_color);
+            rgb_led_refresh(&rgb_color);
+            rgb_led_enable();
             break;
         case RGB_FADE:
             if (backlight_config.enable) {
@@ -188,6 +192,7 @@ void rgb_set_level(uint8_t level)
                 rgb_brightness = 16;
             }
             rgb_fading_enable = 1;
+            rgb_led_enable();
             break;
     }
 }
@@ -197,7 +202,21 @@ void rgb_set_brightness(uint8_t brightness)
     rgb_brightness = brightness;
 }
 
-void rgb_refresh(rgb_color_t *rgb)
+void rgb_led_enable(void)
+{
+    for (uint8_t i = 0; i < 3; i++) {
+        softpwm_led_enable(i + 1);
+    }
+}
+
+void rgb_led_disable(void)
+{
+    for (uint8_t i = 0; i < 3; i++) {
+        softpwm_led_disable(i + 1);
+    }
+}
+
+void rgb_led_refresh(rgb_color_t *rgb)
 {
     for (uint8_t i = 0; i < 3; i++) {
         softpwm_led_set(i + 1, rgb->raw[i]);
@@ -231,7 +250,7 @@ void rgb_fading(void)
             step = 0;
             rgb_hue = hue;
             hsb_to_rgb(rgb_hue, rgb_saturation, rgb_brightness, &color);
-            rgb_refresh(&color);
+            rgb_led_refresh(&color);
             if (++hue >= 768) {
                 hue = 0;
             }

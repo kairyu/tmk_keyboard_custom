@@ -46,6 +46,7 @@ void backlight_set(uint8_t level)
             breathing_led_disable(BACKLIGHT);
             backlight_brightness = pgm_read_byte(&backlight_table[level]);
             softpwm_led_set(BACKLIGHT, backlight_brightness);
+            softpwm_led_enable(BACKLIGHT);
             rgb_set_brightness(backlight_brightness);
             break;
         case 4:
@@ -56,6 +57,7 @@ void backlight_set(uint8_t level)
 #endif
             breathing_led_enable(BACKLIGHT);
             breathing_led_set_duration(6 - level);
+            softpwm_led_enable(BACKLIGHT);
             break;
 #ifdef FADING_LED_ENABLE
         case 7:
@@ -63,12 +65,14 @@ void backlight_set(uint8_t level)
             breathing_led_disable(BACKLIGHT);
             fading_led_set_direction(BACKLIGHT, FADING_LED_FADE_IN);
             fading_led_set_duration(3);
+            softpwm_led_enable(BACKLIGHT);
             break;
         case 8:
             fading_led_enable(BACKLIGHT);
             breathing_led_disable(BACKLIGHT);
             fading_led_set_direction(BACKLIGHT, FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
+            softpwm_led_enable(BACKLIGHT);
             break;
 #endif
         case 0:
@@ -79,6 +83,7 @@ void backlight_set(uint8_t level)
             breathing_led_disable(BACKLIGHT);
             backlight_brightness = 0;
             softpwm_led_set(BACKLIGHT, backlight_brightness);
+            softpwm_led_disable(BACKLIGHT);
             break;
     }
 #else

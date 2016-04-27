@@ -83,13 +83,13 @@ void matrix_init(void)
     if ((PINC & (1<<PC7)) == 0) {
         ps2_mouse_enabled = 1;
 #ifdef SOFTPWM_LED_ENABLE
-        softpwm_led_disable();
+        softpwm_disable();
 #endif
     }
     else {
         ps2_mouse_enabled = 0;
 #ifdef SOFTPWM_LED_ENABLE
-        softpwm_led_enable();
+        softpwm_enable();
 #endif
     }
     PORTC &= ~(1<<PC7);
