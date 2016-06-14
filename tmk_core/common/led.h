@@ -54,6 +54,14 @@ typedef uint32_t led_pack_t;
 #define USB_LED_KANA                    4
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void led_set(uint8_t usb_led);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -48,11 +48,13 @@
 #include "sleep_led.h"
 #endif
 #include "suspend.h"
+#include "hook.h"
 
 #include "descriptor.h"
 #include "lufa.h"
 
 uint8_t keyboard_idle = 0;
+/* 0: Boot Protocol, 1: Report Protocol(default) */
 uint8_t keyboard_protocol = 1;
 static uint8_t keyboard_led_stats = 0;
 
@@ -179,22 +181,13 @@ void EVENT_USB_Device_Reset(void)
 void EVENT_USB_Device_Suspend()
 {
     print("[S]");
-    matrix_power_down();
-#ifdef SLEEP_LED_ENABLE
-    sleep_led_enable();
-#endif
+    hook_usb_suspend_entry();
 }
 
 void EVENT_USB_Device_WakeUp()
 {
     print("[W]");
-    suspend_wakeup_init();
-
-#ifdef SLEEP_LED_ENABLE
-    sleep_led_disable();
-    // NOTE: converters may not accept this
-    led_set(host_keyboard_leds());
-#endif
+    hook_usb_wakeup();
 }
 
 #ifdef CONSOLE_ENABLE
@@ -218,6 +211,9 @@ void EVENT_USB_Device_StartOfFrame(void)
 
 /** Event handler for the USB_ConfigurationChanged event.
  * This is fired when the host sets the current configuration of the USB device after enumeration.
+ *
+ * ATMega32u2 supports dual bank(ping-pong mode) only on endpoint 3 and 4,
+ * it is safe to use singl bank for all endpoints.
  */
 void EVENT_USB_Device_ConfigurationChanged(void)
 {
@@ -242,7 +238,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 #ifdef CONSOLE_ENABLE
     /* Setup Console HID Report Endpoints */
     ConfigSuccess &= ENDPOINT_CONFIG(CONSOLE_IN_EPNUM, EP_TYPE_INTERRUPT, ENDPOINT_DIR_IN,
-                                     CONSOLE_EPSIZE, ENDPOINT_BANK_DOUBLE);
+                                     CONSOLE_EPSIZE, ENDPOINT_BANK_SINGLE);
 #if 0
     ConfigSuccess &= ENDPOINT_CONFIG(CONSOLE_OUT_EPNUM, EP_TYPE_INTERRUPT, ENDPOINT_DIR_OUT,
                                      CONSOLE_EPSIZE, ENDPOINT_BANK_SINGLE);
@@ -347,10 +343,7 @@ void EVENT_USB_Device_ControlRequest(void)
                     Endpoint_ClearSETUP();
                     Endpoint_ClearStatusStage();
 
-                    keyboard_protocol = ((USB_ControlRequest.wValue & 0xFF) != 0x00);
-#ifdef NKRO_ENABLE
-                    keyboard_nkro = !!keyboard_protocol;
-#endif
+                    keyboard_protocol = (USB_ControlRequest.wValue & 0xFF);
                     clear_keyboard();
                 }
             }
@@ -397,7 +390,7 @@ static void send_keyboard(report_keyboard_t *report)
 
     /* Select the Keyboard Report Endpoint */
 #ifdef NKRO_ENABLE
-    if (keyboard_nkro) {
+    if (keyboard_protocol && keyboard_nkro) {
         /* Report protocol - NKRO */
         Endpoint_SelectEndpoint(NKRO_IN_EPNUM);
 
@@ -592,6 +585,7 @@ int main(void)  __attribute__ ((weak));
 int main(void)
 {
     setup_mcu();
+    hook_early_init();
     keyboard_setup();
     setup_usb();
     sei();
@@ -614,13 +608,11 @@ int main(void)
 #endif
 
     print("Keyboard start.\n");
+    hook_late_init();
     while (1) {
         while (USB_DeviceState == DEVICE_STATE_Suspended) {
             print("[s]");
-            suspend_power_down();
-            if (USB_Device_RemoteWakeupEnabled && suspend_wakeup_condition()) {
-                    USB_Device_SendRemoteWakeup();
-            }
+            hook_usb_suspend_loop();
         }
 
         keyboard_task();
@@ -629,4 +621,40 @@ int main(void)
         USB_USBTask();
 #endif
     }
+}
+
+
+/* hooks */
+__attribute__((weak))
+void hook_early_init(void) {}
+
+__attribute__((weak))
+void hook_late_init(void) {}
+
+ __attribute__((weak))
+void hook_usb_suspend_entry(void)
+{
+#ifdef SLEEP_LED_ENABLE
+    sleep_led_enable();
+#endif
+}
+
+__attribute__((weak))
+void hook_usb_suspend_loop(void)
+{
+    suspend_power_down();
+    if (USB_Device_RemoteWakeupEnabled && suspend_wakeup_condition()) {
+            USB_Device_SendRemoteWakeup();
+    }
+}
+
+__attribute__((weak))
+void hook_usb_wakeup(void)
+{
+    suspend_wakeup_init();
+#ifdef SLEEP_LED_ENABLE
+    sleep_led_disable();
+    // NOTE: converters may not accept this
+    led_set(host_keyboard_leds());
+#endif
 }

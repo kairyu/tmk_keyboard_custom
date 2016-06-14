@@ -1,10 +1,10 @@
 ADB to USB keyboard converter
 =============================
-This firmware converts ADB keyboard protocol to USB.
-You can use PJRC Teensy for this converter, though, other USB AVR(ATMega32U4, AT90USB64/128 or etc) should work.
-But binary size is about 10KB or more it doesn't fit into 8K flash like ATMega8U2.
+This firmware converts Apple ADB keyboard protocol to USB. You can use TMK Converter, PJRC Teensy2.0 and other USB AVR MCU(ATMega32U4, AT90USB64/128 or etc) for this. But binary size is probably more than 10KB and it won't fit into 8K flash.
 
 Discuss: http://geekhack.org/showwiki.php?title=Island:14290
+
+TMK Converter: https://geekhack.org/index.php?topic=72052.0
 
 
 
@@ -54,22 +54,30 @@ Define following macros for ADB connection in config.h if you use other than por
     ADB_PORT, ADB_PIN, ADB_DDR, ADB_DATA_BIT
 
 
-Build
------
-See doc/build.md. In short,
+Build firmware and Program microcontroller
+------------------------------------------
+See [doc/build.md](../../tmk_core/doc/build.md).
 
-    $ make clean
-    $ make
+To build firmware and program TMK Converter run these commands:
 
-You can select keymap(ansi is default) like this:
+    $ make -f Makefile clean
+    $ make -f Makefile [KEYMAP=(plain|ansi|iso|hasu)]
+    $ make -f Makefile [KEYMAP=(plain|ansi|iso|hasu)] dfu
 
-    $ make KEYMAP=[ansi|iso|hasu]
+You can select keymap with optional `KEYMAP=` (plain is default). Push button on the converter before running `dfu` target.
+
+Use **Makefile.rev1** for old TMK Converter rev.1 and **Makefile.teensy** for Teensy2.0 instead of **Makefile**. For TMK Converter rev.2 just use **Makefile**.
+
+To program Teensy you can use `teensy` target:
+
+    $ make -f Makefile.teensy [KEYMAP=(plain|ansi|iso|hasu)] teensy
+
 
 
 Keymap
 ------
-You can change a keymap by editing code of keymap_[ansi|iso|hasu|yours].c.
-How to define the keymap is probably obvious. You can find key symbols in common/keycode.h. And see doc/keymap.md for more detail.
+You can change a keymap by editing code of keymap_[plain|ansi|iso|hasu|yours].c.
+How to define the keymap is probably obvious. You can find key symbols in common/keycode.h. And see [doc/keymap.md](../../tmk_core/doc/keymap.md) for more detail.
 
 
 Magic command
@@ -85,6 +93,12 @@ https://github.com/tmk/tmk_keyboard/blob/master/README.md#mechanical-locking-sup
 Also you may want to remove locking pin from the push-lock switch to use capslock as a normal momentary switch.
 
 
+Mouse support
+-------------
+ADB mouse support was added by @mek-apelsin on Apr,2015. It supports only one button as of now.
+https://github.com/tmk/tmk_keyboard/pull/207
+
+
 Notes
 -----
 Not-extended ADB keyboards have no discrimination between right modifier and left one,
@@ -95,8 +109,7 @@ modifiers except for GUI key(Windows/Command).
 And most ADB keyboard has no diodes in its matrix so they are not NKRO,
 though ADB protocol itself supports it. See protocol/adb.c for more info.
 
-If keyboard has ISO layout you need to use ISO keymap with `make KEYMAP=iso`. With ANSI
-keymap you will suffer from swapped keys problem.
+If keyboard has ISO layout you may have swapped keys problem, see this for the detail.
 
 https://github.com/tmk/tmk_keyboard/issues/35
 

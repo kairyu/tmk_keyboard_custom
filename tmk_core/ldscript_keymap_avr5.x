@@ -1,4 +1,4 @@
-/* 
+/*
  * linker script for configurable keymap
  *
  * This adds keymap section which places keymap at fixed address and
@@ -8,7 +8,7 @@ OUTPUT_FORMAT("elf32-avr","elf32-avr","elf32-avr")
 OUTPUT_ARCH(avr:5)
 MEMORY
 {
-  /* With keymap section 
+  /* With keymap section
    *
    * Flash Map of ATMega32U4(32KB)
    * +------------+ 0x0000
@@ -212,7 +212,7 @@ SECTIONS
   {
     PROVIDE(__keymap_start = .) ;
     *(.keymap.fn_actions)   /* 32*actions = 64bytes */
-    . = ALIGN(0x40); 
+    . = ALIGN(0x40);
     *(.keymap.keymaps)      /* rest of .keymap section */
     *(.keymap*)
     /* . = ALIGN(0x800); */ /* keymap section takes 2KB- */
