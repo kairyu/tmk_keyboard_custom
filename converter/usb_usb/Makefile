@@ -41,7 +41,7 @@
 # Target file name (without extension).
 TARGET = usb_usb
 
-TMK_DIR = ../../tmk_core
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
@@ -91,10 +91,13 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   comment out to disable the options.
 #
 MOUSEKEY_ENABLE = yes	# Mouse keys
-EXTRAKEY_ENABLE = yes	# Media control and System control
-CONSOLE_ENABLE = yes	# Console for debug
+#EXTRAKEY_ENABLE = yes	# Media control and System control
+#CONSOLE_ENABLE = yes	# Console for debug
 #COMMAND_ENABLE = yes    # Commands for debug and configuration
 #NKRO_ENABLE = yes	# USB Nkey Rollover
+KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
+LEDMAP_ENABLE = yes	# Enable LED mapping
+LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Boot Section Size in bytes
 #   Teensy halfKay   512
@@ -110,6 +113,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 SRC =  \
        keymap_common.c \
+       ledmap.c \
        usb_usb.cpp \
        main.cpp
 

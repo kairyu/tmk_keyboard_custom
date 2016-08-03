@@ -9,11 +9,10 @@
 #include "sendchar.h"
 #include "debug.h"
 #include "keyboard.h"
-#include "led.h"
 
 
 /* LED ping configuration */
-#define TMK_LED
+//#define TMK_LED
 //#define LEONARDO_LED
 #if defined(TMK_LED)
 // For TMK converter and Teensy
@@ -54,7 +53,7 @@ static void LUFA_setup(void)
     print_set_sendchar(sendchar);
 }
 
-
+bool kbd_init = false;
 
 int main(void)
 {
@@ -81,6 +80,7 @@ int main(void)
         _delay_ms(1000);
     }
 
+    kbd_init = true;
     debug("init: done\n");
 
     for (;;) {
