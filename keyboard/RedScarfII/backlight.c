@@ -72,7 +72,8 @@ void backlight_set(uint8_t level)
         case 2:
         case 3:
 #ifdef SOFTPWM_LED_ENABLE
-            softpwm_led_enable();
+            softpwm_enable();
+            softpwm_led_enable_all();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
@@ -87,7 +88,8 @@ void backlight_set(uint8_t level)
         case 5:
         case 6:
 #ifdef SOFTPWM_LED_ENABLE
-            softpwm_led_enable();
+            softpwm_enable();
+            softpwm_led_enable_all();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
@@ -101,14 +103,16 @@ void backlight_set(uint8_t level)
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
         case 7:
-            softpwm_led_enable();
+            softpwm_enable();
+            softpwm_led_enable_all();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_IN);
             fading_led_set_duration(3);
             break;
         case 8:
-            softpwm_led_enable();
+            softpwm_enable();
+            softpwm_led_enable_all();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_OUT);
@@ -123,7 +127,8 @@ void backlight_set(uint8_t level)
             fading_led_disable_all();
 #endif
             breathing_led_disable_all();
-            softpwm_led_disable();
+            softpwm_led_disable_all();
+            softpwm_disable();
 #else
             breathing_led_disable();
             backlight_disable();

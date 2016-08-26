@@ -22,7 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
     [0] = LEDMAP_CAPS_LOCK | LEDMAP_BACKLIGHT,      // CapsLock
+#ifdef NO_NUMLOCK
+    [1] = LEDMAP_BACKLIGHT,                         // NumLock
+#else
     [1] = LEDMAP_NUM_LOCK | LEDMAP_BACKLIGHT,       // NumLock
+#endif
 #ifdef REDSCARFII_PLUS
     [2] = LEDMAP_BACKLIGHT,                         // Backlight
 #else
