@@ -22,11 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "rgb.h"
 #include "light_ws2812.h"
 
+#ifdef RGB_LED_ENABLE
+
 volatile static uint8_t rgb_fading_enable = 0;
 static rgb_config_t rgb_config;
+static struct cRGB rgb_color[RGB_LED_COUNT];
 static uint16_t rgb_hue = 0;
 static uint8_t rgb_saturation = 255;
 static uint8_t rgb_brightness = 16;
+static uint8_t rgb_rainbow = 0;
 
 extern backlight_config_t backlight_config;
 extern uint8_t backlight_brightness;
@@ -118,12 +122,21 @@ void rgb_step(void)
 
 void rgb_set_level(uint8_t level)
 {
+    if (level == RGB_OFF) {
+        rgb_brightness = 0;
+    }
+    else if (backlight_config.enable) {
+        if (backlight_config.level >= 1 && backlight_config.level <= 3) {
+            rgb_brightness = backlight_brightness;
+        }
+    }
+    else {
+        rgb_brightness = 16;
+    }
     if (level <= RGB_WHITE) {
         rgb_fading_enable = 0;
-        if (level == RGB_OFF) {
-            rgb_brightness = 0;
-        }
-        else {
+        rgb_rainbow = 0;
+        if (level != RGB_OFF) {
             if (level == RGB_WHITE) {
                 rgb_saturation = 0;
             }
@@ -144,23 +157,41 @@ void rgb_set_level(uint8_t level)
     }
     else {
         rgb_saturation = 255;
-        rgb_fading_enable = 3 - (level - RGB_FADE_SLOW);
+        rgb_fading_enable = 1;
+        rgb_rainbow = (level >= RGB_RAINBOW) ? 1 : 0;
     }
 }
 
 void rgb_set_brightness(uint8_t brightness)
 {
-    rgb_brightness = brightness;
-    rgb_refresh();
+    if (rgb_config.enable) {
+        rgb_brightness = brightness;
+        rgb_refresh();
+    }
 }
 
 void rgb_refresh(void)
 {
-    struct cRGB rgb_color[1];
-    hsb_to_rgb(rgb_hue, rgb_saturation, rgb_brightness, rgb_color);
-    ws2812_setleds(rgb_color, 1);
+    struct cRGB rgb;
+    uint16_t hue;
+    uint8_t i;
+    if (rgb_rainbow) {
+        for (i = 0; i < RGB_LED_COUNT; i++) {
+            hue = rgb_hue + (768 / RGB_LED_COUNT) * i;
+            hsb_to_rgb(hue, rgb_saturation, rgb_brightness, &rgb);
+            rgb_color[i] = rgb;
+        }
+    }
+    else {
+        hsb_to_rgb(rgb_hue, rgb_saturation, rgb_brightness, &rgb);
+        for (i = 0; i < RGB_LED_COUNT; i++) {
+            rgb_color[i] = rgb;
+        }
+    }
+    ws2812_setleds(rgb_color, RGB_LED_COUNT);
 }
 
+#if 0
 void hue_to_rgb(uint16_t hue, struct cRGB *rgb)
 {
     uint8_t hi = hue / 60;
@@ -175,6 +206,7 @@ void hue_to_rgb(uint16_t hue, struct cRGB *rgb)
         case 5: rgb->r = 255; rgb->g = 0;   rgb->b = q;   break;
     }
 }
+#endif
 
 /*
  * original code: https://blog.adafruit.com/2012/03/14/constant-brightness-hsb-to-rgb-algorithm/
@@ -208,3 +240,5 @@ void rgb_fading(void)
         }
     }
 }
+
+#endif

@@ -38,14 +38,14 @@ enum {
     RGB_BLUE,
     RGB_MAGENTA,
     RGB_WHITE,
-    RGB_FADE_SLOW,
-    RGB_FADE_MID,
-    RGB_FADE_FAST,
-    RGB_LEVELS = RGB_FADE_FAST
+    RGB_FADE,
+    RGB_RAINBOW,
+    RGB_LEVELS = RGB_RAINBOW
 };
 
 #define EECONFIG_RGB (uint8_t *)7
 #define RGB_UNCONFIGURED 0xFF
+#define RGB_LED_COUNT 16
 
 void rgb_init(void);
 void rgb_toggle(void);

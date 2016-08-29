@@ -35,7 +35,7 @@ uint8_t backlight_brightness;
 
 void backlight_set(uint8_t level)
 {
-    softpwm_led_enable();
+    softpwm_enable();
     switch (level) {
         case 1:
         case 2:
