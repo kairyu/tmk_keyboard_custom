@@ -117,7 +117,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 # PCB Version
 ifdef VER
-    OPT_DEFS += -DVER_$(REV)
+    OPT_DEFS += -DVER_$(VER)
 endif
 
 # Additional definitions from command line
