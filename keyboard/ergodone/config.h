@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* keymap in eeprom */
 #define FN_ACTIONS_COUNT 32
-#define KEYMAPS_COUNT 3
+#define KEYMAPS_COUNT 8
 #define EECONFIG_KEYMAP_IN_EEPROM 17
 
 /* define if matrix has ghost */
