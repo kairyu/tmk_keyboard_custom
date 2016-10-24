@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #define BACKLIGHT_LEVELS 3
 #endif
+#define BACKLIGHT_CUSTOM
 
 #ifdef GH60_REV_CNY
 #define LED_MATRIX_ROWS 6

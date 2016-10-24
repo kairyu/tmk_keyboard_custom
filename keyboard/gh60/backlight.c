@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "breathing_led.h"
 #endif
-#include "action.h"
+#include "hook.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -54,7 +54,7 @@ static const uint8_t backlight_table[] PROGMEM = {
 void backlight_enable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
-    softpwm_led_enable();
+    softpwm_led_enable_all();
 #else
 #if defined(GH60_REV_CHN)
     // Turn on PWM
@@ -80,7 +80,7 @@ void backlight_enable(void)
 void backlight_disable(void)
 {
 #ifdef SOFTPWM_LED_ENABLE
-    softpwm_led_disable();
+    softpwm_led_disable_all();
 #else
 #if defined(GH60_REV_CHN)
     // Turn off PWM
@@ -105,6 +105,7 @@ void backlight_disable(void)
 void backlight_set(uint8_t level)
 {
     backlight_mode = level;
+    softpwm_enable();
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
         case 1:
@@ -225,16 +226,18 @@ void softpwm_led_off(uint8_t index)
 #endif
 #endif
 
-void action_keyevent(keyevent_t event)
+void hook_matrix_change(keyevent_t event)
 {
     if (backlight_mode == 7) {
         if (event.pressed) {
-            softpwm_led_decrease_all(32);
+            fading_led_set_delay_all(32);
+            softpwm_led_decrease_all(16);
         }
     }
     if (backlight_mode == 8) {
         if (event.pressed) {
-            softpwm_led_increase_all(32);
+            fading_led_set_delay_all(32);
+            softpwm_led_increase_all(16);
         }
     }
 }
