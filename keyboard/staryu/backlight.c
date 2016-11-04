@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/pgmspace.h>
 #include "backlight.h"
 #include "softpwm_led.h"
-#include "action.h"
+#include "hook.h"
 #include "timer.h"
 #include "rgb.h"
 
@@ -45,6 +45,7 @@ void backlight_set(uint8_t level)
             backlight_brightness = pgm_read_byte(&backlight_table[level]);
             softpwm_led_set_all(backlight_brightness);
             rgb_set_brightness(backlight_brightness);
+            softpwm_led_enable_all();
             break;
         case 4:
         case 5:
@@ -53,13 +54,16 @@ void backlight_set(uint8_t level)
             breathing_led_set_duration(6 - level);
             breathing_led_set_index_all(0);
             breathing_led_enable_all();
+            softpwm_led_enable_all();
             break;
         case 7:
             breathing_led_disable_all();
             breathing_led_set_duration(1);
+            softpwm_led_set_all(0);
             fading_led_set_direction_all(FADING_LED_FADE_OUT);
             fading_led_set_duration(3);
             fading_led_enable_all();
+            softpwm_led_enable_all();
             break;
         case 0:
         default:
@@ -67,6 +71,7 @@ void backlight_set(uint8_t level)
             breathing_led_disable_all();
             backlight_brightness = 0;
             softpwm_led_set_all(backlight_brightness);
+            softpwm_led_disable_all();
             break;
     }
 }
@@ -126,13 +131,14 @@ void softpwm_led_off(uint8_t index)
 static uint8_t idle_state = 0;
 static uint16_t idle_last = 0;
 
-void action_keyevent(keyevent_t event)
+void hook_matrix_change(keyevent_t event)
 {
     if (backlight_config.enable) {
         if (backlight_config.level == 7) {
             if (event.pressed) {
                 if (idle_state > 1) {
                     breathing_led_disable_all();
+                    softpwm_led_set_all(0);
                 }
                 idle_state = 0;
                 uint8_t key = event.key.col + 1;
