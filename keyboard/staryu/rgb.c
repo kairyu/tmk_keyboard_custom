@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "light_ws2812.h"
 
 #ifdef RGB_LED_ENABLE
+#define RGB_BRIGHTNESS_RATIO 2
 
 volatile static uint8_t rgb_fading_enable = 0;
 static rgb_config_t rgb_config;
@@ -30,7 +31,7 @@ static struct cRGB rgb_color[RGB_LED_MAX_COUNT];
 static uint8_t rgb_count = 1;
 static uint16_t rgb_hue = 0;
 static uint8_t rgb_saturation = 255;
-static uint8_t rgb_brightness = 16;
+static uint8_t rgb_brightness = 0;
 static uint8_t rgb_rainbow = 0;
 
 extern backlight_config_t backlight_config;
@@ -143,11 +144,11 @@ void rgb_set_level(uint8_t level)
     }
     else if (backlight_config.enable) {
         if (backlight_config.level >= 1 && backlight_config.level <= 3) {
-            rgb_brightness = backlight_brightness;
+            rgb_brightness = backlight_brightness / RGB_BRIGHTNESS_RATIO;
         }
     }
     else {
-        rgb_brightness = 16;
+        rgb_brightness = 16 / RGB_BRIGHTNESS_RATIO;
     }
     if (level <= RGB_WHITE) {
         rgb_fading_enable = 0;
@@ -162,11 +163,11 @@ void rgb_set_level(uint8_t level)
             }
             if (backlight_config.enable) {
                 if (backlight_config.level >= 1 && backlight_config.level <= 3) {
-                    rgb_brightness = backlight_brightness;
+                    rgb_brightness = backlight_brightness / RGB_BRIGHTNESS_RATIO;
                 }
             }
             else {
-                rgb_brightness = 16;
+                rgb_brightness = 16 / RGB_BRIGHTNESS_RATIO;
             }
         }
         rgb_refresh();
@@ -181,7 +182,7 @@ void rgb_set_level(uint8_t level)
 void rgb_set_brightness(uint8_t brightness)
 {
     if (rgb_config.enable) {
-        rgb_brightness = brightness;
+        rgb_brightness = brightness / RGB_BRIGHTNESS_RATIO;
         rgb_refresh();
     }
 }
