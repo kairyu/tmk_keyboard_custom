@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0x1209
-#define PRODUCT_ID      0x2333
-#define DEVICE_VER      0x0104
+#define PRODUCT_ID      0x2328
+#define DEVICE_VER      0x0205
 #define MANUFACTURER    K.T.E.C.
 #define PRODUCT         Staryu Lite
 #define DESCRIPTION     t.m.k. keyboard firmware for Staryu
@@ -45,6 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BACKLIGHT_LEVELS 7
 #define CUSTOM_LED_ENABLE
 #define RGB_LED_ENABLE
+#define SOFTPWM_LED_FREQ 80
+#define REDUCE_CALLBACK_ON_LEVEL_CHANGE
 
 /* number of LEDs */
 #define LED_COUNT 6

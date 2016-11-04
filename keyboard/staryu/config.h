@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define CUSTOM_LED_ENABLE
 #define RGB_LED_ENABLE
 #define SOFTPWM_LED_FREQ 80
+#define REDUCE_CALLBACK_ON_LEVEL_CHANGE
 
 /* number of LEDs */
 #define LED_COUNT 6
