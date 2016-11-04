@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 volatile static uint8_t rgb_fading_enable = 0;
 static rgb_config_t rgb_config;
-static struct cRGB rgb_color[RGB_LED_COUNT];
+static struct cRGB rgb_color[RGB_LED_MAX_COUNT];
+static uint8_t rgb_count = 1;
 static uint16_t rgb_hue = 0;
 static uint8_t rgb_saturation = 255;
 static uint8_t rgb_brightness = 16;
@@ -39,15 +40,28 @@ static void rgb_write_config(void);
 static void rgb_read_config(void);
 static void rgb_set_level(uint8_t level);
 static void rgb_refresh(void);
+#if 0
 static void hue_to_rgb(uint16_t hue, struct cRGB *rgb);
+#endif
 static void hsb_to_rgb(uint16_t hue, uint8_t saturation, uint8_t brightness, struct cRGB *rgb);
 
 void rgb_init(void)
 {
+    bool write_config = false;
     rgb_read_config();
     if (rgb_config.raw == RGB_UNCONFIGURED) {
         rgb_config.enable = 0;
         rgb_config.level = RGB_OFF;
+        write_config = true;
+    }
+    if (rgb_count == 0 || rgb_count == RGB_UNCONFIGURED) {
+        rgb_count = 1;
+        write_config = true;
+    }
+    else if (rgb_count > RGB_LED_MAX_COUNT) {
+        rgb_count = RGB_LED_MAX_COUNT;
+    }
+    if (write_config) {
         rgb_write_config();
     }
     if (rgb_config.enable) {
@@ -58,11 +72,13 @@ void rgb_init(void)
 void rgb_read_config(void)
 {
     rgb_config.raw = eeprom_read_byte(EECONFIG_RGB);
+    rgb_count = eeprom_read_byte(EECONFIG_RGB_COUNT);
 }
 
 void rgb_write_config(void)
 {
-    eeprom_write_byte(EECONFIG_RGB, rgb_config.raw);
+    eeprom_update_byte(EECONFIG_RGB, rgb_config.raw);
+    eeprom_update_byte(EECONFIG_RGB_COUNT, rgb_count);
 }
 
 void rgb_toggle(void)
@@ -176,19 +192,19 @@ void rgb_refresh(void)
     uint16_t hue;
     uint8_t i;
     if (rgb_rainbow) {
-        for (i = 0; i < RGB_LED_COUNT; i++) {
-            hue = rgb_hue + (768 / RGB_LED_COUNT) * i;
+        for (i = 0; i < rgb_count; i++) {
+            hue = rgb_hue + (768 / rgb_count) * i;
             hsb_to_rgb(hue, rgb_saturation, rgb_brightness, &rgb);
             rgb_color[i] = rgb;
         }
     }
     else {
         hsb_to_rgb(rgb_hue, rgb_saturation, rgb_brightness, &rgb);
-        for (i = 0; i < RGB_LED_COUNT; i++) {
+        for (i = 0; i < rgb_count; i++) {
             rgb_color[i] = rgb;
         }
     }
-    ws2812_setleds(rgb_color, RGB_LED_COUNT);
+    ws2812_setleds(rgb_color, rgb_count);
 }
 
 #if 0
