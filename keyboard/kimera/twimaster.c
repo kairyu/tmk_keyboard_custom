@@ -8,8 +8,10 @@
  **************************************************************************/
 #include <inttypes.h>
 #include <compat/twi.h>
+#include <util/delay.h>
 
 #include <i2cmaster.h>
+#include "timer.h"
 #include "debug.h"
 
 
@@ -20,9 +22,30 @@
 
 /* I2C clock in Hz */
 #define SCL_CLOCK  400000L
+#define SCL_DURATION    (1000000L/SCL_CLOCK)/2
 
 volatile uint8_t i2c_force_stop = 0;
+#define TIMEOUT 3000
 #define CHECK_FORCE_STOP() if(i2c_force_stop){i2c_force_stop=0;break;}
+#define CHECK_TIMEOUT_PRE() \
+    uint16_t start; \
+    uint8_t once = 1;
+#define CHECK_TIMEOUT_PRE2() \
+    once = 1;
+#define CHECK_TIMEOUT(retval) { \
+    if (once) { \
+        start = timer_read(); \
+        once = 0; \
+    } \
+    else { \
+        if (timer_elapsed(start) >= TIMEOUT) { \
+            i2c_forceStop(); \
+            return retval; \
+        } \
+    } \
+}
+
+static void i2c_forceStop(void);
 
 /*************************************************************************
   Initialization of the I2C bus interface. Need to be called only once
@@ -49,7 +72,8 @@ unsigned char i2c_start(unsigned char address)
     TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
 
     // wait until transmission completed
-    while(!(TWCR & (1<<TWINT))) { CHECK_FORCE_STOP(); };
+    CHECK_TIMEOUT_PRE();
+    while(!(TWCR & (1<<TWINT))) { CHECK_TIMEOUT(2); };
 
     // check value of TWI Status Register. Mask prescaler bits.
     twst = TW_STATUS & 0xF8;
@@ -60,7 +84,8 @@ unsigned char i2c_start(unsigned char address)
     TWCR = (1<<TWINT) | (1<<TWEN);
 
     // wail until transmission completed and ACK/NACK has been received
-    while(!(TWCR & (1<<TWINT))) { CHECK_FORCE_STOP(); };
+    CHECK_TIMEOUT_PRE2();
+    while(!(TWCR & (1<<TWINT))) { CHECK_TIMEOUT(2); };
 
     // check value of TWI Status Register. Mask prescaler bits.
     twst = TW_STATUS & 0xF8;
@@ -109,7 +134,8 @@ void i2c_start_wait(unsigned char address)
             TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
 
             // wait until stop condition is executed and bus released
-            while(TWCR & (1<<TWSTO)) { CHECK_FORCE_STOP(); };
+            CHECK_TIMEOUT_PRE();
+            while(TWCR & (1<<TWSTO)) { CHECK_TIMEOUT(); };
 
             continue;
         }
@@ -144,7 +170,8 @@ void i2c_stop(void)
     TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
 
     // wait until stop condition is executed and bus released
-    while(TWCR & (1<<TWSTO)) { CHECK_FORCE_STOP(); };
+    CHECK_TIMEOUT_PRE();
+    while(TWCR & (1<<TWSTO)) { CHECK_TIMEOUT(); };
 
 }/* i2c_stop */
 
@@ -165,7 +192,8 @@ unsigned char i2c_write( unsigned char data )
     TWCR = (1<<TWINT) | (1<<TWEN);
 
     // wait until transmission completed
-    while(!(TWCR & (1<<TWINT))) { CHECK_FORCE_STOP() };
+    CHECK_TIMEOUT_PRE();
+    while(!(TWCR & (1<<TWINT))) { CHECK_TIMEOUT(2) };
 
     // check value of TWI Status Register. Mask prescaler bits
     twst = TW_STATUS & 0xF8;
@@ -183,7 +211,8 @@ Return:  byte read from I2C device
 unsigned char i2c_readAck(void)
 {
     TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
-    while(!(TWCR & (1<<TWINT))) { CHECK_FORCE_STOP(); };
+    CHECK_TIMEOUT_PRE();
+    while(!(TWCR & (1<<TWINT))) { CHECK_TIMEOUT(2); };
 
     return TWDR;
 
@@ -198,8 +227,32 @@ Return:  byte read from I2C device
 unsigned char i2c_readNak(void)
 {
     TWCR = (1<<TWINT) | (1<<TWEN);
-    while(!(TWCR & (1<<TWINT))) { CHECK_FORCE_STOP(); };
+    CHECK_TIMEOUT_PRE();
+    while(!(TWCR & (1<<TWINT))) { CHECK_TIMEOUT(2); };
 
     return TWDR;
 
 }/* i2c_readNak */
+
+void i2c_forceStop(void)
+{
+    xprintf("i2c timeout\n");
+
+    /* let slave to release SDA */
+    TWCR = 0;
+    DDRD |=  (1<<PD0);
+    DDRD &= ~(1<<PD1);
+    _delay_us(30);
+    if ((PIND & (1<<PD1)) == 0) {
+        for (uint8_t i = 0; i < 9; i++) {
+            PORTD &= ~(1<<PD0);
+            _delay_us(SCL_DURATION);
+            PORTD |= (1<<PD0);
+            _delay_us(SCL_DURATION);
+        }
+    }
+    DDRD &= ~(1<<PD0);
+
+    /* send stop condition */
+    TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
+}
