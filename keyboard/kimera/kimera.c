@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "i2cmaster.h"
 #include "kimera.h"
 #include "debug.h"
+#include "print.h"
 
 static uint8_t row_mapping[PX_COUNT] = {
     0, 1, 2, 3, 4, 5, 6, 7,
@@ -62,6 +63,7 @@ void kimera_init(void)
     /* read config */
     //write_matrix_mapping(); /* debug */
     if (read_matrix_mapping()) {
+        xprintf("Matrix Mapping Error!\n");
         write_matrix_mapping();
     }
 
@@ -158,8 +160,6 @@ void write_matrix_mapping(void)
 void kimera_scan(void)
 {
     uint8_t ret;
-    dprintf("exp in use: %d\n", exp_in_use);
-    dprintf("exp online: %d\n", exp_online);
     for (uint8_t exp = 0; exp < EXP_COUNT; exp++) {
         if (exp_in_use & (1<<exp)) {
             ret = i2c_start(EXP_ADDR(exp) | I2C_WRITE);
@@ -181,6 +181,8 @@ void kimera_scan(void)
             }
         }
     }
+    print("Exp in use: "); pbin(exp_in_use); print("\n");
+    print("Exp online: "); pbin(exp_online); print("\n");
 }
 
 inline
