@@ -57,7 +57,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* enable customized backlight logic */
 #define BACKLIGHT_CUSTOM
 #define CUSTOM_LED_ENABLE
-#define RGB_LED_ENABLE
 
 /* number of leds */
 #define LED_COUNT 4

@@ -61,6 +61,7 @@ enum function_id {
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
+#ifdef RGB_LED_ENABLE
     if (record->event.pressed) {
         switch (id) {
             case AF_RGB_TOGGLE:
@@ -77,5 +78,6 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
                 break;
         }
     }
+#endif
 }
 #endif
