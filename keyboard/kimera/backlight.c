@@ -24,9 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "breathing_led.h"
 #endif
-#include "action.h"
+#include "hook.h"
 #include "kimera.h"
-#include "rgb.h"
+#include "rgb_led.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -39,7 +39,7 @@ static const uint8_t backlight_table[] PROGMEM = {
 };
 
 extern backlight_config_t backlight_config;
-uint8_t backlight_brightness;
+static uint8_t backlight_brightness;
 
 /* Backlight pin configuration
  * LED4: PB6 (D10) OC1B
@@ -90,9 +90,6 @@ void backlight_set(uint8_t level)
             breathing_led_disable();
 #endif
             backlight_brightness = pgm_read_byte(&backlight_table[level]);
-#ifdef RGB_LED_ENABLE
-            rgb_set_brightness(backlight_brightness);
-#endif
             backlight_set_raw(backlight_brightness);
             break;
         case 4:
@@ -194,7 +191,7 @@ void softpwm_led_off(uint8_t index)
 
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
-void action_keyevent(keyevent_t event)
+void hook_matrix_change(keyevent_t event)
 {
     if (backlight_config.enable) {
         if (backlight_config.level == 7) {
@@ -217,17 +214,16 @@ void action_keyevent(keyevent_t event)
 #ifdef CUSTOM_LED_ENABLE
 void softpwm_led_custom(void)
 {
-    rgb_fading();
 }
 
 void fading_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(value[0]);
+    rgb_led_set_brightness(value[0], false);
 }
 
 void breathing_led_custom(uint8_t *value)
 {
-    rgb_set_brightness(value[0]);
+    rgb_led_set_brightness(value[0], false);
 }
 #endif
 #endif

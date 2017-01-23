@@ -1,4 +1,5 @@
 #include "keymap_common.h"
+#include "rgb_led.h"
 
 // Two-headed
 #ifdef KEYMAP_SECTION_ENABLE
@@ -63,28 +64,45 @@ uint16_t fn_actions_count(void) {
 
 #ifndef NO_ACTION_FUNCTION
 enum function_id {
-    AF_RGB_TOGGLE = 0,
-    AF_RGB_DECREASE,
-    AF_RGB_INCREASE,
-    AF_RGB_STEP
+    AF_RGB_LED = 0
+};
+
+enum rgb_led_id {
+    AF_RGB_LED_TOGGLE = 0,
+    AF_RGB_LED_DECREASE,
+    AF_RGB_LED_INCREASE,
+    AF_RGB_LED_STEP,
+    AF_RGB_LED_DECREASE_BRIGHTNESS,
+    AF_RGB_LED_INCREASE_BRIGHTNESS
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
 #ifdef RGB_LED_ENABLE
+#define RGB_LED_BRIGHTNESS_STEP ((RGB_LED_BRIGHTNESS_MAX - RGB_LED_BRIGHTNESS_MIN) / 8)
     if (record->event.pressed) {
         switch (id) {
-            case AF_RGB_TOGGLE:
-                rgb_toggle();
-                break;
-            case AF_RGB_DECREASE:
-                rgb_decrease();
-                break;
-            case AF_RGB_INCREASE:
-                rgb_increase();
-                break;
-            case AF_RGB_STEP:
-                rgb_step();
+            case AF_RGB_LED:
+                switch (opt) {
+                    case AF_RGB_LED_TOGGLE:
+                        rgb_led_toggle();
+                        break;
+                    case AF_RGB_LED_DECREASE:
+                        rgb_led_decrease();
+                        break;
+                    case AF_RGB_LED_INCREASE:
+                        rgb_led_increase();
+                        break;
+                    case AF_RGB_LED_STEP:
+                        rgb_led_step();
+                        break;
+                    case AF_RGB_LED_DECREASE_BRIGHTNESS:
+                        rgb_led_decrease_brightness(RGB_LED_BRIGHTNESS_STEP, true);
+                        break;
+                    case AF_RGB_LED_INCREASE_BRIGHTNESS:
+                        rgb_led_increase_brightness(RGB_LED_BRIGHTNESS_STEP, true);
+                        break;
+                }
                 break;
         }
     }

@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include "matrix.h"
+#include "eeconfig.h"
+#include "ledmap_in_eeprom.h"
 
 /*
              U1 (Pro Micro)
@@ -40,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           `----------------'
 */
 
+#ifndef LEDMAP_V2
 #ifndef KIMERA_CORE
 
 #define LED1_PORT   PORTB
@@ -86,6 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LED4_BIT    PC7
 #define LED4_OCR    OCR4D
 
+#endif
 #endif
 
 /*
@@ -144,9 +148,14 @@ const uint16_t PROGMEM dummy[] = {
 
 /* Matrix Mapping in EEPROM */
 
-#define EECONFIG_ROW_COUNT          (uint8_t *)16
-#define EECONFIG_COL_COUNT          (uint8_t *)17
-#define EECONFIG_ROW_COL_MAPPING    (uint8_t *)18
+#ifdef EECONFIG_LEDMAP_IN_EEPROM_END
+#   define EECONFIG_KIMERA          EECONFIG_LEDMAP_IN_EEPROM_END
+#else
+#   define EECONFIG_KIMERA          EECONFIG_END
+#endif
+#define EECONFIG_ROW_COUNT          EECONFIG_KIMERA
+#define EECONFIG_COL_COUNT          EECONFIG_KIMERA + 1
+#define EECONFIG_ROW_COL_MAPPING    EECONFIG_KIMERA + 2
 #define UNCONFIGURED                0xFF
 
 enum {

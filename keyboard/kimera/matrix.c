@@ -77,8 +77,6 @@ void matrix_init(void)
     kimera_init();
     kimera_scan_timestamp = timer_read();
 
-    rgb_init();
-
     // initialize row and col
     kimera_unselect_rows();
 
@@ -99,7 +97,6 @@ void matrix_init(void)
     }
 #endif
 
-    PORTD &= ~(1<<PD4);
 
 }
 

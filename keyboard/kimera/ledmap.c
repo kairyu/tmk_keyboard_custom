@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef LEDMAP_ENABLE
 
+#undef ledmap_get_code
+
 static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
     [0] = LEDMAP_NUM_LOCK,              // LED1
     [1] = LEDMAP_CAPS_LOCK,             // LED2
@@ -33,6 +35,7 @@ ledmap_t ledmap_get_code(uint8_t index)
     return (ledmap_t) { .code = pgm_read_word(&ledmaps[index]) };
 }
 
+#ifndef LEDMAP_V2
 void ledmap_led_init(void)
 {
     LED1_DDR  |=  (1<<LED1_BIT);
@@ -55,9 +58,7 @@ void ledmap_led_on(uint8_t index)
             LED2_PORT &= ~(1<<LED2_BIT);
             break;
         case 2:
-#if 0
             LED3_PORT &= ~(1<<LED3_BIT);
-#endif
             break;
         case 3:
             LED4_PORT |=  (1<<LED4_BIT);
@@ -75,14 +76,14 @@ void ledmap_led_off(uint8_t index)
             LED2_PORT |=  (1<<LED2_BIT);
             break;
         case 2:
-#if 0
             LED3_PORT |=  (1<<LED3_BIT);
-#endif
             break;
         case 3:
             LED4_PORT &= ~(1<<LED4_BIT);
             break;
     }
 }
+
+#endif
 
 #endif

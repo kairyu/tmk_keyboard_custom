@@ -55,9 +55,7 @@ SRC =	keymap_common.c \
 	ledmap.c \
 	twimaster.c \
 	i2c_wrapper.c \
-	kimera.c \
-	light_ws2812.c \
-	rgb.c
+	kimera.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -129,13 +127,12 @@ endif
 ifdef DEFS
     OPT_DEFS += $(foreach DEF,$(DEFS),-D$(DEF))
 endif
-OPT_DEFS += -DRGB_LED_ENABLE
 
 # Build Options
 #   comment out to disable the options.
 #
-BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-#MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
+#BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
+MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 CONSOLE_ENABLE = yes	# Console for debug(+400)
 COMMAND_ENABLE = yes	# Commands for debug and configuration
@@ -150,6 +147,7 @@ KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
 SOFTPWM_LED_ENABLE = yes # Enable SoftPWM to drive backlight
 FADING_LED_ENABLE = yes # Enable fading backlight
 BREATHING_LED_ENABLE = yes # Enable breathing backlight
+RGB_LED_ENABLE = yes	# Enable RGB LED control
 LEDMAP_ENABLE = yes	# Enable LED mapping
 LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
