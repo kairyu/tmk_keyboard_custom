@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "breathing_led.h"
 #endif
-#include "action.h"
+#include "hook.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -36,7 +36,7 @@ inline void backlight_set_raw(uint8_t raw);
 
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
-static uint8_t backlight_mode;
+extern backlight_config_t backlight_config;
 #endif
 #endif
 
@@ -66,8 +66,8 @@ void backlight_disable(void)
 
 void backlight_set(uint8_t level)
 {
-#ifdef FADING_LED_ENABLE
-    backlight_mode = level;
+#ifdef SOFTPWM_LED_ENABLE
+    softpwm_enable();
 #endif
 
 #ifdef BREATHING_LED_ENABLE
@@ -76,7 +76,7 @@ void backlight_set(uint8_t level)
         case 2:
         case 3:
 #ifdef SOFTPWM_LED_ENABLE
-            softpwm_led_enable();
+            softpwm_led_enable_all();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
@@ -91,7 +91,7 @@ void backlight_set(uint8_t level)
         case 5:
         case 6:
 #ifdef SOFTPWM_LED_ENABLE
-            softpwm_led_enable();
+            softpwm_led_enable_all();
 #ifdef FADING_LED_ENABLE
             fading_led_disable_all();
 #endif
@@ -105,14 +105,14 @@ void backlight_set(uint8_t level)
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
         case 7:
-            softpwm_led_enable();
+            softpwm_led_enable_all();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_IN);
             fading_led_set_duration(3);
             break;
         case 8:
-            softpwm_led_enable();
+            softpwm_led_enable_all();
             fading_led_enable_all();
             breathing_led_disable_all();
             fading_led_set_direction_all(FADING_LED_FADE_OUT);
@@ -127,7 +127,7 @@ void backlight_set(uint8_t level)
             fading_led_disable_all();
 #endif
             breathing_led_disable_all();
-            softpwm_led_disable();
+            softpwm_led_disable_all();
 #else
             breathing_led_disable();
             backlight_disable();
@@ -185,16 +185,18 @@ void softpwm_led_off(uint8_t index)
 
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
-void action_keyevent(keyevent_t event)
+void hook_matrix_change(keyevent_t event)
 {
-    if (backlight_mode == 7) {
-        if (event.pressed) {
-            softpwm_led_decrease_all(32);
+    if (backlight_config.enable) {
+        if (backlight_config.level == 7) {
+            if (event.pressed) {
+                softpwm_led_decrease_all(32);
+            }
         }
-    }
-    if (backlight_mode == 8) {
-        if (event.pressed) {
-            softpwm_led_increase_all(32);
+        if (backlight_config.level == 8) {
+            if (event.pressed) {
+                softpwm_led_increase_all(32);
+            }
         }
     }
 }

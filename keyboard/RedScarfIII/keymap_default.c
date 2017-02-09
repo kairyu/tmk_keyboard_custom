@@ -28,30 +28,140 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,     BSLS,P7,  P8,  P9,  PPLS, \
         CAPS,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,GRV,      ENT, P4,  P5,  P6,  PPLS, \
         LSFT,NUBS,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,     RSFT,FN0, P1,  P2,  P3,  PENT, \
-        LCTL,LGUI,LALT,               SPC,                RALT,FN0, RGUI,     RCTL,P0,  P0,  PDOT,PENT  ),
-    /* Keymap 1: Fn Layer
+        LCTL,LGUI,LALT,               SPC,                     RALT,FN0, RGUI,RCTL,P0,  P0,  PDOT,PENT  ),
+    /* Keymap 1: WKL Overlayer
      * ,---------------------------------------------------------------------------.
-     * |Fn5|Fn6|Fn7|Fn8|Fn9|   |   |   |   |   |   |   |   |   |   |   |   |Hom|End|
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
-     * |F10|F11|F12|F13|F14|F15|F16|F17|F18|   |   |   |   |       |   |   |   |   |
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
      * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |   |   |   |   |
-     * |-----------------------------------------------------------|---+---+---|   |
-     * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |   |
-     * |-----------------------------------------------------------|---+---+---+---|
-     * |        |   |   |Fn2|Fn1|Fn3|VoD|VoU|Mut|   |   |      |   |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---|   |
-     * |    |    |    |           Fn4          |    |    |    |    |   |   |   |   |
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |   |
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |        |   |   |   |   |   |   |   |   |   |   |      |   |   |   |   |   |
+     * |-----------------------------------------------------------+---+---+---|   |
+     * |Ctrl |Gui|Alt  |                           |Alt  |Fn |Ctrl |   |   |   |   |
      * `---------------------------------------------------------------------------'
      */
     KEYMAP(
-        FN5 ,FN6 ,FN7 ,FN8 ,FN9 ,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,HOME,END,  \
-        FN10,FN11,FN12,FN13,FN14,FN15,FN16,FN17,FN18,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,               TRNS,                    TRNS,RALT,FN0, RCTL,TRNS,TRNS,TRNS,TRNS  ),
+    /* Keymap 2: G80-1800 Overlayer
+     * ,---------------------------------------------------------------------------.
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |Fn0|Del|Pau|Hom|End|PgU|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |   |   |   |PgD|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |   |   |   |  -|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |  +|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |        |   |   |   |   |   |   |   |   |   |   |      |Up |   |   |   |   |
+     * |-------------------------------------------------------+---+---+---+---|   |
+     * |Ctrl|Gui |Alt |         Space          |Alt  |Ctrl |Lef|Dow|Rig|   |   |   |
+     * `---------------------------------------------------------------------------'
+     */
+    KEYMAP(
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,FN0, DEL, PAUS,HOME,END, PGUP, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PGDN, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PMNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PPLS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,UP,  TRNS,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,               TRNS,                    RALT,RCTL,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS  ),
+    /* Keymap 3: G80-1800 WKL Overlayer
+     * ,---------------------------------------------------------------------------.
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |Fn0|Del|Pau|Hom|End|PgU|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |   |   |   |PgD|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |   |   |   |  -|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |   |   |   |  +|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |        |   |   |   |   |   |   |   |   |   |   |      |Up |   |   |   |   |
+     * |-------------------------------------------------------+---+---+---+---|   |
+     * |Ctrl  |Alt   |          Space          |Alt  |Gui  |Lef|Dow|Rig|   |   |   |
+     * `---------------------------------------------------------------------------'
+     */
+    KEYMAP(
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,FN0, DEL, PAUS,HOME,END, PGUP, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PGDN, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PMNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,PPLS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,UP,  TRNS,TRNS,TRNS,TRNS, \
+        LCTL,LALT,TRNS,               TRNS,                    RALT,RGUI,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS  ),
+    /* Keymap 4: Rev.B 84 Overlayer
+     * ,---------------------------------------------------------------.
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |Psc|Del|Hom|
+     * |-----------------------------------------------------------+---|
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |End|
+     * |-----------------------------------------------------------+---|
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |PgU|
+     * |-----------------------------------------------------------+---|
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |PgD|
+     * |-----------------------------------------------------------+---|
+     * |        |   |   |   |   |   |   |   |   |   |   |      |Up |Fn0|
+     * |-------------------------------------------------------+---+---|
+     * |Ctrl |Gui|Alt  |         Space         |Alt  |Ctrl |Lef|Dow|Rig|
+     * `---------------------------------------------------------------'
+     */
+    KEYMAP(
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PSCR,DEL ,HOME,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,END, TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,PGUP,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,PGDN,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,UP,  FN0, TRNS,TRNS,TRNS, \
+        LCTL,LGUI,LALT,               TRNS,                    RALT,RCTL,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS  ),
+    /* Keymap 5: Rev.B 84 WKL Overlayer
+     * ,---------------------------------------------------------------.
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |Psc|Del|Hom|
+     * |-----------------------------------------------------------+---|
+     * |   |   |   |   |   |   |   |   |   |   |   |   |   |       |End|
+     * |-----------------------------------------------------------+---|
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |PgU|
+     * |-----------------------------------------------------------+---|
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |PgD|
+     * |-----------------------------------------------------------+---|
+     * |        |   |   |   |   |   |   |   |   |   |   |      |Up |Fn0|
+     * |-------------------------------------------------------+---+---|
+     * |Ctrl  |Alt   |          Space          |Alt  |Gui  |Lef|Dow|Rig|
+     * `---------------------------------------------------------------'
+     */
+    KEYMAP(
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PSCR,DEL ,HOME,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,END, TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,PGUP,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,PGDN,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,UP,  FN0, TRNS,TRNS,TRNS, \
+        LCTL,LALT,TRNS,               TRNS,                    RALT,RGUI,LEFT,DOWN,RGHT,TRNS,TRNS,TRNS  ),
+    /* Keymap 6: Fn Layer
+     * ,---------------------------------------------------------------------------.
+     * |Fn5|Fn6|Fn7|Fn8|Fn9|   |   |   |   |   |   |   |   |   |Ins|Psc|Slk|Hom|End|
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |F10|F11|F12|F13|F14|F15|F16|F17|F18|   |   |   |   |       |Num|   |   |   |
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |     |   |   |   |   |   |   |   |   |   |   |   |   |     |Slk|   |   |   |
+     * |-----------------------------------------------------------+---+---+---|   |
+     * |      |   |   |   |   |   |   |   |   |   |   |   |        |Pau|   |   |   |
+     * |-----------------------------------------------------------+---+---+---+---|
+     * |        |   |   |Fn2|Fn1|Fn3|VoD|VoU|Mut|   |   |      |   |   |Up |   |   |
+     * |-----------------------------------------------------------+---+---+---|   |
+     * |    |    |    |           Fn4          |    |    |    |    |Lef|Dow|Rig|   |
+     * `---------------------------------------------------------------------------'
+     */
+    KEYMAP(
+        FN5 ,FN6 ,FN7 ,FN8 ,FN9 ,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,INS, PSCR,SLCK,HOME,END,  \
+        FN10,FN11,FN12,FN13,FN14,FN15,FN16,FN17,FN18,TRNS,TRNS,TRNS,TRNS,     TRNS,NLCK,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,SLCK,TRNS,TRNS,TRNS, \
+        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,PAUS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,FN2 ,FN1, FN3, VOLD,VOLU,MUTE,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS, \
-        TRNS,TRNS,TRNS,               FN4,                TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS  ),
-    /* Keymap 2: Arrow key Overlayer
+        TRNS,TRNS,TRNS,               FN4,                     TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS  ),
+    /* Keymap 7: Arrow key Overlayer
      * ,---------------------------------------------------------------------------.
      * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
      * |-----------------------------------------------------------+---+---+---+---|
@@ -72,7 +182,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,TRNS,TRNS, \
         TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,     TRNS,TRNS,TRNS,UP,  TRNS,TRNS, \
-        TRNS,TRNS,TRNS,               TRNS,               TRNS,TRNS,TRNS,     TRNS,LEFT,DOWN,RGHT,TRNS  ),
+        TRNS,TRNS,TRNS,               TRNS,                    TRNS,TRNS,TRNS,TRNS,LEFT,DOWN,RGHT,TRNS  ),
 };
 
 enum function_id {
@@ -94,11 +204,11 @@ const uint16_t fn_actions[FN_ACTIONS_COUNT] __attribute__ ((section (".keymap.fn
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    [0] = ACTION_LAYER_MOMENTARY(1),
+    [0] = ACTION_LAYER_MOMENTARY(6),
     [1] = ACTION_BACKLIGHT_TOGGLE(),
     [2] = ACTION_BACKLIGHT_DECREASE(),
     [3] = ACTION_BACKLIGHT_INCREASE(),
-    [4] = ACTION_LAYER_TOGGLE(2),
+    [4] = ACTION_LAYER_TOGGLE(7),
     [5] = ACTION_FUNCTION(AF_RGB_TOGGLE),
     [6] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_FIXED),
     [7] = ACTION_FUNCTION_OPT(AF_RGB_STEP, RGB_VARIABLE),
