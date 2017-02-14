@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* keymap in eeprom */
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 8
-#define EECONFIG_KEYMAP_IN_EEPROM 0x11
+#define EECONFIG_KEYMAP_IN_EEPROM 19
 
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST
@@ -49,6 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BACKLIGHT_LEVELS 3
 #endif
 #define BACKLIGHT_CUSTOM
+#ifdef RGB_LED_ENABLE
+#define CUSTOM_LED_ENABLE
+#endif
 
 #ifdef GH60_REV_CNY
 #define LED_MATRIX_ROWS 6
@@ -59,8 +62,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef LEDMAP_ENABLE
 #if defined(GH60_REV_CHN)
 #define LED_COUNT 2
+#define LEDMAP_V2
+#define LED1_PORT   B
+#define LED1_BIT    2
+#define LED2_PORT   B
+#define LED2_BIT    6
 #else
 #define LED_COUNT 5
+#define LEDMAP_V2
+#define LED1_PORT   B
+#define LED1_BIT    2
+#define LED2_PORT   F
+#define LED2_BIT    7
+#define LED3_PORT   F
+#define LED3_BIT    6
+#define LED4_PORT   F
+#define LED4_BIT    5
+#define LED5_PORT   F
+#define LED5_BIT    4
 #endif
 #endif
 

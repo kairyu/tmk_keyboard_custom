@@ -25,10 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "breathing_led.h"
 #endif
 #include "hook.h"
+#ifdef RGB_LED_ENABLE
+#include "rgb_led.h"
+#endif
 
 #ifdef BACKLIGHT_ENABLE
 
-static uint8_t backlight_mode;
+extern backlight_config_t backlight_config;
 
 void backlight_enable(void);
 void backlight_disable(void);
@@ -104,7 +107,6 @@ void backlight_disable(void)
 
 void backlight_set(uint8_t level)
 {
-    backlight_mode = level;
     softpwm_enable();
 #ifdef BREATHING_LED_ENABLE
     switch (level) {
@@ -152,6 +154,7 @@ void backlight_set(uint8_t level)
 #ifdef SOFTPWM_LED_ENABLE
             fading_led_disable_all();
             breathing_led_disable_all();
+            backlight_set_raw(0);
 #else
             breathing_led_disable();
 #endif
@@ -226,21 +229,45 @@ void softpwm_led_off(uint8_t index)
 #endif
 #endif
 
+#ifdef SOFTPWM_LED_ENABLE
+#ifdef FADING_LED_ENABLE
 void hook_matrix_change(keyevent_t event)
 {
-    if (backlight_mode == 7) {
-        if (event.pressed) {
-            fading_led_set_delay_all(32);
-            softpwm_led_decrease_all(16);
+    if (backlight_config.enable) {
+        if (backlight_config.level == 7) {
+            if (event.pressed) {
+                fading_led_set_delay_all(32);
+                softpwm_led_decrease_all(16);
+            }
         }
-    }
-    if (backlight_mode == 8) {
-        if (event.pressed) {
-            fading_led_set_delay_all(32);
-            softpwm_led_increase_all(16);
+        if (backlight_config.level == 8) {
+            if (event.pressed) {
+                fading_led_set_delay_all(32);
+                softpwm_led_increase_all(16);
+            }
         }
     }
 }
+#endif
+
+#ifdef RGB_LED_ENABLE
+#ifdef CUSTOM_LED_ENABLE
+void softpwm_led_custom(void)
+{
+}
+
+void fading_led_custom(uint8_t *value)
+{
+    rgb_led_set_brightness(value[0], false);
+}
+
+void breathing_led_custom(uint8_t *value)
+{
+    rgb_led_set_brightness(value[0], false);
+}
+#endif
+#endif
+#endif
 
 
 #ifndef SOFTPWM_LED_ENABLE

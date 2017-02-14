@@ -1,4 +1,7 @@
 #include "keymap_common.h"
+#ifdef RGB_LED_ENABLE
+#include "rgb_led.h"
+#endif
 
 // Poker2
 #ifdef KEYMAP_SECTION_ENABLE
@@ -87,7 +90,17 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 }
 
 enum function_id {
-    TRICKY_ESC = 0,
+    AF_TRICKY_ESC = 0,
+    AF_RGB_LED
+};
+
+enum rgb_led_id {
+    AF_RGB_LED_TOGGLE = 0,
+    AF_RGB_LED_DECREASE,
+    AF_RGB_LED_INCREASE,
+    AF_RGB_LED_STEP,
+    AF_RGB_LED_DECREASE_BRIGHTNESS,
+    AF_RGB_LED_INCREASE_BRIGHTNESS
 };
 
 #define MODS_SHIFT_MASK (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT))
@@ -95,7 +108,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     static uint8_t tricky_esc_registered;
     switch (id) {
-        case TRICKY_ESC:
+        case AF_TRICKY_ESC:
             if (record->event.pressed) {
                 if (get_mods() & MODS_SHIFT_MASK) {
                     tricky_esc_registered = KC_GRV;
@@ -112,4 +125,33 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
             }
             break;
     }
+#ifdef RGB_LED_ENABLE
+#define RGB_LED_BRIGHTNESS_STEP ((RGB_LED_BRIGHTNESS_MAX - RGB_LED_BRIGHTNESS_MIN) / 8)
+    if (record->event.pressed) {
+        switch (id) {
+            case AF_RGB_LED:
+                switch (opt) {
+                    case AF_RGB_LED_TOGGLE:
+                        rgb_led_toggle();
+                        break;
+                    case AF_RGB_LED_DECREASE:
+                        rgb_led_decrease();
+                        break;
+                    case AF_RGB_LED_INCREASE:
+                        rgb_led_increase();
+                        break;
+                    case AF_RGB_LED_STEP:
+                        rgb_led_step();
+                        break;
+                    case AF_RGB_LED_DECREASE_BRIGHTNESS:
+                        rgb_led_decrease_brightness(RGB_LED_BRIGHTNESS_STEP, true);
+                        break;
+                    case AF_RGB_LED_INCREASE_BRIGHTNESS:
+                        rgb_led_increase_brightness(RGB_LED_BRIGHTNESS_STEP, true);
+                        break;
+                }
+                break;
+        }
+    }
+#endif
 }
