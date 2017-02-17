@@ -6,11 +6,19 @@
 #ifdef LEDMAP_ENABLE
 
 static const uint16_t ledmaps[LED_COUNT] PROGMEM = {
+#ifdef LEDMAP_V2
+    [0] = LEDMAP_ACTIVE_LOW | LEDMAP_NUM_LOCK | LEDMAP_BACKLIGHT,   // LEDS1  - PB2
+    [1] = LEDMAP_ACTIVE_LOW | LEDMAP_BACKLIGHT,                     // LEDS6  - PF7
+    [2] = LEDMAP_ACTIVE_LOW | LEDMAP_BACKLIGHT,                     // LEDS11 - PF6
+    [3] = LEDMAP_ACTIVE_LOW | LEDMAP_BACKLIGHT,                     // LEDS16 - PF5
+    [4] = LEDMAP_ACTIVE_HIGH | LEDMAP_BACKLIGHT,                    // PWM    - PB5
+#else
     [0] = LEDMAP_NUM_LOCK | LEDMAP_BACKLIGHT,   // LEDS1  - PB2
     [1] = LEDMAP_BACKLIGHT,                     // LEDS6  - PF7
     [2] = LEDMAP_BACKLIGHT,                     // LEDS11 - PF6
     [3] = LEDMAP_BACKLIGHT,                     // LEDS16 - PF5
     [4] = LEDMAP_BACKLIGHT,                     // PWM    - PB5
+#endif
 };
 
 ledmap_t ledmap_get_code(uint8_t index)
@@ -18,6 +26,7 @@ ledmap_t ledmap_get_code(uint8_t index)
     return (ledmap_t) { .code = pgm_read_word(&ledmaps[index]) };
 }
 
+#ifndef LEDMAP_V2
 void ledmap_led_init(void)
 {
     DDRB  |=  (1<<PB2);
@@ -69,5 +78,6 @@ void ledmap_led_off(uint8_t index)
             break;
     }
 }
+#endif
 
 #endif

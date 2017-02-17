@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* keymap in eeprom */
 #define FN_ACTIONS_COUNT 32
 #define KEYMAPS_COUNT 32
-#define EECONFIG_KEYMAP_IN_EEPROM 0x11
 
 /* define if matrix has ghost */
 //#define MATRIX_HAS_GHOST
@@ -49,8 +48,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* number of leds */
 #define LED_COUNT 5
 
-/* number of backlight levels */
-//#define BACKLIGHT_LEVELS 3
+/* LED mapping */
+#ifdef LEDMAP_ENABLE
+#define LEDMAP_V2
+#define LED1_PORT   B
+#define LED1_BIT    2
+#define LED2_PORT   F
+#define LED2_BIT    7
+#define LED3_PORT   F
+#define LED3_BIT    6
+#define LED4_PORT   F
+#define LED4_BIT    5
+#define LED5_PORT   B
+#define LED5_BIT    5
+#endif
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
