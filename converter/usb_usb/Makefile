@@ -39,15 +39,15 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = usb_usb
+TARGET ?= usb_usb
 
-TMK_DIR = ../../tmk_core_custom
+TMK_DIR ?= ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
-TARGET_DIR = .
+TARGET_DIR ?= .
 
 # MCU name
-MCU = atmega32u4
+MCU ?= atmega32u4
 
 
 # Processor frequency.
@@ -61,7 +61,7 @@ MCU = atmega32u4
 #     does not *change* the processor frequency - it should merely be updated to
 #     reflect the processor speed set externally so that the code can use accurate
 #     software delays.
-F_CPU = 16000000
+F_CPU ?= 16000000
 
 
 
@@ -81,7 +81,7 @@ ARCH = AVR8
 #
 #     If no clock division is performed on the input clock inside the AVR (via the
 #     CPU clock adjust registers or the clock division fuses), this will be equal to F_CPU.
-F_USB = $(F_CPU)
+F_USB ?= $(F_CPU)
 # Interrupt driven control endpoint task
 OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 
@@ -123,7 +123,7 @@ else
     SRC := keymap.c $(SRC)
 endif
 
-CONFIG_H = config.h
+CONFIG_H ?= config.h
 
 
 
