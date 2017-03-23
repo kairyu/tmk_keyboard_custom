@@ -90,19 +90,23 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 # Build Options
 #   comment out to disable the options.
 #
-MOUSEKEY_ENABLE = yes	# Mouse keys
-#EXTRAKEY_ENABLE = yes	# Media control and System control
-#CONSOLE_ENABLE = yes	# Console for debug
-#COMMAND_ENABLE = yes    # Commands for debug and configuration
-#NKRO_ENABLE = yes	# USB Nkey Rollover
-KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
-LEDMAP_ENABLE = yes	# Enable LED mapping
+MOUSEKEY_ENABLE = yes   # Mouse keys
+# HID_MOUSE_ENABLE = yes  # Use mouse via U2U
+# EXTRAKEY_ENABLE = yes   # Media control and System control
+# CONSOLE_ENABLE = yes    # Console for debug
+# COMMAND_ENABLE = yes    # Commands for debug and configuration
+# NKRO_ENABLE = yes       # USB Nkey Rollover
+KEYMAP_IN_EEPROM_ENABLE = yes   # External keymap in eeprom
+LEDMAP_ENABLE = yes     # Enable LED mapping
 LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Boot Section Size in bytes
 #   Teensy halfKay   512
-#   Atmel DFU loader 4096
+#   Teensy++ halfKay 1024
+#   BootHID          1024
+#   Atmel DFU loader 4096	(TMK Alt Controller)
 #   LUFA bootloader  4096
+#   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 #LDFLAGS += -Wl,--relax
@@ -121,6 +125,14 @@ ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
 else
     SRC := keymap.c $(SRC)
+endif
+
+ifeq (yes,$(strip $(HID_MOUSE_ENABLE)))
+OPT_DEFS += -DHID_MOUSE_ENABLE
+OPT_DEFS += -DHID_COMPOSITE_ENABLE
+ifneq (yes,$(strip $(MOUSEKEY_ENABLE)))
+MOUSEKEY_ENABLE = yes	# Mouse keys
+endif
 endif
 
 CONFIG_H ?= config.h
