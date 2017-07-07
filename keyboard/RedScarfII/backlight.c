@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "backlight.h"
 #ifdef SOFTPWM_LED_ENABLE
 #include "softpwm_led.h"
+#include "hook.h"
 #else
 #include "breathing_led.h"
 #endif
-#include "action.h"
 
 #ifdef BACKLIGHT_ENABLE
 
@@ -186,7 +186,7 @@ void softpwm_led_off(uint8_t index)
 
 #ifdef SOFTPWM_LED_ENABLE
 #ifdef FADING_LED_ENABLE
-void action_keyevent(keyevent_t event)
+void hook_matrix_change(keyevent_t event)
 {
     if (backlight_config.enable) {
         switch (backlight_config.level) {
