@@ -42,7 +42,7 @@
 TARGET = xd75_lufa
 
 # Directory common source filess exist
-TMK_DIR = ../../tmk_core_custom_927664794a5a24a0fe80640a76f077b4ef74634a
+TMK_DIR = ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .

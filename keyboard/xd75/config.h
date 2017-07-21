@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VENDOR_ID       0xCDCD
 #define PRODUCT_ID      0x7575
 #define DEVICE_VER      0x0001
-#define MANUFACTURER    geekhack
+#define MANUFACTURER    xiudi
 #define PRODUCT         XD75
 #define DESCRIPTION     t.m.k. keyboard firmware for XD75
 
@@ -51,6 +51,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef RGB_LED_ENABLE
 #define CUSTOM_LED_ENABLE
 #endif
+
+#define BACKLIGHT_CONFIG_DEFAULT_ENABLE true
+#define BACKLIGHT_CONFIG_DEFAULT_LEVEL 1
+#define RGB_LED_CONFIG_DEFAULT_ENABLE true
+#define RGB_LED_CONFIG_DEFAULT_LEVEL 9
 
 /* LED mapping */
 #ifdef LEDMAP_ENABLE
