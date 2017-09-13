@@ -29,10 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef BACKLIGHT_ENABLE
 
-void backlight_enable(void);
-void backlight_disable(void);
-inline void backlight_set_raw(uint8_t raw);
-
 static const uint8_t backlight_table[] PROGMEM = {
     0, 16, 128, 255
 };

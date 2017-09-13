@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0x1209
 #define PRODUCT_ID      0x2328
-#define DEVICE_VER      0x0500
+#define DEVICE_VER      0x0501
 #define MANUFACTURER    K.T.E.C.
 #define PRODUCT         Daisy
 #define DESCRIPTION     t.m.k. keyboard firmware for Daisy
