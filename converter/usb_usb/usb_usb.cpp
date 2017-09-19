@@ -35,8 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "action.h"
 #include "host.h"
 
-#define HID_MOUSE_ENABLE
-#define HID_COMPOSITE_ENABLE
 #define HID_KEYBOARD_COUNT 2
 #define USB_HUB_COUNT 1
 

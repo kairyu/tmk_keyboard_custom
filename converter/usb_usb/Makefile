@@ -39,15 +39,15 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = usb_usb
+TARGET ?= usb_usb
 
-TMK_DIR = ../../tmk_core_custom
+TMK_DIR ?= ../../tmk_core_custom
 
 # Directory keyboard dependent files exist
-TARGET_DIR = .
+TARGET_DIR ?= .
 
 # MCU name
-MCU = atmega32u4
+MCU ?= atmega32u4
 
 
 # Processor frequency.
@@ -61,7 +61,7 @@ MCU = atmega32u4
 #     does not *change* the processor frequency - it should merely be updated to
 #     reflect the processor speed set externally so that the code can use accurate
 #     software delays.
-F_CPU = 16000000
+F_CPU ?= 16000000
 
 
 
@@ -81,7 +81,7 @@ ARCH = AVR8
 #
 #     If no clock division is performed on the input clock inside the AVR (via the
 #     CPU clock adjust registers or the clock division fuses), this will be equal to F_CPU.
-F_USB = $(F_CPU)
+F_USB ?= $(F_CPU)
 # Interrupt driven control endpoint task
 OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 
@@ -90,19 +90,23 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 # Build Options
 #   comment out to disable the options.
 #
-MOUSEKEY_ENABLE = yes	# Mouse keys
-#EXTRAKEY_ENABLE = yes	# Media control and System control
-#CONSOLE_ENABLE = yes	# Console for debug
-#COMMAND_ENABLE = yes    # Commands for debug and configuration
-#NKRO_ENABLE = yes	# USB Nkey Rollover
-KEYMAP_IN_EEPROM_ENABLE = yes	# External keymap in eeprom
-LEDMAP_ENABLE = yes	# Enable LED mapping
+MOUSEKEY_ENABLE = yes   # Mouse keys
+# HID_MOUSE_ENABLE = yes  # Use mouse via U2U
+# EXTRAKEY_ENABLE = yes   # Media control and System control
+# CONSOLE_ENABLE = yes    # Console for debug
+# COMMAND_ENABLE = yes    # Commands for debug and configuration
+# NKRO_ENABLE = yes       # USB Nkey Rollover
+KEYMAP_IN_EEPROM_ENABLE = yes   # External keymap in eeprom
+LEDMAP_ENABLE = yes     # Enable LED mapping
 LEDMAP_IN_EEPROM_ENABLE = yes # Read LED mapping from eeprom
 
 # Boot Section Size in bytes
 #   Teensy halfKay   512
-#   Atmel DFU loader 4096
+#   Teensy++ halfKay 1024
+#   BootHID          1024
+#   Atmel DFU loader 4096	(TMK Alt Controller)
 #   LUFA bootloader  4096
+#   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 #LDFLAGS += -Wl,--relax
@@ -123,7 +127,15 @@ else
     SRC := keymap.c $(SRC)
 endif
 
-CONFIG_H = config.h
+ifeq (yes,$(strip $(HID_MOUSE_ENABLE)))
+OPT_DEFS += -DHID_MOUSE_ENABLE
+OPT_DEFS += -DHID_COMPOSITE_ENABLE
+ifneq (yes,$(strip $(MOUSEKEY_ENABLE)))
+MOUSEKEY_ENABLE = yes	# Mouse keys
+endif
+endif
+
+CONFIG_H ?= config.h
 
 
 
